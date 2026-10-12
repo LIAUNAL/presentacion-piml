@@ -8,7 +8,7 @@ const nodes = [
   {
     id: 'e1',
     type: 'deck',
-    data: { color: '#95A5A6', title: 'E1 · Estadísticos', lines: ['ARIMA / SARIMA / ETS'] },
+    data: { color: '#95A5A6', title: 'E1 · Estadísticos', lines: ['SARIMA'] },
     position: { x: 0, y: 0 },
   },
   {
@@ -20,7 +20,7 @@ const nodes = [
   {
     id: 'e3',
     type: 'deck',
-    data: { color: '#2E86AB', title: 'E3 · Recurrentes', lines: ['LSTM · GRU · BiLSTM+att'] },
+    data: { color: '#2E86AB', title: 'E3 · Recurrentes', lines: ['LSTM · GRU'] },
     position: { x: 340, y: 0 },
   },
   {

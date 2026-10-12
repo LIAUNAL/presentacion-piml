@@ -658,19 +658,13 @@ export const SLIDES = [
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E1 — Estadísticos clásicos · E2 — ML clásico',
+    title: 'E1 — Estadísticos clásicos (SARIMA)',
     equations: [
       {
         heading: 'E1 · SARIMA (Box–Jenkins; $\\mathcal{B}$ operador de rezago)',
         tex: '\\phi_p(\\mathcal{B})\\,\\Phi_P(\\mathcal{B}^s)\\,(1-\\mathcal{B})^d\\,(1-\\mathcal{B}^s)^D\\, y[t] = c + \\theta_q(\\mathcal{B})\\,\\Theta_Q(\\mathcal{B}^s)\\,\\varepsilon[t], \\qquad \\varepsilon[t] \\sim \\mathcal{N}(0, \\sigma_\\varepsilon^2)',
         conn:
-          '**Conexión:** "ARIMA/SARIMA/ETS" ↔ esta ecuación ($s$ = período estacional 24 h o 168 h); símbolos $s, d, D, c$ son **locales** de esta sección.',
-      },
-      {
-        heading: 'E2 · SVR con pérdida $\\varepsilon_{svr}$-insensible y ensambles aditivos',
-        tex: 'f_\\theta(\\mathbf{x}) = \\langle \\theta, \\varphi(\\mathbf{x}) \\rangle, \\qquad \\min_{\\theta, \\boldsymbol{\\xi}, \\boldsymbol{\\xi}^*} \\frac{1}{2}\\lVert \\theta \\rVert_2^2 + \\lambda_{svr} \\sum_{i=1}^{N} (\\xi_i + \\xi_i^*) \\;\\; \\text{s.a. } \\left| y_i - f_\\theta(\\mathbf{x}_i) \\right| \\le \\varepsilon_{svr} + \\xi_i^{(*)}',
-        conn:
-          '**Conexión:** "SVR, RF, XGBoost, ANFIS — features duras tabulares" ↔ $f_\\theta(\\mathbf{x})$ sobre $\\mathbf{x}$ tabular (rezagos, calendario, meteorología); ensambles aditivos para XGBoost/RF.',
+          '**Conexión:** SARIMA es el único método estadístico clásico nombrado en esta sección ($s$ = período estacional 24 h o 168 h); símbolos $s, d, D, c$ son **locales** de esta sección. La familia **E2** —SVR, árboles y ensambles, y los lineales regularizados— es el bloque que sigue en las próximas slides.',
       },
     ],
   },
@@ -800,35 +794,252 @@ export const SLIDES = [
     refs: [
       'Referencias: Hoerl & Kennard, Technometrics 12(1), 1970 (ridge) · Tibshirani, JRSS-B 58(1), 1996 (lasso) · Zou & Hastie, JRSS-B 67(2), 2005 (red elástica) · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 3.',
     ],
-    notes: '**Cierre del bloque:** las cuatro comparten el esqueleto —ajuste más castigo— y ese esqueleto reaparece en $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$. **Límites de lasso:** con $d > N$ selecciona a lo sumo $N$ variables y ante variables correlacionadas elige de forma inestable; la red elástica ($\\ell_1 + \\ell_2$) corrige ambos casos.',
+    notes: '**Puente a la siguiente slide:** las cuatro comparten el esqueleto —ajuste más castigo— y ese esqueleto reaparece en $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$. **Límites de lasso:** con $d > N$ selecciona a lo sumo $N$ variables y ante variables correlacionadas elige de forma inestable; la red elástica ($\\ell_1 + \\ell_2$) corrige ambos casos.',
   },
   {
-    id: 'd3-mat-2',
+    id: 'd3-reg-elastic',
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E3 — Recurrentes: compuertas de la LSTM y la GRU',
+    title: 'E2 — ElasticNet: penalización $\\ell_1 + \\ell_2$',
+    bullets: [
+      'Suma los dos castigos: la contracción de ridge y la selección de lasso.',
+      'Resuelve el punto débil de lasso: con variables correlacionadas deja de elegir una al azar.',
+      'No tiene forma cerrada: se resuelve por programación convexa.',
+    ],
     equations: [
       {
-        heading: 'LSTM · compuertas de entrada, olvido y salida',
-        tex: '\\mathbf{i}[t] = \\sigma(\\mathbf{W}_i \\mathbf{x}[t] + \\mathbf{U}_i \\mathbf{h}[t-1] + \\mathbf{b}_i), \\qquad \\mathbf{f}[t] = \\sigma(\\mathbf{W}_f \\mathbf{x}[t] + \\mathbf{U}_f \\mathbf{h}[t-1] + \\mathbf{b}_f)',
-        conn:
-          'Estado de celda y salida: $\\mathbf{c}[t] = \\mathbf{f}[t] \\odot \\mathbf{c}[t-1] + \\mathbf{i}[t] \\odot \\tilde{\\mathbf{c}}[t]$ y $\\mathbf{h}[t] = \\mathbf{o}[t] \\odot \\tanh(\\mathbf{c}[t])$.',
+        heading: 'E2 · El objetivo penalizado',
+        tex: '\\mathcal{L}_{EN}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{D}\\theta \\rVert_2^2 + \\lambda_{reg}\\left[ (1 - \\rho_{en})\\lVert \\theta \\rVert_2^2 + \\rho_{en}\\lVert \\theta \\rVert_1 \\right]',
+        conn: '**Conexión:** $\\hat{\\theta}_{EN} = \\arg\\min_{\\theta} \\mathcal{L}_{EN}(\\theta)$, con $\\rho_{en} \\in [0,1]$ la **mezcla** (local: no es el ancho espectral $\\rho_k$ del RFF) y $\\lambda_{reg}$ la fuerza única de la familia penalizada. Los extremos son conocidos: $\\rho_{en} = 0$ devuelve **ridge** exactamente y $\\rho_{en} = 1$ devuelve **lasso**. Es el regularizador del benchmark del proyecto, donde los rezagos están correlacionados de forma cíclica (24 h y 168 h). (Zou & Hastie, 2005.)',
       },
       {
-        heading: 'LSTM · estado de celda (compuerta de salida $\\mathbf{o}[t]$)',
-        tex: '\\mathbf{o}[t] = \\sigma(\\mathbf{W}_o \\mathbf{x}[t] + \\mathbf{U}_o \\mathbf{h}[t-1] + \\mathbf{b}_o), \\qquad \\tilde{\\mathbf{c}}[t] = \\tanh(\\mathbf{W}_c \\mathbf{x}[t] + \\mathbf{U}_c \\mathbf{h}[t-1] + \\mathbf{b}_c)',
+        heading: 'E2 · Condiciones KKT: selección con agrupamiento',
+        tex: '\\mathbf{d}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{D}\\theta \\right) = \\lambda_{reg}\\rho_{en}\\,\\mathrm{sign}(\\theta_j) + \\lambda_{reg}(1 - \\rho_{en})\\,\\theta_j \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{d}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{D}\\theta \\right) \\right| \\le \\lambda_{reg}\\rho_{en} \\ \\text{si } \\theta_j = 0',
+        conn: '**Conexión:** la condición de anulación es la de lasso —umbral $\\lambda_{reg}\\rho_{en}$— y el término $\\lambda_{reg}(1-\\rho_{en})\\theta_j$ es el que aporta ridge. Ese término **reparte** el peso entre variables correlacionadas: si dos rezagos son casi idénticos, sus coeficientes crecen juntos en vez de que uno anule al otro. Ésa es la corrección que el cierre de lasso anunciaba; la $\\ell_1$ no diferenciable en el origen impide una forma cerrada general.',
       },
       {
-        heading: 'GRU · compuertas de actualización $\\mathbf{u}[t]$ y reinicio $\\mathbf{r}[t]$ (decisión 5 de §1)',
+        heading: 'E2 · Umbral suave encogido (diseño ortonormal)',
+        tex: '\\hat{\\theta}^{EN}_j = \\frac{\\mathrm{sign}\\left( \\hat{\\theta}^{OLS}_j \\right)\\max\\left( \\left| \\hat{\\theta}^{OLS}_j \\right| - \\lambda_{reg}\\rho_{en},\\ 0 \\right)}{1 + \\lambda_{reg}(1 - \\rho_{en})}',
+        conn: '**Conexión:** con diseño ortonormal el operador se lee en dos pasos: **umbral** con $\\lambda_{reg}\\rho_{en}$ —igual que lasso, y de ahí la esparsidad— y **encogimiento** por el factor $1/(1+\\lambda_{reg}(1-\\rho_{en}))$ —la herencia de ridge—. El resultado interpola entre los dos estimadores: no anula tan agresivamente como lasso ni reparte tan suavemente como ridge.',
+      },
+    ],
+    refs: [
+      'Referencias: Zou & Hastie, JRSS-B 67(2), 301–320, 2005 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 3.',
+    ],
+    notes: '**Cierre del bloque penalizado:** OLS, MLE, ridge, lasso y ElasticNet comparten un solo esqueleto —ajuste más castigo— y se distinguen por el término que se suma; ese mismo esqueleto reaparece en $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$ de la puerta ①. **En el protocolo:** Ridge y ElasticNet comparten el espacio de búsqueda de $\\lambda_{reg}$, con $\\rho_{en}$ como dimensión extra.',
+  },
+  {
+    id: 'd3-reg-dlinear',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — DLinear: descomposición lineal y baseline obligatorio',
+    bullets: [
+      'Separa la ventana en **tendencia** y **resto** con un promedio móvil.',
+      'Proyecta cada componente con su propia capa lineal: dos proyecciones, no una.',
+      'El protocolo del proyecto lo resuelve por mínimos cuadrados: determinista, sin semillas.',
+    ],
+    equations: [
+      {
+        heading: 'E2 · Descomposición de la ventana',
+        tex: 'x^{tend}_\\tau = \\frac{1}{p_{ma}} \\sum_{s = -\\lfloor (p_{ma}-1)/2 \\rfloor}^{\\lfloor p_{ma}/2 \\rfloor} x_{\\tau + s}, \\qquad x^{rem}_\\tau = x_\\tau - x^{tend}_\\tau',
+        conn: '**Conexión:** $p_{ma}$ es el período del promedio móvil (24 h en el protocolo) y los bordes se rellenan. La descomposición es la clásica tendencia más resto: $x^{tend}$ captura el nivel lento y $x^{rem}$ la estacionalidad y el ruido de alta frecuencia. Símbolos locales: $p_{ma}$ (local: no es el momento $p(t)$ del MR), $x^{tend}$, $x^{rem}$, $\\mathbf{W}_{tend}$, $\\mathbf{W}_{rem}$.',
+      },
+      {
+        heading: 'E2 · El modelo: dos proyecciones lineales',
+        tex: '\\hat{\\mathbf{y}} = \\mathbf{W}_{tend}\\,x^{tend} + \\mathbf{b}_{tend} + \\mathbf{W}_{rem}\\,x^{rem} + \\mathbf{b}_{rem}, \\qquad \\mathbf{W}_{tend}, \\mathbf{W}_{rem} \\in \\mathbb{R}^{h \\times \\tau}',
+        conn: '**Conexión:** cada componente tiene su propia proyección $\\mathbb{R}^{\\tau} \\to \\mathbb{R}^{h}$: la tendencia se proyecta a la tendencia del horizonte, el resto al resto, y luego se suman. Los pesos son bloques de $\\theta$ por S2: $\\theta = \\{\\mathbf{W}_{tend}, \\mathbf{b}_{tend}, \\mathbf{W}_{rem}, \\mathbf{b}_{rem}\\}$. **La ventaja no es la capacidad** —unos 18.7 k parámetros con $\\tau = h = 96$— sino el sesgo inductivo de separar tendencia de alta frecuencia.',
+      },
+      {
+        heading: 'E2 · El ajuste: mínimos cuadrados directos',
+        tex: '\\hat{\\theta} = \\arg\\min_{\\theta}\\ \\lVert \\mathbf{Y} - \\hat{\\mathbf{Y}}(\\theta) \\rVert_F^2',
+        conn: '**Conexión:** el artículo original entrena con descenso de gradiente; el protocolo del proyecto resuelve cada proyección con **mínimos cuadrados cerrados** (SVD y pseudo-inversa), que es la solución exacta del problema cuadrático. De ahí dos consecuencias: es **determinista** —sin semillas ni épocas— y es la cota lineal moderna del benchmark. $\\lVert \\cdot \\rVert_F$ es la norma de Frobenius.',
+      },
+    ],
+    refs: [
+      'Referencias: Zeng, Chen, Zhang & Xu, Are Transformers Effective for Time Series Forecasting?, AAAI 2023 · protocolo interno del benchmark de regresión (§1, Tabla A).',
+    ],
+    notes: '**Por qué está en el deck:** es el baseline obligatorio: ningún modelo nuevo se reporta sin superarlo. **Su tesis:** un modelo lineal bien descompuesto iguala o supera a los Transformers en LTSF. **Contraste:** extrapola (es lineal) y es determinista; no modela interacciones no lineales.',
+  },
+  {
+    id: 'd3-reg-svr',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — SVR: pérdida $\\varepsilon_{svr}$-insensible y margen máximo',
+    bullets: [
+      'No penaliza todo error: sólo el que excede un tubo de tolerancia $\\varepsilon_{svr}$.',
+      'Margen y violaciones conviven en un problema **convexo** con óptimo único.',
+      'El dual sólo necesita productos internos: de ahí el **truco del kernel**.',
+    ],
+    equations: [
+      {
+        heading: 'E2 · El modelo y la pérdida $\\varepsilon_{svr}$-insensible',
+        tex: 'f_\\theta(\\mathbf{x}) = \\langle \\theta, \\varphi(\\mathbf{x}) \\rangle, \\qquad \\ell_{\\varepsilon_{svr}}\\bigl( y_i, f_\\theta(\\mathbf{x}_i) \\bigr) = \\max\\left( 0,\\ \\left| y_i - f_\\theta(\\mathbf{x}_i) \\right| - \\varepsilon_{svr} \\right)',
+        conn: '**Conexión:** $\\varphi(\\mathbf{x})$ es el mapa al espacio de características y $\\varepsilon_{svr}$ el radio del tubo: los errores menores que $\\varepsilon_{svr}$ no cuestan nada, así que es robusto al ruido pequeño —a diferencia del residuo cuadrático de $\\mathcal{L}_{MSE}$—. Símbolos locales: $\\varphi$, $\\xi_i^{(\\ast)}$, $\\alpha_i^{(\\ast)}$.',
+      },
+      {
+        heading: 'E2 · El problema de optimización (primal)',
+        tex: '\\min_{\\theta,\\ \\boldsymbol{\\xi},\\ \\boldsymbol{\\xi}^*}\\ \\frac{1}{2}\\lVert \\theta \\rVert_2^2 + \\lambda_{svr} \\sum_{i=1}^{N} \\left( \\xi_i + \\xi_i^* \\right) \\quad \\text{s.a. } \\left| y_i - f_\\theta(\\mathbf{x}_i) \\right| \\le \\varepsilon_{svr} + \\xi_i^{(*)}, \\quad \\xi_i^{(*)} \\ge 0',
+        conn: '**Conexión:** $\\xi_i^{(\\ast)}$ son las holguras por debajo y por encima del tubo. El objetivo minimiza dos cosas a la vez: la norma $\\lVert \\theta \\rVert_2^2$ —el **margen**, que controla la capacidad— y la suma de violaciones. $\\lambda_{svr}$ pesa el error frente al margen, con el mismo papel que $\\lambda_{reg}$ en ridge y lasso. Es un primal **convexo**: el óptimo es único.',
+      },
+      {
+        heading: 'E2 · El dual y el truco del kernel',
+        tex: '\\hat{f}_\\theta(\\mathbf{x}) = \\sum_{i=1}^{N} \\left( \\alpha_i - \\alpha_i^* \\right) \\kappa(\\mathbf{x}, \\mathbf{x}_i), \\qquad \\kappa(\\mathbf{x}, \\mathbf{x}_i) = \\langle \\varphi(\\mathbf{x}), \\varphi(\\mathbf{x}_i) \\rangle, \\qquad 0 \\le \\alpha_i^{(*)} \\le \\lambda_{svr}',
+        conn: '**Conexión:** el dual sólo usa productos internos $\\kappa$, así que $\\varphi$ nunca se calcula explícitamente: ése es el **truco del kernel**. Se cumple $\\alpha_i^{(\\ast)} = 0$ para los puntos dentro del tubo; sólo los que lo violan —los **vectores de soporte**— definen la solución.',
+      },
+    ],
+    refs: [
+      'Referencias: Vapnik, The Nature of Statistical Learning Theory, 2.ª ed., 2000 · Smola & Schölkopf, Statistics and Computing 14, 199–222, 2004 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 12.',
+    ],
+    notes: '**Idea central:** SVR no minimiza el error cuadrático; minimiza margen más violaciones del tubo. **Puente:** es el mismo esqueleto ajuste más castigo de OLS, ridge y lasso, con la pérdida $\\varepsilon_{svr}$-insensible. **Contraste:** es programación cuadrática, no una ecuación normal: no hay forma cerrada general.',
+  },
+  {
+    id: 'd3-reg-tree',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — Árbol de regresión (CART): partición recursiva',
+    bullets: [
+      'No supone linealidad: aproxima $f$ con **cajas** del espacio de entrada.',
+      'Dentro de cada hoja la predicción es constante: la media de sus muestras.',
+      'Buscar el árbol óptimo es NP-duro; en la práctica se crece **greedy** y se poda.',
+    ],
+    equations: [
+      {
+        heading: 'E2 · El modelo: función escalón sobre una partición',
+        tex: '\\hat{y}(\\mathbf{x}) = \\sum_{j=1}^{J_{arb}} c_j \\,\\mathbb{1}\\!\\left[ \\mathbf{x} \\in R_j \\right], \\qquad c_j = \\frac{1}{|R_j|} \\sum_{\\mathbf{x}_i \\in R_j} y_i',
+        conn: '**Conexión:** $R_j$ es la caja (región) de la hoja $j$, $J_{arb}$ el número de hojas (local: no son los modos $J$ de la familia E8) y $c_j$ la **media** de las muestras que caen en ella (local: no es el término constante $c$ del SARIMA). La predicción es una función escalón: constante por caja y discontinua en los cortes. Símbolos locales de esta slide: $J_{arb}$, $R_j$, $c_j$, $k$, $s$; $i$ sigue siendo el índice de muestra y nunca tiempo.',
+      },
+      {
+        heading: 'E2 · El criterio del split (búsqueda greedy)',
+        tex: '\\min_{k,\\ s} \\left[ \\min_{c_1} \\sum_{\\mathbf{x}_i \\in R_1(k,s)} \\left( y_i - c_1 \\right)^2 + \\min_{c_2} \\sum_{\\mathbf{x}_i \\in R_2(k,s)} \\left( y_i - c_2 \\right)^2 \\right]',
+        conn: '**Conexión:** $k$ es la variable (un rezago) y $s$ el umbral del corte que parte el nodo en $R_1(k,s)$ y $R_2(k,s)$. El criterio es la **suma de cuadrados intra-hoja**, equivalente a maximizar la suma de cuadrados entre los dos grupos: en cada paso se busca el par $(k,s)$ que más reduce el error de ajuste, con las medias $c_1, c_2$ recalculadas. Optimizar la partición completa es **NP-duro** y el árbol **no extrapola**: su predicción queda dentro del rango de $y$ de sus hojas.',
+      },
+    ],
+    refs: [
+      'Referencias: Breiman, Friedman, Olshen & Stone, Classification and Regression Trees, 1984 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 9.',
+    ],
+    notes: '**Sesgo–varianza:** un árbol profundo tiene varianza alta y sesgo bajo; uno poco profundo, lo contrario. Ése es el compromiso que atacan los dos ensambles siguientes: **bagging** para la varianza y **boosting** para el sesgo. El árbol es determinista; lo estocástico llega con los ensambles.',
+  },
+  {
+    id: 'd3-reg-forest',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — Random Forest: bagging sobre árboles',
+    bullets: [
+      'Promedia $M_{arb}$ árboles entrenados sobre **muestras bootstrap**.',
+      'Cada split considera sólo $m_{try}$ variables al azar: así baja la correlación entre árboles.',
+      'No reduce el sesgo del árbol base: su objetivo es la **varianza**.',
+    ],
+    equations: [
+      {
+        heading: 'E2 · El modelo: promedio de árboles bootstrap',
+        tex: '\\hat{y}(\\mathbf{x}) = \\frac{1}{M_{arb}} \\sum_{m=1}^{M_{arb}} T_m(\\mathbf{x}), \\qquad T_m \\sim \\text{bootstrap}\\left( \\mathbf{D}, N \\right) \\quad \\text{con } m_{try} \\text{ variables por split}',
+        conn: '**Conexión:** cada $T_m$ es un árbol CART completo, entrenado sobre una **remuestra con reemplazo** de las $N$ filas de $\\mathbf{D}$ (bootstrap) y decidido con sólo $m_{try}$ variables candidatas en cada split (en regresión, típicamente $d/3$). El promedio reduce la varianza sin cambiar la forma del modelo por árbol. Símbolos locales: $M_{arb}$, $T_m$, $m_{try}$, $\\rho_{arb}$ (local: no es el ancho espectral $\\rho_k$), $\\sigma_{arb}^2$.',
+      },
+      {
+        heading: 'E2 · Por qué promediar reduce la varianza',
+        tex: '\\mathrm{Var}\\left( \\hat{y}(\\mathbf{x}) \\right) = \\rho_{arb}\\,\\sigma_{arb}^2 + \\frac{1 - \\rho_{arb}}{M_{arb}}\\,\\sigma_{arb}^2',
+        conn: '**Conexión:** si cada árbol tiene varianza $\\sigma_{arb}^2$ y la correlación media entre pares es $\\rho_{arb}$, el promedio elimina **sólo** la parte no correlacionada: el segundo término desaparece con $M_{arb} \\to \\infty$, pero el primero se queda. De ahí el **piso** $\\rho_{arb}\\sigma_{arb}^2$ y el papel de $m_{try}$: bajar $\\rho_{arb}$ a cambio de algo de sesgo.',
+      },
+    ],
+    refs: [
+      'Referencias: Breiman, Machine Learning 45(1), 5–32, 2001 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 15.',
+    ],
+    notes: '**Bagging frente a boosting:** el bosque promedia en paralelo para bajar varianza; el boosting suma en serie para bajar sesgo. **Multi-salida:** el criterio del split puede sumar el RSS de las $h$ componentes, así que un solo bosque predice todo el horizonte. **Protocolo:** `n_estimators` en 200/500/1000 y `max_depth` en None/8/16/32; al ser estocástico, se reporta media y desviación sobre semillas.',
+  },
+  {
+    id: 'd3-reg-boost',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — Gradient Boosting (XGBoost): ajustar el residuo',
+    bullets: [
+      'Construye el modelo **aditivamente**: cada árbol corrige lo que dejó el anterior.',
+      'Cada $T_m$ ajusta el **gradiente negativo** de la pérdida, no $y$ directamente.',
+    ],
+    equations: [
+      {
+        heading: 'E2 · El modelo aditivo y los pseudo-residuos',
+        tex: 'F_0(\\mathbf{x}) = \\bar{y}, \\qquad F_m(\\mathbf{x}) = F_{m-1}(\\mathbf{x}) + \\nu\\, T_m(\\mathbf{x}), \\qquad r_{im} = -\\left.\\frac{\\partial \\ell\\left( y_i, F(\\mathbf{x}_i) \\right)}{\\partial F(\\mathbf{x}_i)} \\right|_{F = F_{m-1}} = y_i - F_{m-1}(\\mathbf{x}_i)',
+        conn: '**Conexión:** el ensamble arranca en la media $\\bar{y}$ y cada paso suma un árbol escalado por el **shrinkage** $\\nu \\in (0,1]$. $r_{im}$ es el **pseudo-residuo**: el gradiente negativo de la pérdida por muestra, evaluado en el modelo anterior.',
+      },
+      {
+        heading: 'E2 · El objetivo del ensamble y su aproximación por iteración',
+        tex: '\\mathcal{L}\\left( F \\right) = \\sum_{i=1}^{N} \\ell\\left( y_i, F(\\mathbf{x}_i) \\right) + \\sum_{m=1}^{M_{arb}} \\Omega\\left( T_m \\right), \\qquad \\mathrm{Obj}^{(m)} = \\sum_{i=1}^{N} \\left[ g_i\\, T_m(\\mathbf{x}_i) + \\frac{1}{2}\\,\\eta_i\\, T_m(\\mathbf{x}_i)^2 \\right] + \\Omega\\left( T_m \\right)',
+        conn: '**Conexión:** el objetivo global es pérdida de datos **más** castigo por complejidad de cada árbol. Como minimizar $\\mathcal{L}$ directamente es intratable, XGBoost expande $\\mathcal{L}$ a **segundo orden** alrededor de $F_{m-1}$ y minimiza $\\mathrm{Obj}^{(m)}$, con $g_i$ el gradiente y $\\eta_i$ la curvatura (segunda derivada) por muestra. Símbolo local: $\\eta_i$ **no** es el horizonte $h$.',
+      },
+      {
+        heading: 'E2 · Peso óptimo de hoja y ganancia del split',
+        tex: '\\Omega\\left( T \\right) = \\gamma_{arb}\\, J_{arb} + \\frac{1}{2}\\,\\lambda_{arb} \\sum_{j=1}^{J_{arb}} w_j^2, \\qquad w_j^{*} = -\\frac{G_j}{E_j + \\lambda_{arb}}',
+        conn: '**Conexión:** con $G_j = \\sum_{i \\in R_j} g_i$ y $E_j = \\sum_{i \\in R_j} \\eta_i$ (sumas de gradiente y curvatura en la hoja), el peso óptimo sale **cerrado**: $w_j^{\\star}$ es el paso de Newton regularizado y $\\lambda_{arb}$ lo encoge. La **ganancia** del split se mide con esos mismos términos y $\\gamma_{arb}$ exige un mínimo para crear la hoja: es una poda automática. $\\lambda_{arb}$ y $\\gamma_{arb}$ son locales.',
+      },
+    ],
+    refs: [
+      'Referencias: Friedman, Annals of Statistics 29(5), 1189–1232, 2001 (gradient boosting) · Chen & Guestrin, KDD 2016 (XGBoost) · Ke et al., NeurIPS 2017 (LightGBM) · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 10.',
+    ],
+    notes: '**Contraste:** el bosque reduce **varianza** promediando en paralelo; el boosting reduce **sesgo** sumando en serie, y puede sobreajustar: lo controlan $\\nu$, $M_{arb}$ y la parada temprana. **LightGBM** cambia la implementación, no la matemática. **Sin extrapolación:** sus hojas son constantes.',
+  },
+  {
+    id: 'd3-mat-2-lstm',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E3 — LSTM: memoria celular y compuertas',
+    bullets: [
+      'La LSTM mantiene dos estados: memoria celular $\\mathbf{c}[t]$ y estado oculto $\\mathbf{h}[t]$.',
+      'Las compuertas de olvido, entrada y salida controlan qué información conserva, incorpora y expone en cada paso.',
+    ],
+    equations: [
+      {
+        heading: 'Compuertas de olvido y entrada',
+        tex: '\\mathbf{f}[t] = \\sigma(\\mathbf{W}_f \\mathbf{x}[t] + \\mathbf{U}_f \\mathbf{h}[t-1] + \\mathbf{b}_f), \\qquad \\mathbf{i}[t] = \\sigma(\\mathbf{W}_i \\mathbf{x}[t] + \\mathbf{U}_i \\mathbf{h}[t-1] + \\mathbf{b}_i)',
+      },
+      {
+        heading: 'Candidato y actualización de memoria',
+        tex: '\\tilde{\\mathbf{c}}[t] = \\tanh(\\mathbf{W}_c \\mathbf{x}[t] + \\mathbf{U}_c \\mathbf{h}[t-1] + \\mathbf{b}_c), \\qquad \\mathbf{c}[t] = \\mathbf{f}[t] \\odot \\mathbf{c}[t-1] + \\mathbf{i}[t] \\odot \\tilde{\\mathbf{c}}[t]',
+      },
+      {
+        heading: 'Compuerta de salida y estado expuesto',
+        tex: '\\mathbf{o}[t] = \\sigma(\\mathbf{W}_o \\mathbf{x}[t] + \\mathbf{U}_o \\mathbf{h}[t-1] + \\mathbf{b}_o), \\qquad \\mathbf{h}[t] = \\mathbf{o}[t] \\odot \\tanh(\\mathbf{c}[t])',
+        conn: 'Cada compuerta usa la entrada actual y el estado oculto anterior; $\\odot$ es el producto elemento a elemento. La ruta de memoria $\\mathbf{c}[t]$ permite conservar información a través de muchos pasos.',
+      },
+    ],
+  },
+  {
+    id: 'd3-mat-2-gru',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E3 — GRU: actualización y reinicio del estado',
+    bullets: [
+      'La GRU mantiene un solo estado oculto; combina memoria y representación sin una celda separada.',
+      'La actualización mezcla el estado anterior con un candidato, mientras el reinicio regula qué pasado entra en ese candidato.',
+    ],
+    equations: [
+      {
+        heading: 'Compuertas de actualización y reinicio',
         tex: '\\mathbf{u}[t] = \\sigma(\\mathbf{W}_u \\mathbf{x}[t] + \\mathbf{U}_u \\mathbf{h}[t-1] + \\mathbf{b}_u), \\qquad \\mathbf{r}[t] = \\sigma(\\mathbf{W}_r \\mathbf{x}[t] + \\mathbf{U}_r \\mathbf{h}[t-1] + \\mathbf{b}_r)',
-        conn:
-          '**Conexión:** "LSTM / GRU / BiLSTM + atención" ↔ estos sistemas de compuertas; el backbone del artículo guía ($\\breve{\\mathbf{h}}[t] = f_{RNN}(\\tilde{\\mathbf{z}}[t], \\breve{\\mathbf{h}}[t-1]; \\Theta_r)$) es exactamente una de estas celdas.',
       },
       {
-        heading: 'GRU · candidato y estado oculto',
-        tex: '\\tilde{\\mathbf{h}}[t] = \\tanh\\!\\bigl(\\mathbf{W}_h \\mathbf{x}[t] + \\mathbf{U}_h (\\mathbf{r}[t] \\odot \\mathbf{h}[t-1]) + \\mathbf{b}_h\\bigr), \\qquad \\mathbf{h}[t] = (1 - \\mathbf{u}[t]) \\odot \\mathbf{h}[t-1] + \\mathbf{u}[t] \\odot \\tilde{\\mathbf{h}}[t]',
+        heading: 'Candidato: reinicio del estado previo',
+        tex: '\\tilde{\\mathbf{h}}[t] = \\tanh\\!\\bigl(\\mathbf{W}_h \\mathbf{x}[t] + \\mathbf{U}_h (\\mathbf{r}[t] \\odot \\mathbf{h}[t-1]) + \\mathbf{b}_h\\bigr)',
+      },
+      {
+        heading: 'Mezcla del estado anterior y el candidato',
+        tex: '\\mathbf{h}[t] = (1 - \\mathbf{u}[t]) \\odot \\mathbf{h}[t-1] + \\mathbf{u}[t] \\odot \\tilde{\\mathbf{h}}[t]',
+        conn: 'Con la convención de esta diapositiva, $\\mathbf{u}[t]$ pondera el candidato nuevo y $1-\\mathbf{u}[t]$ conserva el estado anterior. El backbone recurrente aplica esta celda paso a paso a la secuencia.',
       },
     ],
   },
