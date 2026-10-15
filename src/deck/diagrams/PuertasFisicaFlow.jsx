@@ -38,7 +38,9 @@ const nodes = [
     data: {
       color: '#7D3C98',
       title: '② Arquitectura (fuerte)',
-      lines: ['invariancias · monotonías', 'se cumple SIEMPRE'],
+      // Texto de la caja ②: «invarianzas» (no «invariancias») y garantía
+      // estructural, en línea con el lema de la Puerta ② del deck.
+      lines: ['invarianzas · monotonías', 'garantía por construcción'],
     },
     position: { x: 320, y: 100 },
   },
@@ -48,7 +50,9 @@ const nodes = [
     data: {
       color: '#16A085',
       title: '③ Datos / features',
-      lines: ['features de leyes físicas', 'multi-fidelity · bottleneck'],
+      // Física en los datos: la entrada se transforma antes del modelo, que es
+      // el mensaje de la Puerta ③; sin enumerar técnicas sueltas.
+      lines: ['features de leyes físicas', 'entra antes del modelo'],
     },
     position: { x: 320, y: 200 },
   },
@@ -59,7 +63,7 @@ const nodes = [
       color: '#E67E22',
       title: '④ Híbrido',
       // R15: fórmula marcada `$…$`.
-      lines: ['$f_{fis}(\\mathbf{x}) + g_\\theta(\\mathbf{x})$', 'residual learning'],
+      lines: ['$f_{fis}(\\mathbf{x}) + g_\\theta(\\mathbf{x})$', 'la red aprende el residuo'],
     },
     position: { x: 320, y: 300 },
   },

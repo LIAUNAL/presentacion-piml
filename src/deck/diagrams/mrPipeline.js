@@ -400,7 +400,7 @@ export function buildMrDiagram({ entry }) {
         color: TEAL,
         dashed: true,
         heavy: true,
-        title: 'Features $\\psi_{fis} \\cdot f_{LF}$',
+        title: 'Features $\\psi_{fis}$',
         lines: ['$\\to \\tilde{x}$ aumentada', BADGE],
         targetHandles: [{ id: 't-fis', yPct: 50 }],
       },

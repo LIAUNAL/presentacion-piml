@@ -5,7 +5,7 @@ import { NeuronNode, LabelNode, StructureNode, LossLineNode } from './mrNodeType
 
 /**
  * Puerta ③ — Física en los datos / features. Pipeline MR compartido con la
- * física entrando en los datos: features ψ_fis / simulador f_LF antes del modelo.
+ * física entrando en los datos: features ψ_fis antes del modelo.
  */
 const { nodes, edges } = buildMrDiagram({ entry: 'datos' });
 

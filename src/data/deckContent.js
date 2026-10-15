@@ -108,7 +108,6 @@ export const SLIDES = [
     title: 'El sistema ejemplar: masa-resorte-amortiguador (MR)',
     bullets: [
       'Un solo sistema físico para comparar las tres puertas: la ley $\\mathcal{F}[u]=0$ instanciada en el MR.',
-      '**Envolvente amortiguada:** en régimen subamortiguado la solución $x(t) \\sim e^{-\\gamma t}\\cos(\\omega t)$, con $\\omega = \\sqrt{k/m - \\gamma^2}$, decae dentro de una envolvente exponencial $\\pm e^{-\\gamma t}$; $\\gamma = c/2m$ controla cuánto tarda en apagarse la oscilación — conexión directa con la disipación térmica que la puerta ① inyecta como pérdida.',
     ],
     equations: [
       {
@@ -117,9 +116,9 @@ export const SLIDES = [
         conn: '**MR:** masa $m$, rigidez $k$, amortiguamiento $c$; la trayectoria $x(t)$ es lo que cada puerta predice.',
       },
       {
-        heading: 'Estado canónico y energía',
+        heading: 'Estado canónico y energía (Hamiltoniano)',
         tex: 'q(t) = x(t), \\quad p(t) = m\\,\\dot{x}(t), \\quad H(q(t), p(t)) = \\frac{p(t)^2}{2m} + \\frac{k\\,q(t)^2}{2} \\quad (c = 0)',
-        conn: '**Conexión:** el caso conservativo ($c=0$) es hamiltoniano puro; es la forma que exige la puerta ②. $q(t)$ y $p(t)$ son los estados (posición y momento) en cada instante; $H$ se evalúa sobre esa trayectoria.',
+        conn: '**Conexión:** el caso conservativo ($c=0$) es hamiltoniano puro; es la forma que exige la puerta ② en su variante HNN. $q(t)$ y $p(t)$ son los estados (posición y momento) en cada instante; $H$ se evalúa sobre esa trayectoria. La variante lagrangiana ($L = T - V$) se define en la diapositiva propia de la puerta ② (Lagrangian NN).',
       },
       {
         heading: 'Datos disponibles',
@@ -458,24 +457,18 @@ export const SLIDES = [
         conn: '**Conexión:** para el MR las features son el espacio de fases y la energía; el bloque "Features ψ_fis" transforma la entrada antes de $f_\\theta$.',
       },
       {
-        heading: 'Multi-fidelity (simulador MR de baja fidelidad)',
-        tex: 'y_{HF}(\\mathbf{x}) = \\alpha_{mf}\\, f_{LF}(\\mathbf{x}) + \\delta_{mf}(\\mathbf{x})',
-        conn: '**Conexión:** el simulador MR barato $f_{LF}$ genera datos; la discrepancia $\\delta_{mf}$ se aprende (Kennedy–O\'Hagan).',
-      },
-      {
         heading: 'Función de pérdida (sobre datos aumentados)',
         tex: '\\mathcal{L}_{MSE}(\\theta) = \\frac{1}{N_d}\\sum_{i=1}^{N_d} \\left| f_\\theta(\\tilde{\\mathbf{x}}_i) - y(t_i) \\right|^2',
-        conn: '**Conexión:** la física no aparece como término de penalización; vive en $\\tilde{\\mathbf{x}}$ y en los datos del simulador.',
+        conn: '**Conexión:** la física no aparece como término de penalización: vive en la entrada aumentada $\\tilde{\\mathbf{x}}$ y en las features $\\psi_{fis}$.',
       },
       {
-        heading: 'Problema de optimización (+ physical bottleneck)',
+        heading: 'Problema de optimización (sobre $\\tilde{\\mathbf{x}}$ aumentado, + bottleneck)',
         tex: '\\theta^* = \\arg\\min_{\\theta \\in \\Theta}\\; \\mathcal{L}_{MSE}(\\theta; \\tilde{\\mathbf{x}}), \\qquad \\mathbf{z}_{bot} = E(t)',
-        conn: '**Conexión:** variante con bottleneck: la latente $\\mathbf{z}_{bot}$ queda restringida a significado físico explícito (Hao 2022).',
+        conn: '**Conexión:** el problema se plantea sobre la entrada aumentada $\\tilde{\\mathbf{x}}$; en la variante con bottleneck la latente $\\mathbf{z}_{bot}$ queda restringida a un significado físico explícito (Hao 2022).',
       },
     ],
     refs: [
       'Hao et al. PIML: A Survey on Problems, Methods and Applications. arXiv:2211.08064, 2022.',
-      'Kennedy, O\'Hagan. Predicting with engineering models (multi-fidelity). Biometrika 87, 2000.',
       'Willard et al. ACM Computing Surveys, 2022.',
       'Machine Learning with Physics Knowledge for Prediction: A Survey. arXiv:2408.09840.',
     ],
@@ -659,13 +652,33 @@ export const SLIDES = [
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
     title: 'E1 — Estadísticos clásicos (SARIMA)',
+    bullets: [
+      '**Definición:** SARIMA$(p,d,q)(P,D,Q)_s$ — modelo autorregresivo integrado de medias móviles estacional: la serie se diferencia $d$ veces —y $D$ veces en el rezago estacional $s$— antes de modelarla con una parte autorregresiva ($p$, $P$) y una de medias móviles ($q$, $Q$).',
+      'Es el único método estadístico clásico nombrado en esta sección y la línea base de comparación: la familia **E2** —SVR, árboles y ensambles, y los lineales regularizados— comienza en la diapositiva siguiente.',
+    ],
     equations: [
       {
-        heading: 'E1 · SARIMA (Box–Jenkins; $\\mathcal{B}$ operador de rezago)',
+        heading: 'Ecuación general (Box–Jenkins)',
         tex: '\\phi_p(\\mathcal{B})\\,\\Phi_P(\\mathcal{B}^s)\\,(1-\\mathcal{B})^d\\,(1-\\mathcal{B}^s)^D\\, y[t] = c + \\theta_q(\\mathcal{B})\\,\\Theta_Q(\\mathcal{B}^s)\\,\\varepsilon[t], \\qquad \\varepsilon[t] \\sim \\mathcal{N}(0, \\sigma_\\varepsilon^2)',
         conn:
-          '**Conexión:** SARIMA es el único método estadístico clásico nombrado en esta sección ($s$ = período estacional 24 h o 168 h); símbolos $s, d, D, c$ son **locales** de esta sección. La familia **E2** —SVR, árboles y ensambles, y los lineales regularizados— es el bloque que sigue en las próximas slides.',
+          '**Conexión:** a la izquierda, la parte AR —simple $\\phi_p(\\mathcal{B})$ y estacional $\\Phi_P(\\mathcal{B}^s)$— junto con las diferenciaciones $(1-\\mathcal{B})^d$ (tendencia) y $(1-\\mathcal{B}^s)^D$ (estacionalidad); a la derecha, la parte MA —$\\theta_q(\\mathcal{B})$ y $\\Theta_Q(\\mathcal{B}^s)$— más la constante $c$ y la innovación gaussiana $\\varepsilon[t]$.',
       },
+      {
+        heading: 'Operadores de rezago y parámetros',
+        tex: '\\mathcal{B}\\,y[t] = y[t-1], \\qquad \\mathcal{B}^s\\,y[t] = y[t-s]',
+        conn:
+          '**Parámetros:** $p, P$: orden AR (simple, estacional) · $d, D$: diferencias (simple, estacional) · $q, Q$: orden MA (simple, estacional) · $s$: período estacional (24 h diario, 168 h semanal). Los símbolos $\\mathcal{B}, s, d, D, c$ son **locales** de esta diapositiva.',
+      },
+      {
+        heading: 'Ejemplo reducido: AR(1) con constante',
+        tex: '\\hat{y}[t] = c + \\phi_1\\,y[t-1]',
+        conn:
+          '**Ejemplo:** con $c = 20$, $\\phi_1 = 0.9$ y $y[t-1] = 140$ kWh, el pronóstico es $\\hat{y}[t] = 20 + 0.9\\,(140) = 146$ kWh. Corresponde al caso SARIMA$(1,0,0)(0,0,0)_s$: sin diferenciación ni parte estacional.',
+      },
+    ],
+    refs: [
+      'Box, Jenkins, Reinsel, Ljung. Time Series Analysis: Forecasting and Control. Wiley, 5ª ed., 2015.',
+      'Hyndman & Athanasopoulos. Forecasting: Principles and Practice. OTexts, 3ª ed., 2021.',
     ],
   },
   {
@@ -676,15 +689,13 @@ export const SLIDES = [
     kicker: '5a · Matemática del Diagrama 3',
     title: 'E2 — Regresión lineal por mínimos cuadrados',
     bullets: [
-      'Gauss–Markov: con los supuestos clásicos, $\\hat{\\theta}_{OLS}$ es el mejor estimador **lineal** insesgado (BLUE).',
-      'Su dispersión es $\\sigma^{2}\\left(\\mathbf{D}^{\\top}\\mathbf{D}\\right)^{-1}$: el modelo lineal no sólo ajusta, también permite inferir.',
-      'Se rompe con colinealidad o con $d > N$; de esas dos fallas nacen ridge y lasso.',
+      '**Límites:** se rompe con colinealidad o con $d > N$; de esas dos fallas nacen ridge y lasso.',
     ],
     equations: [
       {
-        heading: 'E2 · El modelo lineal y sus supuestos',
-        tex: 'f_{\\theta}(\\mathbf{x}) = \\mathbf{x}^{\\top}\\theta, \\qquad \\mathbf{y} = \\mathbf{D}\\theta + \\boldsymbol{\\varepsilon}, \\qquad \\mathbb{E}[\\boldsymbol{\\varepsilon}] = \\mathbf{0}, \\ \\mathrm{Var}(\\boldsymbol{\\varepsilon}) = \\sigma^{2}\\mathbf{I}',
-        conn: '**Conexión:** el sesgo $\\theta_0$ va absorbido en $\\mathbf{x}_i$, así que $\\theta \\in \\mathbb{R}^{d}$; $\\mathbf{D} \\in \\mathbb{R}^{N \\times d}$ es la matriz de diseño (no la ventana $\\mathbf{X}$). Cada $\\theta_j$ es el **efecto marginal** de la variable $j$ con el resto fijo: de ahí la interpretabilidad del modelo lineal frente a las familias E3–E7. Los dos supuestos escritos —media cero y varianza constante— son los que usa Gauss–Markov.',
+        heading: 'E2 · El modelo lineal',
+        tex: 'f_{\\theta}(\\mathbf{x}) = \\mathbf{x}^{\\top}\\theta, \\qquad \\mathbf{y} = \\mathbf{D}\\theta + \\boldsymbol{\\varepsilon}',
+        conn: '**Conexión:** el sesgo $\\theta_0$ va absorbido en $\\mathbf{x}_i$, así que $\\theta \\in \\mathbb{R}^{d}$; $\\mathbf{D} \\in \\mathbb{R}^{N \\times d}$ es la matriz de diseño (no la ventana $\\mathbf{X}$). Cada $\\theta_j$ es el **efecto marginal** de la variable $j$ con el resto fijo: de ahí la interpretabilidad del modelo lineal frente a las familias E3–E7.',
       },
       {
         heading: 'E2 · El criterio: residuo cuadrático mínimo',
@@ -692,12 +703,12 @@ export const SLIDES = [
         conn: '**Conexión:** $i$ numera muestras y no es tiempo, por eso va como subíndice y nunca con corchetes. El criterio tampoco es arbitrario: es la pérdida $\\mathcal{L}_{MSE}$ sin normalizar, equivalente a $\\arg\\min_{\\theta} \\lVert \\mathbf{y}-\\mathbf{D}\\theta \\rVert_2^{2}$, la misma que el resto del deck usa para comparar predicciones. Y sobrevive intacto cuando se le añade la penalización de ridge y lasso en las tres slides siguientes: lo único que cambia es el término que se suma.',
       },
       {
-        heading: 'E2 · La solución: ecuación normal y proyección ortogonal',
-        tex: '\\hat{\\theta} = \\left( \\mathbf{D}^{\\top}\\mathbf{D} \\right)^{-1}\\mathbf{D}^{\\top}\\mathbf{y}, \\qquad \\mathbf{H} = \\mathbf{D}\\left( \\mathbf{D}^{\\top}\\mathbf{D} \\right)^{-1}\\mathbf{D}^{\\top}',
-        conn: '**Conexión:** igualar a cero el gradiente $-2\\mathbf{D}^{\\top}(\\mathbf{y}-\\mathbf{D}\\theta)$ da la ecuación normal $\\mathbf{D}^{\\top}\\mathbf{D}\\hat{\\theta} = \\mathbf{D}^{\\top}\\mathbf{y}$. $\\hat{\\mathbf{y}} = \\mathbf{H}\\mathbf{y}$, con $\\mathbf{H}$ la **matriz sombrero**, proyecta $\\mathbf{y}$ sobre el espacio columna de $\\mathbf{D}$: el residuo $\\mathbf{e} = \\mathbf{y}-\\hat{\\mathbf{y}}$ queda ortogonal a las columnas ($\\mathbf{D}^{\\top}\\mathbf{e} = \\mathbf{0}$) y se cumple Pitágoras, $\\lVert\\mathbf{y}\\rVert^{2} = \\lVert\\hat{\\mathbf{y}}\\rVert^{2} + \\lVert\\mathbf{e}\\rVert^{2}$. Solución única sii $\\mathrm{rango}(\\mathbf{D}) = d$.',
+        heading: 'E2 · La solución: ecuación normal',
+        tex: '\\hat{\\theta} = \\left( \\mathbf{D}^{\\top}\\mathbf{D} \\right)^{-1}\\mathbf{D}^{\\top}\\mathbf{y}',
+        conn: '**Conexión:** igualar a cero el gradiente $-2\\mathbf{D}^{\\top}(\\mathbf{y}-\\mathbf{D}\\theta)$ da la ecuación normal $\\mathbf{D}^{\\top}\\mathbf{D}\\hat{\\theta} = \\mathbf{D}^{\\top}\\mathbf{y}$; con ella el residuo $\\mathbf{e} = \\mathbf{y}-\\mathbf{D}\\hat{\\theta}$ queda ortogonal a las columnas ($\\mathbf{D}^{\\top}\\mathbf{e} = \\mathbf{0}$). Solución única sii $\\mathrm{rango}(\\mathbf{D}) = d$.',
       },
     ],
-    notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: es la proyección ortogonal de $\\mathbf{y}$ sobre lo que el modelo puede representar. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta geometría. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.',
+    notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: la solución cerrada sale de igualar a cero el gradiente y deja el residuo ortogonal a las columnas de $\\mathbf{D}$. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta lectura. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.',
   },
   {
     id: 'd3-reg-mle',
