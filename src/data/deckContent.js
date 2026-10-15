@@ -62,8 +62,8 @@ export const SLIDES = [
       ],
       [
         'Símbolos locales',
-        '$\\mathcal{B}$ (E1), $\\mathbf{A}, \\mathbf{B}, \\mathbf{C}$ (E6), instantes $t_i$, $t_j$ y muestras $i$, convolución E4 $f[i]$, $s[t]$; E2: $\\theta \\in \\mathbb{R}^{d}$, $\\mathbf{D}$, $\\varepsilon_i$, $\\lambda_{reg}$, $c$, $(\\cdot)_{+}$, $\\varepsilon_{svr}$, $\\lambda_{svr}$; SVD: $\\mathbf{U}, \\mathbf{S}, \\mathbf{V}$.',
-        'Existen solo dentro de su ecuación. $t_i$ son valores de $t$ continuo: paréntesis, $x(t_i)$; $i$ numera muestras, no tiempo: subíndice, nunca corchete. Colisiones: $\\varepsilon_i$ (ruido), $\\varepsilon[t]$ (innovación) y $\\varepsilon_{svr}$ (tolerancia del tubo) son conceptos distintos; $\\mathbf{U}$ es factor del SVD y $\\mathbf{U}_i$ compuerta; $\\mathcal{N}$ es sólo la normal —la ley física es $\\mathcal{F}[u] = 0$—.',
+        '$\\mathcal{B}$ (E1), $\\mathbf{A}, \\mathbf{B}, \\mathbf{C}$ (E6), instantes $t_i$, $t_j$ y muestras $i$, convolución E4 $f[i]$, $s[t]$; E2: $\\theta \\in \\mathbb{R}^{d}$, $\\mathbf{X}$ (matriz de diseño $N \\times d$), $\\varepsilon_i$, $\\lambda_{reg}$, $c$, $(\\cdot)_{+}$, $\\varepsilon_{svr}$, $\\lambda_{svr}$; SVD: $\\mathbf{U}, \\mathbf{S}, \\mathbf{V}$.',
+        'Existen solo dentro de su ecuación. $t_i$ son valores de $t$ continuo: paréntesis, $x(t_i)$; $i$ numera muestras, no tiempo: subíndice, nunca corchete. Colisiones: $\\varepsilon_i$ (ruido), $\\varepsilon[t]$ (innovación) y $\\varepsilon_{svr}$ (tolerancia del tubo) son conceptos distintos; $\\mathbf{U}$ es factor del SVD y $\\mathbf{U}_i$ compuerta; $\\mathcal{N}$ es sólo la normal —la ley física es $\\mathcal{F}[u] = 0$—; $\\mathbf{X}$ cambia de sentido: diseño en E2, ventana fuera.',
       ],
       [
         'Decisiones de unificación',
@@ -694,21 +694,21 @@ export const SLIDES = [
     equations: [
       {
         heading: 'E2 · El modelo lineal',
-        tex: 'f_{\\theta}(\\mathbf{x}) = \\mathbf{x}^{\\top}\\theta, \\qquad \\mathbf{y} = \\mathbf{D}\\theta + \\boldsymbol{\\varepsilon}',
-        conn: '**Conexión:** el sesgo $\\theta_0$ va absorbido en $\\mathbf{x}_i$, así que $\\theta \\in \\mathbb{R}^{d}$; $\\mathbf{D} \\in \\mathbb{R}^{N \\times d}$ es la matriz de diseño (no la ventana $\\mathbf{X}$). Cada $\\theta_j$ es el **efecto marginal** de la variable $j$ con el resto fijo: de ahí la interpretabilidad del modelo lineal frente a las familias E3–E7.',
+        tex: 'f_{\\theta}(\\mathbf{x}) = \\mathbf{x}^{\\top}\\theta, \\qquad \\mathbf{y} = \\mathbf{X}\\theta + \\boldsymbol{\\varepsilon}',
+        conn: '**Conexión:** el sesgo $\\theta_0$ va absorbido en $\\mathbf{x}_i$, así que $\\theta \\in \\mathbb{R}^{d}$; $\\mathbf{X} \\in \\mathbb{R}^{N \\times d}$ es la matriz de diseño: la minúscula $\\mathbf{x}_i$ es su fila $i$ (la muestra) y $\\mathbf{x}_j$ su columna $j$ (la variable); fuera de E2, $\\mathbf{X}$ es la ventana de entrada $\\tau \\times d$. Cada $\\theta_j$ es el **efecto marginal** de la variable $j$ con el resto fijo: de ahí la interpretabilidad del modelo lineal frente a las familias E3–E7.',
       },
       {
         heading: 'E2 · El criterio: residuo cuadrático mínimo',
         tex: '\\hat{\\theta} = \\arg\\min_{\\theta} \\sum_{i=1}^{N} \\left( y_i - \\mathbf{x}_i^{\\top}\\theta \\right)^{2}',
-        conn: '**Conexión:** $i$ numera muestras y no es tiempo, por eso va como subíndice y nunca con corchetes. El criterio tampoco es arbitrario: es la pérdida $\\mathcal{L}_{MSE}$ sin normalizar, equivalente a $\\arg\\min_{\\theta} \\lVert \\mathbf{y}-\\mathbf{D}\\theta \\rVert_2^{2}$, la misma que el resto del deck usa para comparar predicciones. Y sobrevive intacto cuando se le añade la penalización de ridge y lasso en las tres slides siguientes: lo único que cambia es el término que se suma.',
+        conn: '**Conexión:** $i$ numera muestras y no es tiempo, por eso va como subíndice y nunca con corchetes. El criterio tampoco es arbitrario: es la pérdida $\\mathcal{L}_{MSE}$ sin normalizar, equivalente a $\\arg\\min_{\\theta} \\lVert \\mathbf{y}-\\mathbf{X}\\theta \\rVert_2^{2}$, la misma que el resto del deck usa para comparar predicciones. Y sobrevive intacto cuando se le añade la penalización de ridge y lasso en las tres slides siguientes: lo único que cambia es el término que se suma.',
       },
       {
         heading: 'E2 · La solución: ecuación normal',
-        tex: '\\hat{\\theta} = \\left( \\mathbf{D}^{\\top}\\mathbf{D} \\right)^{-1}\\mathbf{D}^{\\top}\\mathbf{y}',
-        conn: '**Conexión:** igualar a cero el gradiente $-2\\mathbf{D}^{\\top}(\\mathbf{y}-\\mathbf{D}\\theta)$ da la ecuación normal $\\mathbf{D}^{\\top}\\mathbf{D}\\hat{\\theta} = \\mathbf{D}^{\\top}\\mathbf{y}$; con ella el residuo $\\mathbf{e} = \\mathbf{y}-\\mathbf{D}\\hat{\\theta}$ queda ortogonal a las columnas ($\\mathbf{D}^{\\top}\\mathbf{e} = \\mathbf{0}$). Solución única sii $\\mathrm{rango}(\\mathbf{D}) = d$.',
+        tex: '\\hat{\\theta} = \\left( \\mathbf{X}^{\\top}\\mathbf{X} \\right)^{-1}\\mathbf{X}^{\\top}\\mathbf{y}',
+        conn: '**Conexión:** igualar a cero el gradiente $-2\\mathbf{X}^{\\top}(\\mathbf{y}-\\mathbf{X}\\theta)$ da la ecuación normal $\\mathbf{X}^{\\top}\\mathbf{X}\\hat{\\theta} = \\mathbf{X}^{\\top}\\mathbf{y}$; con ella el residuo $\\mathbf{e} = \\mathbf{y}-\\mathbf{X}\\hat{\\theta}$ queda ortogonal a las columnas ($\\mathbf{X}^{\\top}\\mathbf{e} = \\mathbf{0}$). Solución única sii $\\mathrm{rango}(\\mathbf{X}) = d$.',
       },
     ],
-    notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: la solución cerrada sale de igualar a cero el gradiente y deja el residuo ortogonal a las columnas de $\\mathbf{D}$. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta lectura. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.',
+    notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: la solución cerrada sale de igualar a cero el gradiente y deja el residuo ortogonal a las columnas de $\\mathbf{X}$. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta lectura. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.',
   },
   {
     id: 'd3-reg-mle',
@@ -725,18 +725,18 @@ export const SLIDES = [
     equations: [
       {
         heading: 'E2 · El modelo generativo y la verosimilitud',
-        tex: 'p(\\mathbf{y}\\mid\\mathbf{D},\\theta,\\sigma^{2}) = \\left( 2\\pi\\sigma^{2} \\right)^{-N/2} \\exp\\!\\left( -\\lVert \\mathbf{y} - \\mathbf{D}\\theta \\rVert_2^{2}/(2\\sigma^{2}) \\right)',
+        tex: 'p(\\mathbf{y}\\mid\\mathbf{X},\\theta,\\sigma^{2}) = \\left( 2\\pi\\sigma^{2} \\right)^{-N/2} \\exp\\!\\left( -\\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2}/(2\\sigma^{2}) \\right)',
         conn: '**Conexión:** el modelo generativo es $y_i = \\mathbf{x}_i^{\\top}\\theta + \\varepsilon_i$ con $\\varepsilon_i \\sim \\mathcal{N}(0,\\sigma^{2})$ **iid**, donde $\\varepsilon_i$ es el ruido **por muestra** (subíndice porque $i$ no es tiempo): no confundirlo con la innovación $\\varepsilon[t]$ de SARIMA, que sí va con corchete. El paso de «iid» al producto es todo lo que hace la verosimilitud: multiplica las densidades porque las muestras son independientes. Y al ser lineal-gaussiano, la densidad conjunta queda en **forma cerrada** — sin optimización numérica, a diferencia de E3–E7.',
       },
       {
         heading: 'E2 · Log-verosimilitud negativa: el puente con mínimos cuadrados',
-        tex: '-\\log p(\\mathbf{y}\\mid\\mathbf{D},\\theta,\\sigma^{2}) = \\;\\propto\\; \\lVert \\mathbf{y} - \\mathbf{D}\\theta \\rVert_2^{2}',
+        tex: '-\\log p(\\mathbf{y}\\mid\\mathbf{X},\\theta,\\sigma^{2}) = \\;\\propto\\; \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2}',
         conn: '**Conexión:** con $\\sigma^{2}$ fijo, ni la constante $\\frac{N}{2}\\log(2\\pi\\sigma^{2})$ ni el factor $\\frac{1}{2\\sigma^{2}}$ afectan al óptimo sobre $\\theta$: queda una **proporcionalidad** con el residuo cuadrático. Por tanto **maximizar la verosimilitud es minimizar el error cuadrático**: el criterio de mínimos cuadrados de la slide anterior no era una elección estética, es lo que produce suponer ruido gaussiano iid. Con otra distribución la equivalencia se rompe y la pérdida óptima puede no ser la cuadrática.',
       },
       {
         heading: 'E2 · Los estimadores y su dispersión',
-        tex: '\\hat{\\theta} = \\left( \\mathbf{D}^{\\top}\\mathbf{D} \\right)^{-1}\\mathbf{D}^{\\top}\\mathbf{y}, \\qquad \\hat{\\sigma}^{2}_{MLE} = \\frac{1}{N}\\lVert \\mathbf{y} - \\mathbf{D}\\hat{\\theta} \\rVert_2^{2}',
-        conn: '**Conexión:** el estimador de $\\theta$ coincide con OLS, y con él llega la **matriz de covarianza** $\\mathrm{Var}(\\hat{\\theta}) = \\sigma^{2}\\left(\\mathbf{D}^{\\top}\\mathbf{D}\\right)^{-1}$: de ahí salen los errores estándar, los contrastes $t$ y los intervalos de confianza. Cuidado con $\\hat{\\sigma}^{2}_{MLE}$: divide por $N$ y es **sesgado**; el insesgado divide por $N-d$. La verosimilitud no mejora el estimador puntual, le añade la incertidumbre.',
+        tex: '\\hat{\\theta} = \\left( \\mathbf{X}^{\\top}\\mathbf{X} \\right)^{-1}\\mathbf{X}^{\\top}\\mathbf{y}, \\qquad \\hat{\\sigma}^{2}_{MLE} = \\frac{1}{N}\\lVert \\mathbf{y} - \\mathbf{X}\\hat{\\theta} \\rVert_2^{2}',
+        conn: '**Conexión:** el estimador de $\\theta$ coincide con OLS, y con él llega la **matriz de covarianza** $\\mathrm{Var}(\\hat{\\theta}) = \\sigma^{2}\\left(\\mathbf{X}^{\\top}\\mathbf{X}\\right)^{-1}$: de ahí salen los errores estándar, los contrastes $t$ y los intervalos de confianza. Cuidado con $\\hat{\\sigma}^{2}_{MLE}$: divide por $N$ y es **sesgado**; el insesgado divide por $N-d$. La verosimilitud no mejora el estimador puntual, le añade la incertidumbre.',
       },
     ],
     notes: '**Idea central:** MLE no cambia a $\\hat{\\theta}$; justifica el criterio, da varianza e inferencia, y abre el punto de vista bayesiano. **Puente:** un prior sobre $\\theta$ más esta verosimilitud produce un estimador MAP —gaussiano da ridge, Laplace da lasso—; regularizar es declarar una creencia previa.',
@@ -750,28 +750,28 @@ export const SLIDES = [
     title: 'E2 — Ridge: penalización cuadrática y contracción',
     bullets: [
       'Añade un castigo cuadrático al ajuste: $\\ell_2$ contrae los coeficientes hacia cero **sin anularlos**.',
-      'Gana cuando $\\mathbf{D}^{\\top}\\mathbf{D}$ está mal condicionada: la penalización vuelve el problema invertible.',
+      'Gana cuando $\\mathbf{X}^{\\top}\\mathbf{X}$ está mal condicionada: la penalización vuelve el problema invertible.',
       'Es el estimador **MAP** con prior gaussiano sobre $\\theta$: regularizar es imponer una creencia previa.',
       'El precio es sesgo deliberado, y $\\lambda_{reg}$ se elige por validación cruzada.',
     ],
     equations: [
       {
         heading: 'E2 · El objetivo penalizado',
-        tex: '\\mathcal{L}_{ridge}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{D}\\theta \\rVert_2^{2} + \\lambda_{reg} \\lVert \\theta \\rVert_2^{2}',
+        tex: '\\mathcal{L}_{ridge}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2} + \\lambda_{reg} \\lVert \\theta \\rVert_2^{2}',
         conn: '**Conexión:** $\\hat{\\theta}_{ridge} = \\arg\\min_{\\theta} \\mathcal{L}_{ridge}(\\theta)$. Aquí $\\lambda_{reg} \\ge 0$ es la fuerza de penalización y lleva símbolo propio: no es $\\lambda_{phys}$ (el peso físico de las puertas ① y ④) ni $\\lambda_{rk}$ (kernel ridge, familia F5). Con $\\lambda_{reg} = 0$ se recupera OLS exactamente. La forma es idéntica a la pérdida compuesta $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$: cambia qué se castiga, no la estructura. (Hoerl & Kennard, 1970.)',
       },
       {
         heading: 'E2 · Solución cerrada y buen planteamiento',
-        tex: '\\hat{\\theta}_{ridge} = \\left( \\mathbf{D}^{\\top}\\mathbf{D} + \\lambda_{reg}\\mathbf{I} \\right)^{-1} \\mathbf{D}^{\\top}\\mathbf{y}, \\qquad \\mathbf{D}^{\\top}\\mathbf{D} + \\lambda_{reg}\\mathbf{I} \\succ 0',
+        tex: '\\hat{\\theta}_{ridge} = \\left( \\mathbf{X}^{\\top}\\mathbf{X} + \\lambda_{reg}\\mathbf{I} \\right)^{-1} \\mathbf{X}^{\\top}\\mathbf{y}, \\qquad \\mathbf{X}^{\\top}\\mathbf{X} + \\lambda_{reg}\\mathbf{I} \\succ 0',
         conn: '**Conexión:** para todo $\\lambda_{reg} > 0$, sumar $\\lambda_{reg}\\mathbf{I}$ desplaza todos los autovalores a $\\mu_k + \\lambda_{reg} > 0$, así que la matriz es definida positiva —y por tanto invertible— **siempre**. El problema queda bien puesto incluso en los dos casos que dejan a OLS sin solución única: colinealidad perfecta y $d > N$.',
       },
       {
-        heading: 'E2 · Contracción espectral, vía la SVD de $\\mathbf{D}$',
-        tex: '\\hat{\\theta}_{ridge} = \\sum_k \\kappa_k\\, \\mathbf{v}_k \\mathbf{u}_k^{\\top} \\mathbf{y}, \\qquad \\mathbf{D} = \\mathbf{U}\\mathbf{S}\\mathbf{V}^{\\top}',
-        conn: '**Conexión:** con la SVD $\\mathbf{D} = \\mathbf{U}\\mathbf{S}\\mathbf{V}^{\\top}$, cada dirección singular $k$ se contrae por el factor $\\kappa_k = s_k^{2}/(s_k^{2}+\\lambda_{reg}) \\in (0,1)$, que **nunca llega a cero**. De ahí las dos propiedades que definen a ridge: ninguna dirección se elimina, y la contracción es más fuerte precisamente donde $s_k$ es pequeño, es decir, en las direcciones peor condicionadas. La suma de esos factores es el número efectivo de parámetros $\\mathrm{df}(\\lambda_{reg})$, que decrece con $\\lambda_{reg}$.',
+        heading: 'E2 · Contracción espectral, vía la SVD de $\\mathbf{X}$',
+        tex: '\\hat{\\theta}_{ridge} = \\sum_k \\kappa_k\\, \\mathbf{v}_k \\mathbf{u}_k^{\\top} \\mathbf{y}, \\qquad \\mathbf{X} = \\mathbf{U}\\mathbf{S}\\mathbf{V}^{\\top}',
+        conn: '**Conexión:** con la SVD $\\mathbf{X} = \\mathbf{U}\\mathbf{S}\\mathbf{V}^{\\top}$, cada dirección singular $k$ se contrae por el factor $\\kappa_k = s_k^{2}/(s_k^{2}+\\lambda_{reg}) \\in (0,1)$, que **nunca llega a cero**. De ahí las dos propiedades que definen a ridge: ninguna dirección se elimina, y la contracción es más fuerte precisamente donde $s_k$ es pequeño, es decir, en las direcciones peor condicionadas. La suma de esos factores es el número efectivo de parámetros $\\mathrm{df}(\\lambda_{reg})$, que decrece con $\\lambda_{reg}$.',
       },
     ],
-    notes: '**Sesgo–varianza:** OLS es insesgado y de varianza mínima dentro de su clase lineal; ridge acepta sesgo a cambio de menos varianza, y por eso gana cuando $\\mathbf{D}^{\\top}\\mathbf{D}$ está mal condicionada. **Lo que lo separa de lasso:** reparte el peso entre variables correlacionadas y nunca produce un modelo esparso: un coeficiente puede quedar diminuto, pero no exactamente cero.',
+    notes: '**Sesgo–varianza:** OLS es insesgado y de varianza mínima dentro de su clase lineal; ridge acepta sesgo a cambio de menos varianza, y por eso gana cuando $\\mathbf{X}^{\\top}\\mathbf{X}$ está mal condicionada. **Lo que lo separa de lasso:** reparte el peso entre variables correlacionadas y nunca produce un modelo esparso: un coeficiente puede quedar diminuto, pero no exactamente cero.',
   },
   {
     id: 'd3-reg-lasso',
@@ -788,12 +788,12 @@ export const SLIDES = [
     equations: [
       {
         heading: 'E2 · El objetivo penalizado y su forma restringida',
-        tex: '\\mathcal{L}_{lasso}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{D}\\theta \\rVert_2^{2} + \\lambda_{reg} \\lVert \\theta \\rVert_1',
-        conn: '**Conexión:** $\\hat{\\theta}_{lasso} = \\arg\\min_{\\theta} \\mathcal{L}_{lasso}(\\theta)$. Misma familia que ridge, con $\\lVert \\theta \\rVert_1 = \\sum_j |\\theta_j|$; pero la norma $\\ell_1$ no es diferenciable en el origen y por eso **no tiene solución cerrada general**. $\\lambda_{reg}$ tiene aquí una lectura distinta y directamente interpretable: es el umbral por debajo del cual un coeficiente se anula, no una simple contracción. Su forma restringida equivalente es $\\min \\lVert \\mathbf{y}-\\mathbf{D}\\theta \\rVert_2^{2}$ sujeto a $\\lVert \\theta \\rVert_1 \\le c$, con $c$ decreciente en $\\lambda_{reg}$. (Tibshirani, 1996.)',
+        tex: '\\mathcal{L}_{lasso}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2} + \\lambda_{reg} \\lVert \\theta \\rVert_1',
+        conn: '**Conexión:** $\\hat{\\theta}_{lasso} = \\arg\\min_{\\theta} \\mathcal{L}_{lasso}(\\theta)$. Misma familia que ridge, con $\\lVert \\theta \\rVert_1 = \\sum_j |\\theta_j|$; pero la norma $\\ell_1$ no es diferenciable en el origen y por eso **no tiene solución cerrada general**. $\\lambda_{reg}$ tiene aquí una lectura distinta y directamente interpretable: es el umbral por debajo del cual un coeficiente se anula, no una simple contracción. Su forma restringida equivalente es $\\min \\lVert \\mathbf{y}-\\mathbf{X}\\theta \\rVert_2^{2}$ sujeto a $\\lVert \\theta \\rVert_1 \\le c$, con $c$ decreciente en $\\lambda_{reg}$. (Tibshirani, 1996.)',
       },
       {
         heading: 'E2 · Condiciones KKT: por qué anula coeficientes',
-        tex: '\\mathbf{d}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{D}\\theta \\right) = \\lambda_{reg}\\,\\mathrm{sign}(\\theta_j) \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{d}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{D}\\theta \\right) \\right| \\le \\lambda_{reg} \\ \\text{si } \\theta_j = 0',
+        tex: '\\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) = \\lambda_{reg}\\,\\mathrm{sign}(\\theta_j) \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) \\right| \\le \\lambda_{reg} \\ \\text{si } \\theta_j = 0',
         conn: '**Conexión:** $j = 1 \\dots d$ indexa variables, ni muestras ni tiempo. Mientras la correlación de la variable $j$ con el residuo no supere $\\lambda_{reg}$ en valor absoluto, su coeficiente queda **exactamente** en cero — así es como $\\ell_1$ selecciona. Con diseño ortonormal el sistema se resuelve a mano y aparece el operador de umbral suave de la ecuación siguiente.',
       },
       {
@@ -822,12 +822,12 @@ export const SLIDES = [
     equations: [
       {
         heading: 'E2 · El objetivo penalizado',
-        tex: '\\mathcal{L}_{EN}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{D}\\theta \\rVert_2^2 + \\lambda_{reg}\\left[ (1 - \\rho_{en})\\lVert \\theta \\rVert_2^2 + \\rho_{en}\\lVert \\theta \\rVert_1 \\right]',
+        tex: '\\mathcal{L}_{EN}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^2 + \\lambda_{reg}\\left[ (1 - \\rho_{en})\\lVert \\theta \\rVert_2^2 + \\rho_{en}\\lVert \\theta \\rVert_1 \\right]',
         conn: '**Conexión:** $\\hat{\\theta}_{EN} = \\arg\\min_{\\theta} \\mathcal{L}_{EN}(\\theta)$, con $\\rho_{en} \\in [0,1]$ la **mezcla** (local: no es el ancho espectral $\\rho_k$ del RFF) y $\\lambda_{reg}$ la fuerza única de la familia penalizada. Los extremos son conocidos: $\\rho_{en} = 0$ devuelve **ridge** exactamente y $\\rho_{en} = 1$ devuelve **lasso**. Es el regularizador del benchmark del proyecto, donde los rezagos están correlacionados de forma cíclica (24 h y 168 h). (Zou & Hastie, 2005.)',
       },
       {
         heading: 'E2 · Condiciones KKT: selección con agrupamiento',
-        tex: '\\mathbf{d}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{D}\\theta \\right) = \\lambda_{reg}\\rho_{en}\\,\\mathrm{sign}(\\theta_j) + \\lambda_{reg}(1 - \\rho_{en})\\,\\theta_j \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{d}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{D}\\theta \\right) \\right| \\le \\lambda_{reg}\\rho_{en} \\ \\text{si } \\theta_j = 0',
+        tex: '\\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) = \\lambda_{reg}\\rho_{en}\\,\\mathrm{sign}(\\theta_j) + \\lambda_{reg}(1 - \\rho_{en})\\,\\theta_j \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) \\right| \\le \\lambda_{reg}\\rho_{en} \\ \\text{si } \\theta_j = 0',
         conn: '**Conexión:** la condición de anulación es la de lasso —umbral $\\lambda_{reg}\\rho_{en}$— y el término $\\lambda_{reg}(1-\\rho_{en})\\theta_j$ es el que aporta ridge. Ese término **reparte** el peso entre variables correlacionadas: si dos rezagos son casi idénticos, sus coeficientes crecen juntos en vez de que uno anule al otro. Ésa es la corrección que el cierre de lasso anunciaba; la $\\ell_1$ no diferenciable en el origen impide una forma cerrada general.',
       },
       {
@@ -953,8 +953,8 @@ export const SLIDES = [
     equations: [
       {
         heading: 'E2 · El modelo: promedio de árboles bootstrap',
-        tex: '\\hat{y}(\\mathbf{x}) = \\frac{1}{M_{arb}} \\sum_{m=1}^{M_{arb}} T_m(\\mathbf{x}), \\qquad T_m \\sim \\text{bootstrap}\\left( \\mathbf{D}, N \\right) \\quad \\text{con } m_{try} \\text{ variables por split}',
-        conn: '**Conexión:** cada $T_m$ es un árbol CART completo, entrenado sobre una **remuestra con reemplazo** de las $N$ filas de $\\mathbf{D}$ (bootstrap) y decidido con sólo $m_{try}$ variables candidatas en cada split (en regresión, típicamente $d/3$). El promedio reduce la varianza sin cambiar la forma del modelo por árbol. Símbolos locales: $M_{arb}$, $T_m$, $m_{try}$, $\\rho_{arb}$ (local: no es el ancho espectral $\\rho_k$), $\\sigma_{arb}^2$.',
+        tex: '\\hat{y}(\\mathbf{x}) = \\frac{1}{M_{arb}} \\sum_{m=1}^{M_{arb}} T_m(\\mathbf{x}), \\qquad T_m \\sim \\text{bootstrap}\\left( \\mathbf{X}, N \\right) \\quad \\text{con } m_{try} \\text{ variables por split}',
+        conn: '**Conexión:** cada $T_m$ es un árbol CART completo, entrenado sobre una **remuestra con reemplazo** de las $N$ filas de $\\mathbf{X}$ (bootstrap) y decidido con sólo $m_{try}$ variables candidatas en cada split (en regresión, típicamente $d/3$). El promedio reduce la varianza sin cambiar la forma del modelo por árbol. Símbolos locales: $M_{arb}$, $T_m$, $m_{try}$, $\\rho_{arb}$ (local: no es el ancho espectral $\\rho_k$), $\\sigma_{arb}^2$.',
       },
       {
         heading: 'E2 · Por qué promediar reduce la varianza',
