@@ -905,6 +905,128 @@ p {
   font-size: 1rem;
 }
 
+/* Rounds 8–14 (E1 estadístico, E2 penalizado y E3 recurrente): estas páginas
+   llevan de cuatro a cinco cajas con ecuaciones de una a tres líneas, y la pila
+   dejaba fuera de cuadro la última caja y las notas. Se compacta padding, gap,
+   tipografía y márgenes lo justo para que entren en 1080p. Alcance por id
+   estable: el .eq-box global no cambia. */
+.slide[data-id='d3-reg-ols'] .math-stack,
+.slide[data-id='d3-reg-mle'] .math-stack,
+.slide[data-id='d3-reg-map'] .math-stack,
+.slide[data-id='d3-reg-ridge'] .math-stack,
+.slide[data-id='d3-reg-lasso'] .math-stack,
+.slide[data-id='d3-reg-elastic'] .math-stack,
+.slide[data-id='d3-mat-2-rnn'] .math-stack,
+.slide[data-id='d3-mat-2-lstm'] .math-stack,
+.slide[data-id='d3-mat-2-gru'] .math-stack,
+.slide[data-id='d3-mat-1-arima'] .math-stack,
+.slide[data-id='d3-mat-1'] .math-stack {
+  gap: 4px;
+}
+
+.slide[data-id='d3-reg-ols'] .eq-box,
+.slide[data-id='d3-reg-mle'] .eq-box,
+.slide[data-id='d3-reg-map'] .eq-box,
+.slide[data-id='d3-reg-ridge'] .eq-box,
+.slide[data-id='d3-reg-lasso'] .eq-box,
+.slide[data-id='d3-reg-elastic'] .eq-box,
+.slide[data-id='d3-mat-2-rnn'] .eq-box,
+.slide[data-id='d3-mat-2-lstm'] .eq-box,
+.slide[data-id='d3-mat-2-gru'] .eq-box,
+.slide[data-id='d3-mat-1-arima'] .eq-box,
+.slide[data-id='d3-mat-1'] .eq-box {
+  padding: 2px clamp(10px, 1.2vw, 14px);
+}
+
+.slide[data-id='d3-reg-ols'] .eq-box .eq-heading,
+.slide[data-id='d3-reg-mle'] .eq-box .eq-heading,
+.slide[data-id='d3-reg-map'] .eq-box .eq-heading,
+.slide[data-id='d3-reg-ridge'] .eq-box .eq-heading,
+.slide[data-id='d3-reg-lasso'] .eq-box .eq-heading,
+.slide[data-id='d3-reg-elastic'] .eq-box .eq-heading,
+.slide[data-id='d3-mat-2-rnn'] .eq-box .eq-heading,
+.slide[data-id='d3-mat-2-lstm'] .eq-box .eq-heading,
+.slide[data-id='d3-mat-2-gru'] .eq-box .eq-heading,
+.slide[data-id='d3-mat-1-arima'] .eq-box .eq-heading,
+.slide[data-id='d3-mat-1'] .eq-box .eq-heading {
+  margin: 2px 0 1px;
+  font-size: 0.86rem;
+}
+
+.slide[data-id='d3-reg-ols'] .eq-box .eq-display,
+.slide[data-id='d3-reg-mle'] .eq-box .eq-display,
+.slide[data-id='d3-reg-map'] .eq-box .eq-display,
+.slide[data-id='d3-reg-ridge'] .eq-box .eq-display,
+.slide[data-id='d3-reg-lasso'] .eq-box .eq-display,
+.slide[data-id='d3-reg-elastic'] .eq-box .eq-display,
+.slide[data-id='d3-mat-2-rnn'] .eq-box .eq-display,
+.slide[data-id='d3-mat-2-lstm'] .eq-box .eq-display,
+.slide[data-id='d3-mat-2-gru'] .eq-box .eq-display,
+.slide[data-id='d3-mat-1-arima'] .eq-box .eq-display,
+.slide[data-id='d3-mat-1'] .eq-box .eq-display {
+  font-size: clamp(0.88rem, 1.1vw, 1.02rem);
+  line-height: 1.3;
+}
+
+.slide[data-id='d3-reg-ols'] .eq-box .eq-conn,
+.slide[data-id='d3-reg-mle'] .eq-box .eq-conn,
+.slide[data-id='d3-reg-map'] .eq-box .eq-conn,
+.slide[data-id='d3-reg-ridge'] .eq-box .eq-conn,
+.slide[data-id='d3-reg-lasso'] .eq-box .eq-conn,
+.slide[data-id='d3-reg-elastic'] .eq-box .eq-conn,
+.slide[data-id='d3-mat-2-rnn'] .eq-box .eq-conn,
+.slide[data-id='d3-mat-2-lstm'] .eq-box .eq-conn,
+.slide[data-id='d3-mat-2-gru'] .eq-box .eq-conn,
+.slide[data-id='d3-mat-1-arima'] .eq-box .eq-conn,
+.slide[data-id='d3-mat-1'] .eq-box .eq-conn {
+  margin-top: 1px;
+  font-size: 0.82rem;
+  line-height: 1.32;
+}
+
+.slide[data-id='d3-reg-ols'] h2,
+.slide[data-id='d3-reg-mle'] h2,
+.slide[data-id='d3-reg-map'] h2,
+.slide[data-id='d3-reg-ridge'] h2,
+.slide[data-id='d3-reg-lasso'] h2,
+.slide[data-id='d3-reg-elastic'] h2,
+.slide[data-id='d3-mat-2-rnn'] h2,
+.slide[data-id='d3-mat-2-lstm'] h2,
+.slide[data-id='d3-mat-2-gru'] h2,
+.slide[data-id='d3-mat-1-arima'] h2,
+.slide[data-id='d3-mat-1'] h2 {
+  margin-bottom: 4px;
+}
+
+.slide[data-id='d3-reg-ols'] .slide-list,
+.slide[data-id='d3-reg-mle'] .slide-list,
+.slide[data-id='d3-reg-map'] .slide-list,
+.slide[data-id='d3-reg-ridge'] .slide-list,
+.slide[data-id='d3-reg-lasso'] .slide-list,
+.slide[data-id='d3-reg-elastic'] .slide-list,
+.slide[data-id='d3-mat-2-rnn'] .slide-list,
+.slide[data-id='d3-mat-2-lstm'] .slide-list,
+.slide[data-id='d3-mat-2-gru'] .slide-list,
+.slide[data-id='d3-mat-1-arima'] .slide-list,
+.slide[data-id='d3-mat-1'] .slide-list {
+  margin: 0 0 6px;
+}
+
+.slide[data-id='d3-reg-ols'] .slide-notes,
+.slide[data-id='d3-reg-mle'] .slide-notes,
+.slide[data-id='d3-reg-map'] .slide-notes,
+.slide[data-id='d3-reg-ridge'] .slide-notes,
+.slide[data-id='d3-reg-lasso'] .slide-notes,
+.slide[data-id='d3-reg-elastic'] .slide-notes,
+.slide[data-id='d3-mat-2-rnn'] .slide-notes,
+.slide[data-id='d3-mat-2-lstm'] .slide-notes,
+.slide[data-id='d3-mat-2-gru'] .slide-notes,
+.slide[data-id='d3-mat-1-arima'] .slide-notes,
+.slide[data-id='d3-mat-1'] .slide-notes {
+  margin: 3px 0 0;
+  line-height: 1.36;
+}
+
 /* ---------- Nodos ReactFlow (estilo deck, no v1) ---------- */
 .deck-node {
   border: 1.5px solid rgba(6, 8, 15, 0.25);
@@ -1558,4 +1680,53 @@ body.focus-mode .deck-controls .controls-logo {
 
 .slide-references li::marker {
   content: none;
+}
+
+/* Round 14 (E1 · ARIMA y SARIMA): ambas páginas llevan cinco cajas y dos
+   referencias; un gap algo menor mantiene visibles las referencias. */
+.slide[data-id='d3-mat-1-arima'] .math-stack,
+.slide[data-id='d3-mat-1'] .math-stack {
+  gap: 2px;
+}
+
+.slide[data-id='d3-mat-1-arima'] .slide-notes,
+.slide[data-id='d3-mat-1'] .slide-notes {
+  margin: 2px 0 0;
+  line-height: 1.3;
+}
+
+/* Round 15 (E2 · GPR): cinco cajas con una verosimilitud marginal en una
+   línea que incluye fracciones y llaves; se compacta la pila para que entre
+   en 1080p sin recortes. Alcance por id estable. */
+.slide[data-id='d3-gpr-model'] .math-stack {
+  gap: 3px;
+}
+
+.slide[data-id='d3-gpr-model'] .eq-box {
+  padding: 3px clamp(10px, 1.2vw, 14px);
+}
+
+.slide[data-id='d3-gpr-model'] .eq-box .eq-heading {
+  margin: 2px 0 1px;
+  font-size: 0.84rem;
+}
+
+.slide[data-id='d3-gpr-model'] .eq-box .eq-display {
+  font-size: clamp(0.84rem, 1.05vw, 0.98rem);
+  line-height: 1.28;
+}
+
+.slide[data-id='d3-gpr-model'] .eq-box .eq-conn {
+  margin-top: 1px;
+  font-size: 0.79rem;
+  line-height: 1.3;
+}
+
+.slide[data-id='d3-gpr-model'] h2 {
+  margin-bottom: 4px;
+}
+
+.slide[data-id='d3-gpr-model'] .slide-notes {
+  margin: 2px 0 0;
+  line-height: 1.3;
 }

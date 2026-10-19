@@ -37,8 +37,8 @@ export const SLIDES = [
       ],
       [
         'Series y marco general',
-        '$y[t]$ observada, $\\hat{\\mathbf{y}} \\in \\mathbb{R}^h$ multi-paso directa, ventana $\\mathbf{X} \\in \\mathbb{R}^{\\tau \\times d}$, pérdidas $\\mathcal{L}_{MSE}$, $\\mathcal{L}_{phys}$, $\\mathcal{L}_{total}$, peso $\\lambda_{phys}$, residuo $\\mathcal{R}_{phys}$, ley $\\mathcal{F}[u] = 0$ en dominio $\\Omega_T$.',
-        'Marco común: series, pérdidas y ley física. Toda penalización es $\\lambda_{\\cdot}$ y la rama física se escribe $f_{fis}$.',
+        '$\\mathbf{x}_n \\in \\mathbb{R}^{P}$, $\\mathbf{y}_n \\in \\mathbb{R}^{\\tau}$; $\\mathbf{X} \\in \\mathbb{R}^{N \\times P}$, $\\mathbf{Y} \\in \\mathbb{R}^{N \\times \\tau}$ y $\\hat{\\mathbf{Y}}=f_\\theta(\\mathbf{X})$. $N$: muestras; $P$: características; $\\tau$: horizonte futuro. La ventana histórica tiene longitud $L$ y se denota $\\mathbf{X}_n^{win} \\in \\mathbb{R}^{L \\times P}$.',
+        '$\\theta$ son parámetros, $\\hat{\\theta}$ su estimador; $f_\\theta$ predictor. $\\tau$ es horizonte, no ventana, orden ni capas. Para una muestra, $\\mathbf{x}_n$ puede representar la ventana aplanada o sus características derivadas; los modelos dinámicos conservan su secuencia explícita.'
       ],
       [
         'Codificador RFF multibanda (artículo guía)',
@@ -62,14 +62,49 @@ export const SLIDES = [
       ],
       [
         'Símbolos locales',
-        '$\\mathcal{B}$ (E1), $\\mathbf{A}, \\mathbf{B}, \\mathbf{C}$ (E6), instantes $t_i$, $t_j$ y muestras $i$, convolución E4 $f[i]$, $s[t]$; E2: $\\theta \\in \\mathbb{R}^{d}$, $\\mathbf{X}$ (matriz de diseño $N \\times d$), $\\varepsilon_i$, $\\lambda_{reg}$, $c$, $(\\cdot)_{+}$, $\\varepsilon_{svr}$, $\\lambda_{svr}$; SVD: $\\mathbf{U}, \\mathbf{S}, \\mathbf{V}$.',
-        'Existen solo dentro de su ecuación. $t_i$ son valores de $t$ continuo: paréntesis, $x(t_i)$; $i$ numera muestras, no tiempo: subíndice, nunca corchete. Colisiones: $\\varepsilon_i$ (ruido), $\\varepsilon[t]$ (innovación) y $\\varepsilon_{svr}$ (tolerancia del tubo) son conceptos distintos; $\\mathbf{U}$ es factor del SVD y $\\mathbf{U}_i$ compuerta; $\\mathcal{N}$ es sólo la normal —la ley física es $\\mathcal{F}[u] = 0$—; $\\mathbf{X}$ cambia de sentido: diseño en E2, ventana fuera.',
+        '$\\mathcal{B}$ (E1), $\\mathbf{A}, \\mathbf{B}, \\mathbf{C}$ (E6), instantes $t_i$, $t_j$ y muestras $i$, convolución E4 $f[i]$, $s[t]$; E2: $\\mathbf{W}\\in\\mathbb{R}^{P\\times\\tau}$, $\\mathbf{X}\\in\\mathbb{R}^{N\\times P}$, ventana $\\mathbf{X}^{win}_n\\in\\mathbb{R}^{L\\times P}$, $\\varepsilon_i$, $\\lambda_1,\\lambda_2$, $c$, $(\\cdot)_{+}$, $\\varepsilon_{svr}$, $\\lambda_{svr}$; SVD: $\\mathbf{U}, \\mathbf{S}, \\mathbf{V}$.',
+        'Los símbolos de operadores y estructuras son locales a su familia. $t_i$ son valores de $t$ continuo: paréntesis, $x(t_i)$; $i$ numera muestras, no tiempo: subíndice, nunca corchete. Colisiones: $\\varepsilon_i$ (ruido), $\\varepsilon[t]$ (innovación) y $\\varepsilon_{svr}$ (tolerancia del tubo) son conceptos distintos; $\\mathbf{U}$ es factor del SVD y $\\mathbf{U}_i$ compuerta; $\\mathcal{N}$ es sólo la normal —la ley física es $\\mathcal{F}[u] = 0$—. $\\mathbf{X}$ denota la matriz muestras-características y las secuencias usan $\\mathbf{X}^{win}_n$.',
       ],
       [
         'Decisiones de unificación',
-        '$\\theta$ parámetros del modelo (único); $\\Theta$ conjunto de parámetros; $\\lambda_{phys}, \\lambda_{reg}, \\lambda_{svr}, \\lambda_{rk}$ penalizaciones; $\\mathcal{L}$ pérdida; $\\mathbf{u}[t]$ compuerta GRU; $f_{fis}$ rama física.',
+        '$\\theta$ parámetros del modelo; $\\hat{\\theta}$ estimador; $\\Theta$ conjunto de parámetros; $\\lambda_{phys}, \\lambda_{reg}, \\lambda_1, \\lambda_2, \\lambda_{svr}, \\lambda_{rk}$ pesos de penalización; $\\mathcal{L}$ pérdida; $\\mathbf{u}[t]$ compuerta GRU; $f_{fis}$ rama física.',
         '$\\theta$ es el **único** símbolo de los parámetros: los coeficientes de una regresión, los pesos de una red y las matrices de compuerta son $\\theta$ o bloques con nombre de $\\theta$; $\\Theta$ es el conjunto donde vive.',
       ],
+    ],
+  },
+
+  {
+    id: 'marco-aprendizaje',
+    module: 'notacion',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '2 · Marco común',
+    title: 'Riesgo esperado, aproximación empírica y optimización',
+    bullets: [
+      'La estructura compartida organiza la comparación, pero no reemplaza los criterios propios de cada modelo probabilístico o dinámico.',
+      'El promedio muestral estima el riesgo bajo la distribución empírica; no es idéntico en general al riesgo poblacional.',
+    ],
+    equations: [
+      {
+        heading: 'Aprendizaje regularizado (riesgo poblacional)',
+        tex: '\\hat{\\theta} = \\arg\\min_{\\theta \\in \\Theta} \\left[ \\mathbb{E}_{(\\mathbf{x},\\mathbf{y}) \\sim p_{\\mathrm{datos}}} \\left\\{ \\mathcal{L}(\\mathbf{y},f_{\\theta}(\\mathbf{x})) \\right\\} + \\lambda \\mathcal{R}(\\theta,f_{\\theta}) \\right]',
+        conn: 'La esperanza se toma bajo la distribución poblacional de datos. $\\mathcal{R}$ puede penalizar parámetros o comportamiento; en PIML puede ser un residuo físico, que no es una penalización paramétrica.'
+      },
+      {
+        heading: 'Aproximación empírica',
+        tex: '\\widehat{\\mathcal{E}}_N(\\theta)=\\frac{1}{N}\\sum_{n=1}^{N}\\mathcal{L}(\\mathbf{y}_n,f_{\\theta}(\\mathbf{x}_n))',
+        conn: 'Este promedio es una esperanza respecto de la distribución empírica que asigna masa $1/N$ a cada muestra; aproxima el riesgo poblacional bajo condiciones de muestreo, no por identidad universal.'
+      },
+      {
+        heading: 'PIML/PINN: la penalización física actúa sobre el residuo',
+        tex: '\\hat{\\theta}=\\arg\\min_{\\theta}\\left[\\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\mathcal{L}(\\mathbf{y},f_{\\theta}(\\mathbf{x}))+\\lambda_{phys}\\mathbb{E}_{\\mathbf{z}\\sim p_{phys}}\\lVert r_{\\theta}(\\mathbf{z})\\rVert_2^2\\right]',
+        conn: 'La regularización convencional penaliza parámetros; la formulación informada por física penaliza el residuo de una ley en puntos $\\mathbf{z}$. La estructura de optimización es semejante, pero los objetos penalizados son distintos.'
+      },
+      {
+        heading: 'Derivadas: objetos distintos',
+        tex: '\\nabla_{\\theta}\\mathcal{L} \\quad (\\text{optimización}), \\qquad \\nabla_{\\mathbf{x}}f_{\\theta} \\quad (\\text{sensibilidad a entradas}), \\qquad \\frac{\\partial f_{\\theta}}{\\partial t},\\;\\frac{\\partial^{2}f_{\\theta}}{\\partial t^{2}} \\quad (\\text{dinámica temporal})',
+        conn: 'El operador nabla denota gradientes respecto de variables vectoriales; las derivadas temporales de una trayectoria se escriben explícitamente y no se sustituyen por $\\nabla$.'
+      }
     ],
   },
 
@@ -112,7 +147,7 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Ecuación de movimiento (residuo físico)',
-        tex: '\\mathcal{F}[x] \\;\\equiv\\; m\\,\\ddot{x}(t) + c\\,\\dot{x}(t) + k\\,x(t) = 0',
+        tex: '\\mathcal{F}[q] \\;\\equiv\\; m\\,\\ddot{q}(t) + c\\,\\dot{q}(t) + k\\,q(t) = 0',
         conn: '**MR:** masa $m$, rigidez $k$, amortiguamiento $c$; la trayectoria $x(t)$ es lo que cada puerta predice.',
       },
       {
@@ -122,7 +157,7 @@ export const SLIDES = [
       },
       {
         heading: 'Datos disponibles',
-        tex: '\\mathbf{x}_i = (t_i, x(t_i), \\dot{x}(t_i)), \\qquad i = 1, \\dots, N_d',
+        tex: '\\mathbf{x}_n = (t_n, q(t_n), \\dot{q}(t_n)), \\qquad \\mathbf{y}_n=q(t_n) \\quad (\\tau=1), \\qquad n=1,\\dots,N',
         conn: '**Conexión:** las tres puertas consumen el mismo dato básico: trayectoria medida del MR.',
       },
     ],
@@ -140,22 +175,22 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Modelo',
-        tex: '\\hat{x}(t) = f_\\theta(t), \\qquad \\theta \\in \\Theta',
+        tex: '\\hat{q}(t) = f_\\theta(t), \\qquad \\theta \\in \\Theta',
         conn: '**Conexión:** la red aproxima la solución del sistema masa-resorte; es el bloque "Modelo ML f_θ" del diagrama.',
       },
       {
         heading: 'Residuo físico (diferenciación automática)',
-        tex: 'r_\\theta(t_j) = m\\,\\ddot{\\hat{x}}_\\theta(t_j) + c\\,\\dot{\\hat{x}}_\\theta(t_j) + k\\,\\hat{x}_\\theta(t_j)',
+        tex: 'r_\\theta(t_j) = m\\,\\frac{d^2 f_\\theta(t_j)}{dt^2} + c\\,\\frac{d f_\\theta(t_j)}{dt} + k\\,f_\\theta(t_j)',
         conn: '**Conexión:** la caja punteada "Diff. automática" produce $r_\\theta$ en los puntos de colocación $t_j$; es $\\mathcal{F}[\\hat{x}_\\theta]$ de la ley $\\mathcal{F}[u]=0$.',
       },
       {
         heading: 'Función de pérdida',
-        tex: '\\mathcal{L}_{total}(\\theta) = \\underbrace{\\frac{1}{N_d}\\sum_{i=1}^{N_d} \\left| f_\\theta(t_i) - x(t_i) \\right|^2}_{\\mathcal{L}_{MSE}} \\;+\\; \\lambda_{phys}\\,\\underbrace{\\frac{1}{N_c}\\sum_{j=1}^{N_c} \\left\\| r_\\theta(t_j) \\right\\|^2}_{\\mathcal{L}_{phys}}',
+        tex: '\\mathcal{J}(\\theta)=\\mathbb{E}_{(t,q)\\sim p_{\\mathrm{datos}}}\\left[\\mathcal{L}(q,f_\\theta(t))\\right]+\\lambda_{phys}\\mathbb{E}_{t\\sim p_{\\mathrm{phys}}}\\left[r_\\theta(t)^2\\right]',
         conn: '**Conexión:** la línea inferior del diagrama es exactamente esta suma: la física entra en el segundo término, no en la estructura.',
       },
       {
         heading: 'Problema de optimización',
-        tex: '\\theta^* = \\arg\\min_{\\theta \\in \\Theta}\\; \\mathcal{L}_{total}(\\theta)',
+        tex: '\\hat{\\theta}=\\arg\\min_{\\theta\\in\\Theta}\\mathcal{J}(\\theta)',
         conn: 'El residuo entra en la pérdida, no en la estructura: el cumplimiento depende de $\\lambda_{phys}$ y del entrenamiento.',
       },
     ],
@@ -552,17 +587,17 @@ export const SLIDES = [
       },
       {
         heading: 'F1 · Pérdida con puntos de colocación',
-        tex: '\\mathcal{L}(\\theta) = \\frac{1}{N_d}\\sum_{i=1}^{N_d} \\left| u_\\theta(t_i, \\mathbf{x}_i) - u(t_i, \\mathbf{x}_i) \\right|^2 + \\lambda_{phys}\\,\\frac{1}{N_c}\\sum_{j=1}^{N_c} \\left\\| r_\\theta(t_j, \\mathbf{x}_j) \\right\\|^2',
+        tex: '\\mathcal{L}_{PINN}(\\theta) = \\frac{1}{N_d}\\sum_{i=1}^{N_d} \\left| u_\\theta(t_i, \\mathbf{x}_i) - u(t_i, \\mathbf{x}_i) \\right|^2 + \\lambda_{phys}\\,\\frac{1}{N_c}\\sum_{j=1}^{N_c} \\left\\| r_\\theta(t_j, \\mathbf{x}_j) \\right\\|^2, \\qquad \\hat{\\theta}=\\arg\\min_{\\theta}\\mathcal{L}_{PINN}(\\theta)',
       },
       {
         heading: 'F2 · Recurrencia estándar + término físico',
-        tex: '\\mathbf{h}[t] = f_{RNN}(\\mathbf{x}[t], \\mathbf{h}[t-1]; \\Theta_r), \\qquad \\hat{y}[t] = g(\\mathbf{h}[t])',
+        tex: '\\mathbf{h}[t] = f_{RNN}(\\mathbf{x}[t], \\mathbf{h}[t-1]; \\theta_r), \\qquad \\hat{\\mathbf{y}}_{T+1:T+\\tau}=g_{\\theta}(\\mathbf{h}[T])\\in\\mathbb{R}^{\\tau}',
         conn:
           '**Conexión:** "recurrencia estándar" ↔ $f_{RNN}$; "consistencia temporal" ↔ $\\mathcal{L}_{EC}$ (línea PGML de Karpatne).',
       },
       {
         heading: 'F2 · Pérdida de consistencia temporal',
-        tex: '\\mathcal{L} = \\mathcal{L}_{MSE} + \\lambda_{phys}\\,\\mathcal{L}_{EC}, \\qquad \\mathcal{L}_{EC} = \\sum_t \\left\\| r_{EC}(\\hat{y}[t], \\hat{y}[t-1], \\mathbf{x}[t]) \\right\\|^2',
+        tex: '\\mathcal{L}_{PG}(\\theta)=\\frac{1}{N}\\sum_{n=1}^{N}\\lVert\\mathbf{y}_{n+1:n+\\tau}-\\hat{\\mathbf{y}}_{n+1:n+\\tau}\\rVert_2^2+\\lambda_{phys}\\mathcal{L}_{EC}(\\theta), \\quad \\mathcal{L}_{EC}=\\sum_t\\lVert r_{EC}(\\hat{y}[t],\\hat{y}[t-1],\\mathbf{x}[t])\\rVert^2, \\quad \\hat{\\theta}=\\arg\\min_{\\theta}\\mathcal{L}_{PG}(\\theta)',
       },
     ],
   },
@@ -604,9 +639,19 @@ export const SLIDES = [
     equations: [
       {
         heading: 'F5 · Kernel ridge con restricciones de forma',
-        tex: '\\hat{f}_\\theta(\\mathbf{x}) = \\sum_{i=1}^{N} \\theta_i\\, \\kappa(\\mathbf{x}, \\mathbf{x}_i), \\qquad \\theta = (\\mathbf{K}_{GP} + \\lambda_{rk} \\mathbf{I})^{-1} \\mathbf{y}',
+        tex: '\\hat{f}_{\\boldsymbol{\\theta}}(\\mathbf{x}) = \\sum_{i=1}^{N} \\theta_i\\, \\kappa(\\mathbf{x}, \\mathbf{x}_i), \\qquad \\hat{\\boldsymbol{\\theta}} = (\\mathbf{K} + \\lambda_{rk} \\mathbf{I})^{-1} \\mathbf{y}',
         conn:
           '**Conexión:** "bounds, rampas, parabolicidad, estacionalidad" ↔ las restricciones sobre $f$; GPR con prior físico (formulación de Doumèche 2025 / PhI-GPR).',
+      },
+      {
+        heading: 'F5 · GPR: distribución predictiva y estimación de hiperparámetros',
+        tex: 'p(\\mathbf{y}_*\\mid\\mathbf{x}_*,\\mathcal{D})=\\mathcal{N}(\\boldsymbol{\\mu}_*,\\mathbf{\\Sigma}_*), \\quad \\boldsymbol{\\mu}_*=\\mathbf{K}_*^{\\top}(\\mathbf{K}+\\sigma_n^2\\mathbf{I})^{-1}\\mathbf{y}, \\quad \\mathbf{\\Sigma}_*=\\mathbf{K}_{**}-\\mathbf{K}_*^{\\top}(\\mathbf{K}+\\sigma_n^2\\mathbf{I})^{-1}\\mathbf{K}_*',
+        conn: 'La media es la predicción puntual; $\\mathbf{\\Sigma}_*$ cuantifica incertidumbre predictiva. Esta forma corresponde a GP gaussiano con ruido gaussiano y kernel fijado. Los hiperparámetros se pueden estimar maximizando la verosimilitud marginal, no minimizando un MSE genérico.'
+      },
+      {
+        heading: 'F5 · Verosimilitud marginal para hiperparámetros',
+        tex: '\\hat{\\boldsymbol{\\eta}}=\\arg\\max_{\\boldsymbol{\\eta}}p(\\mathbf{y}\\mid\\mathbf{X},\\boldsymbol{\\eta})',
+        conn: '$\\boldsymbol{\\eta}$ reúne parámetros del kernel y del ruido. Si se incorpora un prior sobre estos hiperparámetros, la estimación MAP maximiza $p(\\mathbf{y}\\mid\\mathbf{X},\\boldsymbol{\\eta})p(\\boldsymbol{\\eta})$; no se confunde con la distribución predictiva posterior.'
       },
       {
         heading: 'F6 · Prior físico cableado, sin EDP explícita',
@@ -619,6 +664,36 @@ export const SLIDES = [
         tex: '\\boldsymbol{\\phi}_k(\\mathbf{x}[t]) = \\sqrt{\\frac{2}{N_f}}\\,\\cos\\!\\left(\\mathrm{softplus}(\\rho_k)\\,\\mathbf{W}_k^\\top \\mathbf{x}[t] + \\mathbf{b}_k\\right)',
       },
     ],
+  },
+
+  {
+    id: 'd2-objectives',
+    module: 'd2',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '4 · Familias PIML · objetivos por modelo',
+    title: 'Neural ODE/SDE, PhyDNet y física embebida: salida y estimación',
+    bullets: [
+      'La estructura común identifica entradas, salidas y estimación; no borra las diferencias entre una trayectoria determinista, una dinámica estocástica y una arquitectura con prior físico.',
+      'La pérdida de datos depende del tipo de salida y del modelo probabilístico; la física puede estar en la dinámica o la arquitectura, sin una penalización residual explícita.',
+    ],
+    equations: [
+      {
+        heading: 'F3 · SDE y estimación probabilística',
+        tex: 'd\\mathbf{h}(t)=f_{\\theta}(\\mathbf{h}(t),t)dt+\\mathbf{G}_{\\theta}(\\mathbf{h}(t),t)d\\mathbf{W}_t, \\quad \\hat{\\theta}=\\arg\\min_{\\theta}[-\\log p_{\\theta}(\\mathbf{y}_{T+1:T+\\tau}\\mid\\mathbf{X}^{win}_{T-L+1:T})]',
+        conn: 'La distribución predictiva se induce por la dinámica estocástica y el modelo de observación; si la verosimilitud no es tractable, se requiere el estimador aproximado correspondiente. Para la variante ODE determinista se usa la pérdida compatible con las observaciones, no se asume automáticamente una predictiva gaussiana.'
+      },
+      {
+        heading: 'F4 · PhyDNet: ventana, latente físico/residual y salida',
+        tex: '\\mathbf{z}=\\mathrm{Enc}_{\\theta}(\\mathbf{X}^{win}), \\quad \\hat{\\mathbf{y}}_{T+1:T+\\tau}=\\mathrm{Dec}_{\\theta}(\\mathbf{z}^{phys}_{T+\\tau},\\mathbf{z}^{res}_{T+\\tau}), \\quad \\hat{\\theta}=\\arg\\min_{\\theta}\\frac{1}{N}\\sum_{n=1}^{N}\\lVert\\mathbf{y}_{n+1:n+\\tau}-f_{\\theta}(\\mathbf{X}^{win}_n)\\rVert_2^2',
+        conn: 'La evolución de los estados latentes mantiene las recurrencias física y residual descritas en la diapositiva anterior. La función de pérdida mostrada es el ajuste empírico de una predicción puntual; no afirma que sea el único objetivo posible de la familia.'
+      },
+      {
+        heading: 'F6 · Física embebida en la arquitectura',
+        tex: '\\hat{\\mathbf{Y}}=g_{\\theta}(\\mathbf{X}^{win};\\mathcal{P}_{fis}), \\qquad \\hat{\\theta}=\\arg\\min_{\\theta}\\frac{1}{N}\\sum_{n=1}^{N}\\mathcal{L}(\\mathbf{y}_{n+1:n+\\tau},g_{\\theta}(\\mathbf{X}^{win}_n;\\mathcal{P}_{fis}))',
+        conn: 'El prior físico $\\mathcal{P}_{fis}$ forma parte de la arquitectura (como el embedding espectral RFF); si no hay residuo de ley física, no se inventa una pérdida PINN separada. La penalización convencional, si existe, se declara aparte.'
+      }
+    ]
   },
 
   // ── §5a Diagrama 3 — Familias data-driven E1–E8 ─────────────────────────
@@ -646,40 +721,125 @@ export const SLIDES = [
     ],
   },
   {
+    id: 'd3-mat-1-arima',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E1 — ARIMA: autorregresivo integrado de medias móviles',
+    bullets: [
+      '**Definición:** ARIMA$(p,d,q)$ modela la serie diferenciada $d$ veces con una parte autorregresiva (orden $p$) y una de medias móviles (orden $q$).',
+      'Cambia el punto de partida: no hay $\\hat{\\mathbf{Y}}=\\mathbf{X}\\mathbf{W}$, sino dependencia de la propia serie y de sus errores pasados.',
+    ],
+    equations: [
+      {
+        heading: 'Entrada y salida',
+        tex: 'y[1:T]=(y[1],\\ldots,y[T]), \\qquad \\hat{y}_\\eta[t]=\\mathbb{E}_\\eta\\!\\left[ y[t] \\mid y[1:t-1] \\right], \\qquad \\hat{\\mathbf{y}}_{T+1:T+\\tau}\\in\\mathbb{R}^{\\tau}',
+        conn: 'La entrada es la serie observada hasta $T$; la salida es la predicción condicional a su propio pasado, no una matriz de características. $\\tau$ es el horizonte, como en el resto del diagrama.'
+      },
+      {
+        heading: 'Modelo ARIMA($p,d,q$)',
+        tex: '\\begin{aligned} \\phi_p(\\mathcal{B})\\,(1-\\mathcal{B})^{d}\\,y[t] &= c + \\theta_q(\\mathcal{B})\\,\\varepsilon[t], \\qquad \\varepsilon[t]\\sim\\mathcal{N}(0,\\sigma_\\varepsilon^{2}) \\\\[3pt] \\phi_p(\\mathcal{B}) &= 1-\\phi_1\\mathcal{B}-\\cdots-\\phi_p\\mathcal{B}^{p}, \\qquad \\theta_q(\\mathcal{B}) = 1+\\theta_1\\mathcal{B}+\\cdots+\\theta_q\\mathcal{B}^{q} \\end{aligned}',
+        conn: 'El operador de rezago cumple $\\mathcal{B}\\,y[t]=y[t-1]$. La parte AR captura la dependencia con los rezagos, $(1-\\mathcal{B})^{d}$ remueve tendencia y la parte MA modela los errores pasados. Los parámetros se agrupan en $\\eta={\\phi,\\theta,c,\\sigma_\\varepsilon^{2}}$ y $d$ es el orden de diferenciación.'
+      },
+      {
+        heading: 'Función de costo: riesgo esperado',
+        tex: '\\begin{aligned} J(\\eta) &= \\mathbb{E}\\!\\left[ \\left( y[t]-\\hat{y}_\\eta[t] \\right)^{2} \\right] \\\\[3pt] \\mathbb{E}\\!\\left[ -\\log L(\\eta,\\sigma_\\varepsilon^{2}) \\right] &= \\frac{1}{2\\sigma_\\varepsilon^{2}}J(\\eta) + \\text{cte} \\end{aligned}',
+        conn: 'El criterio es el error cuadrático de predicción esperado. Con innovaciones gaussianas y varianza fija, la log-verosimilitud negativa esperada es proporcional a $J(\\eta)$: los dos criterios están **relacionados**, pero no son idénticos en toda formulación de verosimilitud.'
+      },
+      {
+        heading: 'Aproximación empírica',
+        tex: '\\widehat{J}_{N_{\\mathrm{eff}}}(\\eta) = \\frac{1}{N_{\\mathrm{eff}}}\\sum_{t=t_0}^{T} \\left( y[t]-\\hat{y}_\\eta[t] \\right)^{2}',
+        conn: '$N_{\\mathrm{eff}}=T-t_0+1$ es el número de observaciones efectivas: la diferenciación y los rezagos consumen observaciones iniciales. La serie temporal **no** es i.i.d., así que el promedio es una aproximación de trabajo.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\widehat{\\eta} \\in \\arg\\min_{\\eta} \\widehat{J}_{N_{\\mathrm{eff}}}(\\eta)',
+        conn: 'En la práctica ARIMA se estima habitualmente por **máxima verosimilitud** —a menudo condicional a las primeras observaciones—, que con innovaciones gaussianas y varianza fija conduce al mismo óptimo que el criterio cuadrático, salvo constantes.'
+      },
+    ],
+    notes: '**Familia E1:** ARIMA es el modelo base del bloque estadístico; SARIMA añade la parte estacional sobre esta misma estructura y conserva el criterio de estimación.',
+    refs: [
+      'Box, Jenkins, Reinsel, Ljung. Time Series Analysis: Forecasting and Control. Wiley, 5ª ed., 2015.',
+      'Hyndman & Athanasopoulos. Forecasting: Principles and Practice. OTexts, 3ª ed., 2021.'
+    ]
+  },
+  {
     id: 'd3-mat-1',
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E1 — Estadísticos clásicos (SARIMA)',
+    title: 'E1 — SARIMA: extensión estacional de ARIMA',
     bullets: [
-      '**Definición:** SARIMA$(p,d,q)(P,D,Q)_s$ — modelo autorregresivo integrado de medias móviles estacional: la serie se diferencia $d$ veces —y $D$ veces en el rezago estacional $s$— antes de modelarla con una parte autorregresiva ($p$, $P$) y una de medias móviles ($q$, $Q$).',
-      'Es el único método estadístico clásico nombrado en esta sección y la línea base de comparación: la familia **E2** —SVR, árboles y ensambles, y los lineales regularizados— comienza en la diapositiva siguiente.',
+      '**Definición:** SARIMA$(p,d,q)(P,D,Q)_s$ añade a ARIMA un juego de operadores en el rezago estacional $s$; es el único método estadístico clásico nombrado en el diagrama 3.',
+      'Es la línea base de comparación de la familia E2, que comienza en la diapositiva siguiente.',
     ],
     equations: [
       {
-        heading: 'Ecuación general (Box–Jenkins)',
-        tex: '\\phi_p(\\mathcal{B})\\,\\Phi_P(\\mathcal{B}^s)\\,(1-\\mathcal{B})^d\\,(1-\\mathcal{B}^s)^D\\, y[t] = c + \\theta_q(\\mathcal{B})\\,\\Theta_Q(\\mathcal{B}^s)\\,\\varepsilon[t], \\qquad \\varepsilon[t] \\sim \\mathcal{N}(0, \\sigma_\\varepsilon^2)',
-        conn:
-          '**Conexión:** a la izquierda, la parte AR —simple $\\phi_p(\\mathcal{B})$ y estacional $\\Phi_P(\\mathcal{B}^s)$— junto con las diferenciaciones $(1-\\mathcal{B})^d$ (tendencia) y $(1-\\mathcal{B}^s)^D$ (estacionalidad); a la derecha, la parte MA —$\\theta_q(\\mathcal{B})$ y $\\Theta_Q(\\mathcal{B}^s)$— más la constante $c$ y la innovación gaussiana $\\varepsilon[t]$.',
+        heading: 'Entrada y salida',
+        tex: 'y[1:T]=(y[1],\\ldots,y[T]), \\qquad \\hat{y}_\\eta[t]=\\mathbb{E}_\\eta\\!\\left[ y[t] \\mid y[1:t-1] \\right], \\qquad \\hat{\\mathbf{y}}_{T+1:T+\\tau}\\in\\mathbb{R}^{\\tau}',
+        conn: 'Misma entrada y salida que ARIMA; aquí $s$ es el período estacional (24 h diario, 168 h semanal) y la dependencia se repite cada $s$ pasos.'
       },
       {
-        heading: 'Operadores de rezago y parámetros',
-        tex: '\\mathcal{B}\\,y[t] = y[t-1], \\qquad \\mathcal{B}^s\\,y[t] = y[t-s]',
-        conn:
-          '**Parámetros:** $p, P$: orden AR (simple, estacional) · $d, D$: diferencias (simple, estacional) · $q, Q$: orden MA (simple, estacional) · $s$: período estacional (24 h diario, 168 h semanal). Los símbolos $\\mathcal{B}, s, d, D, c$ son **locales** de esta diapositiva.',
+        heading: 'Modelo SARIMA($p,d,q$)$(P,D,Q)_s$',
+        tex: '\\begin{aligned} \\phi_p(\\mathcal{B})\\,\\Phi_P(\\mathcal{B}^{s})\\,(1-\\mathcal{B})^{d}\\,(1-\\mathcal{B}^{s})^{D}\\,y[t] &= c + \\theta_q(\\mathcal{B})\\,\\Theta_Q(\\mathcal{B}^{s})\\,\\varepsilon[t] \\\\[3pt] \\mathcal{B}^{s}y[t] &= y[t-s], \\qquad \\Phi_P(\\mathcal{B}^{s}) = 1-\\Phi_1\\mathcal{B}^{s}-\\cdots, \\qquad \\Theta_Q(\\mathcal{B}^{s}) = 1+\\Theta_1\\mathcal{B}^{s}+\\cdots \\end{aligned}',
+        conn: 'SARIMA **extiende** ARIMA: a la parte simple se suma la estacional —AR $\\Phi_P(\\mathcal{B}^{s})$, MA $\\Theta_Q(\\mathcal{B}^{s})$ y la diferenciación $(1-\\mathcal{B}^{s})^{D}$—. El período $s$ es local de esta ecuación. Todos los coeficientes se agrupan en $\\eta$.'
       },
       {
-        heading: 'Ejemplo reducido: AR(1) con constante',
-        tex: '\\hat{y}[t] = c + \\phi_1\\,y[t-1]',
-        conn:
-          '**Ejemplo:** con $c = 20$, $\\phi_1 = 0.9$ y $y[t-1] = 140$ kWh, el pronóstico es $\\hat{y}[t] = 20 + 0.9\\,(140) = 146$ kWh. Corresponde al caso SARIMA$(1,0,0)(0,0,0)_s$: sin diferenciación ni parte estacional.',
+        heading: 'Función de costo: riesgo esperado',
+        tex: '\\begin{aligned} J(\\eta) &= \\mathbb{E}\\!\\left[ \\left( y[t]-\\hat{y}_\\eta[t] \\right)^{2} \\right] \\\\[3pt] \\mathbb{E}\\!\\left[ -\\log L(\\eta,\\sigma_\\varepsilon^{2}) \\right] &= \\frac{1}{2\\sigma_\\varepsilon^{2}}J(\\eta) + \\text{cte} \\end{aligned}',
+        conn: 'Idéntico al de ARIMA: la extensión estacional cambia el modelo, no el criterio de error cuadrático de predicción ni su relación con la log-verosimilitud gaussiana de varianza fija.'
       },
+      {
+        heading: 'Aproximación empírica',
+        tex: '\\widehat{J}_{N_{\\mathrm{eff}}}(\\eta) = \\frac{1}{N_{\\mathrm{eff}}}\\sum_{t=t_0}^{T} \\left( y[t]-\\hat{y}_\\eta[t] \\right)^{2}',
+        conn: 'Promedio sobre las $N_{\\mathrm{eff}}=T-t_0+1$ observaciones efectivas: la diferenciación, el rezago estacional y los órdenes AR consumen observaciones iniciales. Las observaciones temporales **no** son i.i.d.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\widehat{\\eta} \\in \\arg\\min_{\\eta} \\widehat{J}_{N_{\\mathrm{eff}}}(\\eta)',
+        conn: 'También se estima habitualmente por **máxima verosimilitud**; con innovaciones gaussianas y varianza fija el óptimo coincide con el del criterio cuadrático, salvo constantes.'
+      },
+    ],
+    notes: '**Ejemplo reducido:** SARIMA$(1,0,0)(0,0,0)_s$ es un AR(1) con constante, $\\hat{y}[t]=c+\\phi_1 y[t-1]$; con $c=20$, $\\phi_1=0.9$ y $y[t-1]=140$ kWh, $\\hat{y}[t]=146$ kWh.',
+    refs: [
+      'Box, Jenkins, Reinsel, Ljung. Time Series Analysis: Forecasting and Control. Wiley, 5ª ed., 2015.',
+      'Hyndman & Athanasopoulos. Forecasting: Principles and Practice. OTexts, 3ª ed., 2021.'
+    ]
+  },
+  {
+    id: 'd3-sarima-forecast',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Modelos estadísticos · desarrollo',
+    title: 'SARIMA: historia, estimación y distribución de pronóstico',
+    bullets: [
+      '**Entrada:** historia observada hasta T, con ventana histórica de longitud L; **salida:** distribución o pronóstico para los siguientes $\\tau$ pasos.',
+      'La dinámica de rezagos y diferencias del SARIMA se conserva; el horizonte no cambia sus órdenes $p,d,q,P,D,Q,s$.',
+    ],
+    equations: [
+      {
+        heading: 'Pronóstico condicional multi-paso',
+        tex: '\\hat{\\mathbf{y}}_{T+1:T+\\tau}=\\mathbb{E}_{\\hat{\\psi}}[\\mathbf{y}_{T+1:T+\\tau}\\mid y_{1:T}], \\qquad \\mathbf{y}_{T+1:T+\\tau}\\in\\mathbb{R}^{\\tau}',
+        conn: 'La media condicional da una predicción puntual; bajo innovaciones gaussianas el modelo también induce una distribución predictiva y sus intervalos. La varianza predictiva crece, en general, con el horizonte.'
+      },
+      {
+        heading: 'Estimación por verosimilitud (ejemplo condicional)',
+        tex: '\\hat{\\psi}_{ML}=\\arg\\max_{\\psi}p_{\\psi}(y_{L+1:T}\\mid y_{1:L}), \\qquad \\varepsilon[t]\\overset{iid}{\\sim}\\mathcal{N}(0,\\sigma_{\\varepsilon}^{2})',
+        conn: 'El conjunto $\\psi$ reúne parámetros AR, MA, estacionales y de varianza. Se maximiza la verosimilitud definida por la estructura temporal y el supuesto de innovaciones; no se reemplaza por MSE salvo que se justifique la equivalencia para el caso gaussiano correspondiente.'
+      },
+      {
+        heading: 'Entrada histórica y objetivo empírico de parámetros',
+        tex: '\\mathbf{x}_n^{win}=(y[n-L+1],\\ldots,y[n])\\in\\mathbb{R}^{L}, \\qquad \\hat{\\psi}=\\arg\\min_{\\psi}\\left[-\\log p_{\\psi}(y_{L+1:T}\\mid y_{1:L})\\right]',
+        conn: 'L denota longitud de ventana histórica y no el horizonte; $\\tau$ cuenta pasos pronosticados. En la práctica, la verosimilitud puede incluir el tratamiento de condiciones iniciales y efectos estacionales.'
+      }
     ],
     refs: [
       'Box, Jenkins, Reinsel, Ljung. Time Series Analysis: Forecasting and Control. Wiley, 5ª ed., 2015.',
-      'Hyndman & Athanasopoulos. Forecasting: Principles and Practice. OTexts, 3ª ed., 2021.',
-    ],
+      'Hyndman & Athanasopoulos. Forecasting: Principles and Practice. OTexts, 3ª ed., 2021.'
+    ]
   },
   {
     id: 'd3-reg-ols',
@@ -689,23 +849,33 @@ export const SLIDES = [
     kicker: '5a · Matemática del Diagrama 3',
     title: 'E2 — Regresión lineal por mínimos cuadrados',
     bullets: [
-      '**Límites:** se rompe con colinealidad o con $d > N$; de esas dos fallas nacen ridge y lasso.',
+      '**Límites:** con colinealidad o con $P > N$ la solución puede no ser única; de esas dos condiciones nacen ridge y lasso.',
     ],
     equations: [
       {
-        heading: 'E2 · El modelo lineal',
-        tex: 'f_{\\theta}(\\mathbf{x}) = \\mathbf{x}^{\\top}\\theta, \\qquad \\mathbf{y} = \\mathbf{X}\\theta + \\boldsymbol{\\varepsilon}',
-        conn: '**Conexión:** el sesgo $\\theta_0$ va absorbido en $\\mathbf{x}_i$, así que $\\theta \\in \\mathbb{R}^{d}$; $\\mathbf{X} \\in \\mathbb{R}^{N \\times d}$ es la matriz de diseño: la minúscula $\\mathbf{x}_i$ es su fila $i$ (la muestra) y $\\mathbf{x}_j$ su columna $j$ (la variable); fuera de E2, $\\mathbf{X}$ es la ventana de entrada $\\tau \\times d$. Cada $\\theta_j$ es el **efecto marginal** de la variable $j$ con el resto fijo: de ahí la interpretabilidad del modelo lineal frente a las familias E3–E7.',
+        heading: 'E2 · Entrada y salida',
+        tex: '\\mathbf{x}_n \\in \\mathbb{R}^{P}, \\quad \\mathbf{X} \\in \\mathbb{R}^{N \\times P}; \\qquad \\mathbf{y}_n \\in \\mathbb{R}^{\\tau}, \\quad \\mathbf{Y} \\in \\mathbb{R}^{N \\times \\tau}',
+        conn: '$N$ observaciones, $P$ características y $\\tau$ salidas; con una sola respuesta $\\tau=1$ y se conserva $\\tau$ para la extensión multi-salida. El intercepto entra como columna de unos en $\\mathbf{X}$ o como sesgo explícito.'
       },
       {
-        heading: 'E2 · El criterio: residuo cuadrático mínimo',
-        tex: '\\hat{\\theta} = \\arg\\min_{\\theta} \\sum_{i=1}^{N} \\left( y_i - \\mathbf{x}_i^{\\top}\\theta \\right)^{2}',
-        conn: '**Conexión:** $i$ numera muestras y no es tiempo, por eso va como subíndice y nunca con corchetes. El criterio tampoco es arbitrario: es la pérdida $\\mathcal{L}_{MSE}$ sin normalizar, equivalente a $\\arg\\min_{\\theta} \\lVert \\mathbf{y}-\\mathbf{X}\\theta \\rVert_2^{2}$, la misma que el resto del deck usa para comparar predicciones. Y sobrevive intacto cuando se le añade la penalización de ridge y lasso en las tres slides siguientes: lo único que cambia es el término que se suma.',
+        heading: 'E2 · Modelo lineal',
+        tex: '\\hat{\\mathbf{y}}_n = \\mathbf{W}^{\\top}\\mathbf{x}_n, \\quad \\mathbf{W} \\in \\mathbb{R}^{P \\times \\tau}; \\qquad \\hat{\\mathbf{Y}} = \\mathbf{X}\\mathbf{W}',
+        conn: 'La primera expresión predice las $\\tau$ salidas de una observación; la segunda reúne las $N$ predicciones. Con $\\tau=1$ se obtiene la regresión lineal escalar.'
       },
       {
-        heading: 'E2 · La solución: ecuación normal',
-        tex: '\\hat{\\theta} = \\left( \\mathbf{X}^{\\top}\\mathbf{X} \\right)^{-1}\\mathbf{X}^{\\top}\\mathbf{y}',
-        conn: '**Conexión:** igualar a cero el gradiente $-2\\mathbf{X}^{\\top}(\\mathbf{y}-\\mathbf{X}\\theta)$ da la ecuación normal $\\mathbf{X}^{\\top}\\mathbf{X}\\hat{\\theta} = \\mathbf{X}^{\\top}\\mathbf{y}$; con ella el residuo $\\mathbf{e} = \\mathbf{y}-\\mathbf{X}\\hat{\\theta}$ queda ortogonal a las columnas ($\\mathbf{X}^{\\top}\\mathbf{e} = \\mathbf{0}$). Solución única sii $\\mathrm{rango}(\\mathbf{X}) = d$.',
+        heading: 'E2 · Función de costo: riesgo esperado y empírico',
+        tex: '\\begin{aligned} J(\\mathbf{W}) &= \\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\left[ \\lVert \\mathbf{y} - \\mathbf{W}^{\\top}\\mathbf{x} \\rVert_{2}^{2} \\right] \\\\[3pt] \\widehat{J}_{N}(\\mathbf{W}) &= \\frac{1}{N}\\sum_{n=1}^{N} \\lVert \\mathbf{y}_n - \\mathbf{W}^{\\top}\\mathbf{x}_n \\rVert_{2}^{2} = \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} \\end{aligned}',
+        conn: 'El costo poblacional promedia sobre la distribución de datos; la media sobre $N$ muestras i.i.d. lo aproxima empíricamente. Dividir por $N$ cambia la escala del costo, no su minimizador.'
+      },
+      {
+        heading: 'E2 · Problema de optimización',
+        tex: '\\begin{aligned} \\mathbf{W}^{*} &\\in \\arg\\min_{\\mathbf{W}} J(\\mathbf{W}) \\\\[3pt] \\widehat{\\mathbf{W}} &\\in \\arg\\min_{\\mathbf{W}} \\widehat{J}_{N}(\\mathbf{W}) \\end{aligned}',
+        conn: 'El óptimo poblacional es $\\mathbf{W}^{*}$; el estimador $\\widehat{\\mathbf{W}}$ resuelve su versión empírica. Se usa $\\in\\arg\\min$ porque con colinealidad puede haber más de un minimizador.'
+      },
+      {
+        heading: 'E2 · Solución por ecuaciones normales',
+        tex: '\\mathbf{X}^{\\top}\\mathbf{X}\\hat{\\mathbf{W}}=\\mathbf{X}^{\\top}\\mathbf{Y}; \\qquad \\hat{\\mathbf{W}}=\\mathbf{X}^{+}\\mathbf{Y}',
+        conn: 'Las ecuaciones normales caracterizan el mínimo. Con rango columna completo, $\\mathbf{X}^{+}=(\\mathbf{X}^{\\top}\\mathbf{X})^{-1}\\mathbf{X}^{\\top}$ y la solución es única; en general $\\mathbf{X}^{+}$ es la pseudoinversa de Moore–Penrose y el residuo es ortogonal a las columnas de $\\mathbf{X}$.'
       },
     ],
     notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: la solución cerrada sale de igualar a cero el gradiente y deja el residuo ortogonal a las columnas de $\\mathbf{X}$. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta lectura. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.',
@@ -716,30 +886,76 @@ export const SLIDES = [
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E2 — Máxima verosimilitud con ruido gaussiano',
+    title: 'E2 — Máxima verosimilitud (MLE)',
     bullets: [
-      'La verosimilitud convierte un supuesto sobre el **ruido** en un criterio de ajuste.',
-      'Añade dos cosas: la varianza $\\hat{\\sigma}^{2}$ —y con ella la inferencia— y la lectura bayesiana de ridge y lasso.',
-      'No valida la linealidad del modelo: sólo describe el error.',
+      'La verosimilitud convierte un supuesto sobre el **ruido** en un criterio de estimación: no añade un modelo nuevo.',
+      'Aporta $\\hat{\\sigma}^{2}$ —y con ella la inferencia— y la lectura bayesiana de ridge y lasso.',
     ],
     equations: [
       {
-        heading: 'E2 · El modelo generativo y la verosimilitud',
-        tex: 'p(\\mathbf{y}\\mid\\mathbf{X},\\theta,\\sigma^{2}) = \\left( 2\\pi\\sigma^{2} \\right)^{-N/2} \\exp\\!\\left( -\\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2}/(2\\sigma^{2}) \\right)',
-        conn: '**Conexión:** el modelo generativo es $y_i = \\mathbf{x}_i^{\\top}\\theta + \\varepsilon_i$ con $\\varepsilon_i \\sim \\mathcal{N}(0,\\sigma^{2})$ **iid**, donde $\\varepsilon_i$ es el ruido **por muestra** (subíndice porque $i$ no es tiempo): no confundirlo con la innovación $\\varepsilon[t]$ de SARIMA, que sí va con corchete. El paso de «iid» al producto es todo lo que hace la verosimilitud: multiplica las densidades porque las muestras son independientes. Y al ser lineal-gaussiano, la densidad conjunta queda en **forma cerrada** — sin optimización numérica, a diferencia de E3–E7.',
+        heading: 'E2 · Modelo probabilístico',
+        tex: '\\begin{aligned} \\mathbf{y}_n &= \\mathbf{W}^{\\top}\\mathbf{x}_n + \\boldsymbol{\\varepsilon}_n, \\qquad \\boldsymbol{\\varepsilon}_n \\overset{iid}{\\sim} \\mathcal{N}\\!\\left( \\mathbf{0}, \\sigma^{2}\\mathbf{I}_{\\tau} \\right) \\\\[3pt] \\mathbf{y}_n \\mid \\mathbf{x}_n, \\mathbf{W}, \\sigma^{2} &\\sim \\mathcal{N}\\!\\left( \\mathbf{W}^{\\top}\\mathbf{x}_n, \\sigma^{2}\\mathbf{I}_{\\tau} \\right) \\end{aligned}',
+        conn: 'Supuesto sobre el ruido, no un modelo nuevo: el predictor sigue siendo $\\hat{\\mathbf{y}}_n=\\mathbf{W}^{\\top}\\mathbf{x}_n$. Con $\\tau=1$ se recupera $\\varepsilon_n\\overset{iid}{\\sim}\\mathcal{N}(0,\\sigma^{2})$; la varianza común y la independencia entre muestras forman parte del supuesto. $\\boldsymbol{\\varepsilon}_n$ es error no observable, distinto del residuo $\\mathbf{e}=\\mathbf{Y}-\\mathbf{X}\\hat{\\mathbf{W}}$.'
       },
       {
-        heading: 'E2 · Log-verosimilitud negativa: el puente con mínimos cuadrados',
-        tex: '-\\log p(\\mathbf{y}\\mid\\mathbf{X},\\theta,\\sigma^{2}) = \\;\\propto\\; \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2}',
-        conn: '**Conexión:** con $\\sigma^{2}$ fijo, ni la constante $\\frac{N}{2}\\log(2\\pi\\sigma^{2})$ ni el factor $\\frac{1}{2\\sigma^{2}}$ afectan al óptimo sobre $\\theta$: queda una **proporcionalidad** con el residuo cuadrático. Por tanto **maximizar la verosimilitud es minimizar el error cuadrático**: el criterio de mínimos cuadrados de la slide anterior no era una elección estética, es lo que produce suponer ruido gaussiano iid. Con otra distribución la equivalencia se rompe y la pérdida óptima puede no ser la cuadrática.',
+        heading: 'E2 · Función de verosimilitud',
+        tex: '\\begin{aligned} L(\\mathbf{W},\\sigma^{2}) &= \\prod_{n=1}^{N} p\\!\\left( \\mathbf{y}_n \\mid \\mathbf{x}_n, \\mathbf{W}, \\sigma^{2} \\right) \\\\[3pt] &= \\left( 2\\pi\\sigma^{2} \\right)^{-N\\tau/2} \\exp\\!\\left[ -\\frac{1}{2\\sigma^{2}} \\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} \\right] \\end{aligned}',
+        conn: 'Las $N$ muestras son i.i.d., así que la verosimilitud conjunta es el producto de las densidades. Tomar logaritmo no cambia el maximizador: $\\log L = -\\frac{N\\tau}{2}\\log(2\\pi\\sigma^{2}) - \\frac{1}{2\\sigma^{2}}\\lVert \\mathbf{Y}-\\mathbf{X}\\mathbf{W}\\rVert_{F}^{2}$.'
       },
       {
-        heading: 'E2 · Los estimadores y su dispersión',
-        tex: '\\hat{\\theta} = \\left( \\mathbf{X}^{\\top}\\mathbf{X} \\right)^{-1}\\mathbf{X}^{\\top}\\mathbf{y}, \\qquad \\hat{\\sigma}^{2}_{MLE} = \\frac{1}{N}\\lVert \\mathbf{y} - \\mathbf{X}\\hat{\\theta} \\rVert_2^{2}',
-        conn: '**Conexión:** el estimador de $\\theta$ coincide con OLS, y con él llega la **matriz de covarianza** $\\mathrm{Var}(\\hat{\\theta}) = \\sigma^{2}\\left(\\mathbf{X}^{\\top}\\mathbf{X}\\right)^{-1}$: de ahí salen los errores estándar, los contrastes $t$ y los intervalos de confianza. Cuidado con $\\hat{\\sigma}^{2}_{MLE}$: divide por $N$ y es **sesgado**; el insesgado divide por $N-d$. La verosimilitud no mejora el estimador puntual, le añade la incertidumbre.',
+        heading: 'E2 · Problema de optimización',
+        tex: '\\begin{aligned} \\mathcal{R}(\\mathbf{W},\\sigma^{2}) &= -\\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\log p(\\mathbf{y}\\mid\\mathbf{x},\\mathbf{W},\\sigma^{2}) \\right] \\\\[3pt] \\widehat{\\mathcal{R}}_{N}(\\mathbf{W},\\sigma^{2}) &= -\\frac{1}{N}\\sum_{n=1}^{N} \\log p(\\mathbf{y}_n\\mid\\mathbf{x}_n,\\mathbf{W},\\sigma^{2}) \\\\[3pt] (\\widehat{\\mathbf{W}}, \\hat{\\sigma}^{2}) &\\in \\arg\\min_{\\mathbf{W},\\,\\sigma^{2}>0} \\widehat{\\mathcal{R}}_{N}(\\mathbf{W},\\sigma^{2}) \\end{aligned}',
+        conn: 'El riesgo logarítmico negativo poblacional se aproxima por su media muestral bajo muestras i.i.d.; minimizarlo equivale a maximizar $\\log L$. La varianza es un parámetro más del criterio: $\\hat{\\sigma}^{2}$ describe la dispersión del ruido.'
+      },
+      {
+        heading: 'E2 · Relación con mínimos cuadrados',
+        tex: '\\arg\\max_{\\mathbf{W}} \\log L(\\mathbf{W},\\sigma^{2}) = \\arg\\min_{\\mathbf{W}} \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} \\qquad (\\sigma^{2}\\ \\text{fija})',
+        conn: 'Con errores gaussianos independientes y homocedásticos, MLE y mínimos cuadrados comparten el estimador de $\\mathbf{W}$: MLE es un criterio, no un modelo nuevo. Añade $\\hat{\\sigma}^{2}$ —sesgado; el insesgado usa $(N-P)\\tau$ grados de libertad— para la inferencia.'
       },
     ],
     notes: '**Idea central:** MLE no cambia a $\\hat{\\theta}$; justifica el criterio, da varianza e inferencia, y abre el punto de vista bayesiano. **Puente:** un prior sobre $\\theta$ más esta verosimilitud produce un estimador MAP —gaussiano da ridge, Laplace da lasso—; regularizar es declarar una creencia previa.',
+  },
+  {
+    id: 'd3-reg-map',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Modelos probabilísticos · desarrollo',
+    title: 'E2 — Máximo a posteriori (MAP)',
+    bullets: [
+      'MAP es un criterio de estimación: incorpora información previa sobre los parámetros, no un modelo nuevo.',
+    ],
+    equations: [
+      {
+        heading: 'E2 · Modelo probabilístico y prior',
+        tex: '\\mathbf{y}_n \\mid \\mathbf{x}_n, \\mathbf{W}, \\sigma^{2} \\sim \\mathcal{N}\\!\\left( \\mathbf{W}^{\\top}\\mathbf{x}_n, \\sigma^{2}\\mathbf{I}_{\\tau} \\right), \\qquad \\mathbf{W} \\sim p(\\mathbf{W})',
+        conn: 'Se conserva la verosimilitud gaussiana de MLE y se añade un prior sobre los parámetros. $\\sigma^{2}$ es la varianza del ruido y $\\sigma_{0}^{2}$ la escala del prior: son dispersiones distintas.'
+      },
+      {
+        heading: 'E2 · Teorema de Bayes',
+        tex: 'p(\\mathbf{W}\\mid\\mathbf{X},\\mathbf{Y}) \\;\\propto\\; p(\\mathbf{Y}\\mid\\mathbf{X},\\mathbf{W})\\,p(\\mathbf{W})',
+        conn: 'La posterior combina verosimilitud y prior; la evidencia $p(\\mathbf{Y}\\mid\\mathbf{X})$ no depende de $\\mathbf{W}$ y desaparece al optimizar.'
+      },
+      {
+        heading: 'E2 · Función de costo: esperanza y aproximación empírica',
+        tex: '\\begin{aligned} J_{\\mathrm{MAP}}(\\mathbf{W}) &= \\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ -\\log p(\\mathbf{y}\\mid\\mathbf{x},\\mathbf{W}) \\right] + \\lambda\\,\\mathcal{R}(\\mathbf{W}) \\\\[3pt] \\widehat{J}_{\\mathrm{MAP},N}(\\mathbf{W}) &= -\\frac{1}{N}\\sum_{n=1}^{N}\\log p(\\mathbf{y}_n\\mid\\mathbf{x}_n,\\mathbf{W}) + \\lambda\\,\\mathcal{R}(\\mathbf{W}) \\end{aligned}',
+        conn: 'El término de datos es el riesgo logarítmico de MLE; el prior entra como penalización, salvo constantes que no dependen de $\\mathbf{W}$. Al promediar el término de datos por $N$, el prior también se divide: $\\lambda\\,\\mathcal{R}(\\mathbf{W}) \\equiv \\frac{1}{N}\\left[-\\log p(\\mathbf{W})\\right]$; con la suma de log-verosimilitudes ese $1/N$ no aparece.'
+      },
+      {
+        heading: 'E2 · Problema de optimización',
+        tex: '\\begin{aligned} \\widehat{\\mathbf{W}}_{\\mathrm{MAP}} &\\in \\arg\\max_{\\mathbf{W}} p(\\mathbf{W}\\mid\\mathbf{X},\\mathbf{Y}) \\\\[3pt] &= \\arg\\min_{\\mathbf{W}} \\left[ -\\log p(\\mathbf{Y}\\mid\\mathbf{X},\\mathbf{W}) - \\log p(\\mathbf{W}) \\right] \\end{aligned}',
+        conn: 'Maximizar la posterior equivale a minimizar su logaritmo negativo; MAP es la moda de la posterior, no su esperanza.'
+      },
+      {
+        heading: 'E2 · Conexión con Ridge y Lasso',
+        tex: '\\begin{aligned} p(\\mathbf{W}) \\propto e^{-\\lVert\\mathbf{W}\\rVert_{F}^{2}/(2\\sigma_{0}^{2})} &\\Rightarrow -\\log p(\\mathbf{W}) = \\frac{\\lVert\\mathbf{W}\\rVert_{F}^{2}}{2\\sigma_{0}^{2}} + C \\\\[3pt] p(\\mathbf{W}) \\propto e^{-\\lVert\\mathbf{W}\\rVert_{1}/b} &\\Rightarrow -\\log p(\\mathbf{W}) = \\frac{\\lVert\\mathbf{W}\\rVert_{1}}{b} + C \\end{aligned}',
+        conn: 'El prior gaussiano induce la penalización $\\ell_2$ de Ridge y el Laplace independiente la $\\ell_1$ de Lasso. Con el término de datos promediado, el peso escala como $\\lambda \\propto \\sigma^{2}/(N\\sigma_{0}^{2})$ y $\\lambda \\propto \\sigma^{2}/(Nb)$.'
+      },
+    ],
+    notes: '**Idea central:** MAP no reemplaza la verosimilitud: le añade una creencia previa sobre $\\mathbf{W}$. Regularizar es exactamente eso, y Ridge y Lasso se desarrollan en las páginas siguientes con esta lectura.',
+    refs: [
+      'Bishop, Pattern Recognition and Machine Learning, Springer, 2006, cap. 3; Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 3.'
+    ]
   },
   {
     id: 'd3-reg-ridge',
@@ -747,31 +963,39 @@ export const SLIDES = [
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E2 — Ridge: penalización cuadrática y contracción',
+    title: 'E2 — Ridge (L2): penalización cuadrática',
     bullets: [
-      'Añade un castigo cuadrático al ajuste: $\\ell_2$ contrae los coeficientes hacia cero **sin anularlos**.',
-      'Gana cuando $\\mathbf{X}^{\\top}\\mathbf{X}$ está mal condicionada: la penalización vuelve el problema invertible.',
-      'Es el estimador **MAP** con prior gaussiano sobre $\\theta$: regularizar es imponer una creencia previa.',
-      'El precio es sesgo deliberado, y $\\lambda_{reg}$ se elige por validación cruzada.',
+      'Penaliza la **magnitud** de los coeficientes: los contrae hacia cero **sin anularlos**.',
+      'Es el estimador **MAP** con prior gaussiano; con $\\lambda_{reg}>0$ el problema siempre es invertible.',
     ],
     equations: [
       {
-        heading: 'E2 · El objetivo penalizado',
-        tex: '\\mathcal{L}_{ridge}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2} + \\lambda_{reg} \\lVert \\theta \\rVert_2^{2}',
-        conn: '**Conexión:** $\\hat{\\theta}_{ridge} = \\arg\\min_{\\theta} \\mathcal{L}_{ridge}(\\theta)$. Aquí $\\lambda_{reg} \\ge 0$ es la fuerza de penalización y lleva símbolo propio: no es $\\lambda_{phys}$ (el peso físico de las puertas ① y ④) ni $\\lambda_{rk}$ (kernel ridge, familia F5). Con $\\lambda_{reg} = 0$ se recupera OLS exactamente. La forma es idéntica a la pérdida compuesta $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$: cambia qué se castiga, no la estructura. (Hoerl & Kennard, 1970.)',
+        heading: 'E2 · Modelo lineal (igual que OLS)',
+        tex: '\\hat{\\mathbf{Y}} = \\mathbf{X}\\mathbf{W}',
+        conn: 'Se conserva el modelo y el predictor de OLS: cambia el criterio de estimación, no el modelo. El intercepto se incorpora con una columna de unos en $\\mathbf{X}$ y habitualmente **no** se penaliza.'
       },
       {
-        heading: 'E2 · Solución cerrada y buen planteamiento',
-        tex: '\\hat{\\theta}_{ridge} = \\left( \\mathbf{X}^{\\top}\\mathbf{X} + \\lambda_{reg}\\mathbf{I} \\right)^{-1} \\mathbf{X}^{\\top}\\mathbf{y}, \\qquad \\mathbf{X}^{\\top}\\mathbf{X} + \\lambda_{reg}\\mathbf{I} \\succ 0',
-        conn: '**Conexión:** para todo $\\lambda_{reg} > 0$, sumar $\\lambda_{reg}\\mathbf{I}$ desplaza todos los autovalores a $\\mu_k + \\lambda_{reg} > 0$, así que la matriz es definida positiva —y por tanto invertible— **siempre**. El problema queda bien puesto incluso en los dos casos que dejan a OLS sin solución única: colinealidad perfecta y $d > N$.',
+        heading: 'E2 · Función de costo: riesgo esperado regularizado',
+        tex: 'J_{\\mathrm{Ridge}}(\\mathbf{W}) = \\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{y} - \\mathbf{W}^{\\top}\\mathbf{x} \\rVert_{2}^{2} \\right] + \\lambda_{reg}\\lVert \\mathbf{W} \\rVert_{F}^{2}',
+        conn: 'El primer término es el riesgo de mínimos cuadrados; el segundo penaliza la magnitud global de los coeficientes. Con $\\lambda_{reg}=0$ se recupera OLS.'
       },
       {
-        heading: 'E2 · Contracción espectral, vía la SVD de $\\mathbf{X}$',
-        tex: '\\hat{\\theta}_{ridge} = \\sum_k \\kappa_k\\, \\mathbf{v}_k \\mathbf{u}_k^{\\top} \\mathbf{y}, \\qquad \\mathbf{X} = \\mathbf{U}\\mathbf{S}\\mathbf{V}^{\\top}',
-        conn: '**Conexión:** con la SVD $\\mathbf{X} = \\mathbf{U}\\mathbf{S}\\mathbf{V}^{\\top}$, cada dirección singular $k$ se contrae por el factor $\\kappa_k = s_k^{2}/(s_k^{2}+\\lambda_{reg}) \\in (0,1)$, que **nunca llega a cero**. De ahí las dos propiedades que definen a ridge: ninguna dirección se elimina, y la contracción es más fuerte precisamente donde $s_k$ es pequeño, es decir, en las direcciones peor condicionadas. La suma de esos factores es el número efectivo de parámetros $\\mathrm{df}(\\lambda_{reg})$, que decrece con $\\lambda_{reg}$.',
+        heading: 'E2 · Aproximación empírica (muestras i.i.d.)',
+        tex: '\\widehat{J}_{\\mathrm{Ridge},N}(\\mathbf{W}) = \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} + \\lambda_{reg}\\lVert \\mathbf{W} \\rVert_{F}^{2}',
+        conn: 'Media muestral en notación matricial: $\\lVert\\mathbf{W}\\rVert_F^2=\\sum_{p,k}W_{pk}^{2}$ suma los cuadrados de **todos** los coeficientes.'
+      },
+      {
+        heading: 'E2 · Problema de optimización',
+        tex: '\\widehat{\\mathbf{W}}_{\\mathrm{Ridge}} \\in \\arg\\min_{\\mathbf{W}\\in\\mathbb{R}^{P\\times\\tau}} \\widehat{J}_{\\mathrm{Ridge},N}(\\mathbf{W})',
+        conn: 'El costo es estrictamente convexo para $\\lambda_{reg}>0$, así que el minimizador existe y es único.'
+      },
+      {
+        heading: 'E2 · Solución analítica exacta',
+        tex: '\\begin{aligned} \\mathbf{X}^{\\top}\\mathbf{X}\\widehat{\\mathbf{W}} + N\\lambda_{reg}\\widehat{\\mathbf{W}} &= \\mathbf{X}^{\\top}\\mathbf{Y} \\\\[3pt] \\widehat{\\mathbf{W}}_{\\mathrm{Ridge}} &= \\left( \\mathbf{X}^{\\top}\\mathbf{X} + N\\lambda_{reg}\\mathbf{I}_{P} \\right)^{-1}\\mathbf{X}^{\\top}\\mathbf{Y} \\end{aligned}',
+        conn: 'Con el costo promediado aparece el factor $N$; si el ajuste se escribe como suma de cuadrados, la forma habitual es $(\\mathbf{X}^{\\top}\\mathbf{X}+\\lambda_{reg}\\mathbf{I}_P)^{-1}\\mathbf{X}^{\\top}\\mathbf{Y}$. Sumar $\\lambda_{reg}\\mathbf{I}_P$ desplaza todos los autovalores a $\\mu_k+N\\lambda_{reg}>0$: la matriz es **siempre** invertible y los coeficientes quedan estables incluso con colinealidad, sin que ninguna dirección se anule.'
       },
     ],
-    notes: '**Sesgo–varianza:** OLS es insesgado y de varianza mínima dentro de su clase lineal; ridge acepta sesgo a cambio de menos varianza, y por eso gana cuando $\\mathbf{X}^{\\top}\\mathbf{X}$ está mal condicionada. **Lo que lo separa de lasso:** reparte el peso entre variables correlacionadas y nunca produce un modelo esparso: un coeficiente puede quedar diminuto, pero no exactamente cero.',
+    notes: '**Sesgo–varianza:** OLS es insesgado y de varianza mínima dentro de su clase lineal; ridge acepta sesgo a cambio de menos varianza, y gana cuando $\\mathbf{X}^{\\top}\\mathbf{X}$ está mal condicionada. **Frente a lasso:** reparte el peso entre variables correlacionadas y nunca produce un modelo esparso: un coeficiente puede quedar diminuto, pero no exactamente cero.'
   },
   {
     id: 'd3-reg-lasso',
@@ -779,33 +1003,42 @@ export const SLIDES = [
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E2 — Lasso: penalización en valor absoluto y selección',
+    title: 'E2 — Lasso (L1): penalización en valor absoluto',
     bullets: [
-      'Cambia la norma: $\\ell_1$ en vez de $\\ell_2$, y con ella la penalización deja de ser diferenciable en el origen.',
-      'Consecuencia: anula coeficientes **exactamente**. Selecciona variables, no sólo las contrae.',
-      'Es el estimador **MAP** con prior Laplace: la masa del prior en cero produce la esparsidad.',
+      'Favorece soluciones **dispersas**: puede llevar coeficientes **exactamente a cero**.',
+      'Es el estimador **MAP** con prior Laplace; $\\lambda_1$ controla la intensidad de la regularización.',
     ],
     equations: [
       {
-        heading: 'E2 · El objetivo penalizado y su forma restringida',
-        tex: '\\mathcal{L}_{lasso}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^{2} + \\lambda_{reg} \\lVert \\theta \\rVert_1',
-        conn: '**Conexión:** $\\hat{\\theta}_{lasso} = \\arg\\min_{\\theta} \\mathcal{L}_{lasso}(\\theta)$. Misma familia que ridge, con $\\lVert \\theta \\rVert_1 = \\sum_j |\\theta_j|$; pero la norma $\\ell_1$ no es diferenciable en el origen y por eso **no tiene solución cerrada general**. $\\lambda_{reg}$ tiene aquí una lectura distinta y directamente interpretable: es el umbral por debajo del cual un coeficiente se anula, no una simple contracción. Su forma restringida equivalente es $\\min \\lVert \\mathbf{y}-\\mathbf{X}\\theta \\rVert_2^{2}$ sujeto a $\\lVert \\theta \\rVert_1 \\le c$, con $c$ decreciente en $\\lambda_{reg}$. (Tibshirani, 1996.)',
+        heading: 'E2 · Modelo lineal (igual que OLS)',
+        tex: '\\hat{\\mathbf{Y}} = \\mathbf{X}\\mathbf{W}',
+        conn: 'Como en OLS y ridge: la diferencia está en el criterio de estimación, no en el modelo. El intercepto se suele dejar fuera de la penalización.'
       },
       {
-        heading: 'E2 · Condiciones KKT: por qué anula coeficientes',
-        tex: '\\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) = \\lambda_{reg}\\,\\mathrm{sign}(\\theta_j) \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) \\right| \\le \\lambda_{reg} \\ \\text{si } \\theta_j = 0',
-        conn: '**Conexión:** $j = 1 \\dots d$ indexa variables, ni muestras ni tiempo. Mientras la correlación de la variable $j$ con el residuo no supere $\\lambda_{reg}$ en valor absoluto, su coeficiente queda **exactamente** en cero — así es como $\\ell_1$ selecciona. Con diseño ortonormal el sistema se resuelve a mano y aparece el operador de umbral suave de la ecuación siguiente.',
+        heading: 'E2 · Función de costo: riesgo esperado regularizado',
+        tex: 'J_{\\mathrm{Lasso}}(\\mathbf{W}) = \\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{y} - \\mathbf{W}^{\\top}\\mathbf{x} \\rVert_{2}^{2} \\right] + \\lambda_{1}\\lVert \\mathbf{W} \\rVert_{1}',
+        conn: 'Cambia la norma: $\\lVert\\mathbf{W}\\rVert_{1}=\\sum_{p=1}^{P}\\sum_{k=1}^{\\tau}|W_{pk}|$ en lugar de la suma de cuadrados. No es diferenciable en cero, y de ahí la esparsidad.'
       },
       {
-        heading: 'E2 · Umbral suave (ortonormal) y geometría del politopo',
-        tex: '\\hat{\\theta}^{lasso}_j = \\mathrm{sign}(\\hat{\\theta}^{OLS}_j)\\max\\left( | \\hat{\\theta}^{OLS}_j | - \\lambda_{reg},\\ 0 \\right)',
-        conn: '**Conexión:** $(\\cdot)_{+} = \\max(\\cdot, 0)$; la forma cerrada vale con diseño ortonormal, y en general se resuelve por programación convexa (descenso por coordenadas, LARS). La restricción $\\ell_1$ es un politopo —un rombo en dos dimensiones— con **vértices sobre los ejes**, y el óptimo cae en un vértice: ahí la mayoría de las coordenadas son cero. La bola $\\ell_2$ de ridge, al ser lisa, sólo contrae. Ésa es toda la diferencia entre **seleccionar** y **repartir**.',
+        heading: 'E2 · Aproximación empírica (muestras i.i.d.)',
+        tex: '\\widehat{J}_{\\mathrm{Lasso},N}(\\mathbf{W}) = \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} + \\lambda_{1}\\lVert \\mathbf{W} \\rVert_{1}',
+        conn: 'Media muestral i.i.d. en notación matricial; la penalización es la suma de valores absolutos de los coeficientes. Con $\\lambda_1=0$ se recupera OLS.'
+      },
+      {
+        heading: 'E2 · Problema de optimización',
+        tex: '\\widehat{\\mathbf{W}}_{\\mathrm{Lasso}} \\in \\arg\\min_{\\mathbf{W}\\in\\mathbb{R}^{P\\times\\tau}} \\widehat{J}_{\\mathrm{Lasso},N}(\\mathbf{W})',
+        conn: 'Problema convexo pero no diferenciable en cero: no hay fórmula matricial cerrada general equivalente a las ecuaciones normales.'
+      },
+      {
+        heading: 'E2 · Solución: métodos numéricos',
+        tex: '\\arg\\min_{\\mathbf{W}} \\left\\{ \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} + \\lambda_{1}\\lVert \\mathbf{W} \\rVert_{1} \\right\\} \\quad \\text{(sin forma cerrada general)}',
+        conn: 'La penalización $\\ell_1$ no es diferenciable en cero, así que no existe una fórmula matricial cerrada general equivalente a las ecuaciones normales. Se resuelve por **programación convexa**: descenso por coordenadas, métodos proximales o LARS.'
       },
     ],
     refs: [
-      'Referencias: Hoerl & Kennard, Technometrics 12(1), 1970 (ridge) · Tibshirani, JRSS-B 58(1), 1996 (lasso) · Zou & Hastie, JRSS-B 67(2), 2005 (red elástica) · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 3.',
+      'Tibshirani, JRSS-B 58(1), 1996 (lasso) · Hoerl & Kennard, Technometrics 12(1), 1970 (ridge) · Zou & Hastie, JRSS-B 67(2), 2005 (red elástica) · Hastie, Tibshirani & Friedman, ESL, 2.ª ed., 2009, cap. 3.'
     ],
-    notes: '**Puente a la siguiente slide:** las cuatro comparten el esqueleto —ajuste más castigo— y ese esqueleto reaparece en $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$. **Límites de lasso:** con $d > N$ selecciona a lo sumo $N$ variables y ante variables correlacionadas elige de forma inestable; la red elástica ($\\ell_1 + \\ell_2$) corrige ambos casos.',
+    notes: '**Límites de lasso:** con $P>N$ selecciona a lo sumo $N$ variables y ante variables correlacionadas elige de forma inestable; la red elástica $(\\ell_1+\\ell_2)$ corrige ambos casos.'
   },
   {
     id: 'd3-reg-elastic',
@@ -813,33 +1046,118 @@ export const SLIDES = [
     tone: 'orange',
     kind: 'wide',
     kicker: '5a · Matemática del Diagrama 3',
-    title: 'E2 — ElasticNet: penalización $\\ell_1 + \\ell_2$',
+    title: 'E2 — Elastic Net: regularización $\\ell_1 + \\ell_2$',
     bullets: [
-      'Suma los dos castigos: la contracción de ridge y la selección de lasso.',
-      'Resuelve el punto débil de lasso: con variables correlacionadas deja de elegir una al azar.',
-      'No tiene forma cerrada: se resuelve por programación convexa.',
+      'Combina la **selección de variables** de Lasso con la **contracción** de Ridge.',
+      'Con variables correlacionadas reparte el peso entre ellas, en lugar de elegir una al azar.',
     ],
     equations: [
       {
-        heading: 'E2 · El objetivo penalizado',
-        tex: '\\mathcal{L}_{EN}(\\theta) = \\lVert \\mathbf{y} - \\mathbf{X}\\theta \\rVert_2^2 + \\lambda_{reg}\\left[ (1 - \\rho_{en})\\lVert \\theta \\rVert_2^2 + \\rho_{en}\\lVert \\theta \\rVert_1 \\right]',
-        conn: '**Conexión:** $\\hat{\\theta}_{EN} = \\arg\\min_{\\theta} \\mathcal{L}_{EN}(\\theta)$, con $\\rho_{en} \\in [0,1]$ la **mezcla** (local: no es el ancho espectral $\\rho_k$ del RFF) y $\\lambda_{reg}$ la fuerza única de la familia penalizada. Los extremos son conocidos: $\\rho_{en} = 0$ devuelve **ridge** exactamente y $\\rho_{en} = 1$ devuelve **lasso**. Es el regularizador del benchmark del proyecto, donde los rezagos están correlacionados de forma cíclica (24 h y 168 h). (Zou & Hastie, 2005.)',
+        heading: 'E2 · Modelo lineal (igual que OLS)',
+        tex: '\\hat{\\mathbf{y}}_n = \\mathbf{W}^{\\top}\\mathbf{x}_n, \\qquad \\hat{\\mathbf{Y}} = \\mathbf{X}\\mathbf{W}',
+        conn: 'Se conserva el modelo y el predictor de OLS: Elastic Net cambia el criterio de estimación, no el modelo. El intercepto se suele dejar fuera de la penalización.'
       },
       {
-        heading: 'E2 · Condiciones KKT: selección con agrupamiento',
-        tex: '\\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) = \\lambda_{reg}\\rho_{en}\\,\\mathrm{sign}(\\theta_j) + \\lambda_{reg}(1 - \\rho_{en})\\,\\theta_j \\ \\text{si } \\theta_j \\neq 0, \\qquad \\left| \\mathbf{x}_j^{\\top}\\left( \\mathbf{y} - \\mathbf{X}\\theta \\right) \\right| \\le \\lambda_{reg}\\rho_{en} \\ \\text{si } \\theta_j = 0',
-        conn: '**Conexión:** la condición de anulación es la de lasso —umbral $\\lambda_{reg}\\rho_{en}$— y el término $\\lambda_{reg}(1-\\rho_{en})\\theta_j$ es el que aporta ridge. Ese término **reparte** el peso entre variables correlacionadas: si dos rezagos son casi idénticos, sus coeficientes crecen juntos en vez de que uno anule al otro. Ésa es la corrección que el cierre de lasso anunciaba; la $\\ell_1$ no diferenciable en el origen impide una forma cerrada general.',
+        heading: 'E2 · Función de costo: riesgo esperado regularizado',
+        tex: '\\begin{aligned} J_{\\mathrm{EN}}(\\mathbf{W}) &= \\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{y} - \\mathbf{W}^{\\top}\\mathbf{x} \\rVert_{2}^{2} \\right] \\\\[3pt] &\\quad + \\lambda_1\\lVert \\mathbf{W} \\rVert_{1} + \\lambda_2\\lVert \\mathbf{W} \\rVert_{F}^{2} \\end{aligned}',
+        conn: 'El primer término mide el error esperado; $\\lambda_1\\lVert\\mathbf{W}\\rVert_1$ regulariza en L1 y $\\lambda_2\\lVert\\mathbf{W}\\rVert_F^2$ en L2. Con $\\lambda_1=0$ se recupera Ridge y con $\\lambda_2=0$, Lasso.'
       },
       {
-        heading: 'E2 · Umbral suave encogido (diseño ortonormal)',
-        tex: '\\hat{\\theta}^{EN}_j = \\frac{\\mathrm{sign}\\left( \\hat{\\theta}^{OLS}_j \\right)\\max\\left( \\left| \\hat{\\theta}^{OLS}_j \\right| - \\lambda_{reg}\\rho_{en},\\ 0 \\right)}{1 + \\lambda_{reg}(1 - \\rho_{en})}',
-        conn: '**Conexión:** con diseño ortonormal el operador se lee en dos pasos: **umbral** con $\\lambda_{reg}\\rho_{en}$ —igual que lasso, y de ahí la esparsidad— y **encogimiento** por el factor $1/(1+\\lambda_{reg}(1-\\rho_{en}))$ —la herencia de ridge—. El resultado interpola entre los dos estimadores: no anula tan agresivamente como lasso ni reparte tan suavemente como ridge.',
+        heading: 'E2 · Aproximación empírica (muestras i.i.d.)',
+        tex: '\\begin{aligned} \\widehat{J}_{\\mathrm{EN},N}(\\mathbf{W}) &= \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} \\\\[3pt] &\\quad + \\lambda_1\\lVert \\mathbf{W} \\rVert_{1} + \\lambda_2\\lVert \\mathbf{W} \\rVert_{F}^{2} \\end{aligned}',
+        conn: 'Media muestral en notación matricial, con pesos independientes $\\lambda_1\\ge0$ y $\\lambda_2\\ge0$ para cada penalización.'
+      },
+      {
+        heading: 'E2 · Problema de optimización',
+        tex: '\\widehat{\\mathbf{W}}_{\\mathrm{EN}} \\in \\arg\\min_{\\mathbf{W}\\in\\mathbb{R}^{P\\times\\tau}} \\widehat{J}_{\\mathrm{EN},N}(\\mathbf{W})',
+        conn: 'El objetivo es convexo; el término L1 lo vuelve no diferenciable en cero, y el minimizador puede tener coeficientes exactamente nulos.'
+      },
+      {
+        heading: 'E2 · Solución y propiedades',
+        tex: '\\lambda_1,\\lambda_2\\ge0, \\qquad \\lambda_2>0 \\;\\Rightarrow\\; \\widehat{J}_{\\mathrm{EN},N} \\text{ es estrictamente convexa}',
+        conn: 'No existe una solución matricial cerrada general análoga a la de Ridge: se resuelve con **descenso por coordenadas** o métodos proximales. Con $\\lambda_2>0$ la solución es única, y el término L2 reparte el peso entre variables correlacionadas en lugar de seleccionar una al azar.'
       },
     ],
     refs: [
-      'Referencias: Zou & Hastie, JRSS-B 67(2), 301–320, 2005 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 3.',
+      'Zou & Hastie, JRSS-B 67(2), 301–320, 2005 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 3.'
     ],
-    notes: '**Cierre del bloque penalizado:** OLS, MLE, ridge, lasso y ElasticNet comparten un solo esqueleto —ajuste más castigo— y se distinguen por el término que se suma; ese mismo esqueleto reaparece en $\\mathcal{L}_{MSE} + \\lambda_{phys}\\mathcal{L}_{phys}$ de la puerta ①. **En el protocolo:** Ridge y ElasticNet comparten el espacio de búsqueda de $\\lambda_{reg}$, con $\\rho_{en}$ como dimensión extra.',
+    notes: '**Cierre del bloque penalizado:** OLS, MLE, Ridge, Lasso y Elastic Net comparten el esqueleto —ajuste más castigo— y se distinguen por el término que se suma; ese mismo esqueleto reaparece en $\\mathcal{L}_{MSE}+\\lambda_{phys}\\mathcal{L}_{phys}$. **En el protocolo:** Ridge y Elastic Net comparten el espacio de búsqueda del peso de regularización, con la mezcla $\\rho_{en}$ como dimensión extra.'
+  },
+  {
+    id: 'd3-gpr-model',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — Gaussian Process Regression: modelo y optimización',
+    bullets: [
+      'GPR define una **distribución sobre funciones**, no sólo coeficientes como OLS.',
+      'Los **hiperparámetros** $\\theta$ —longitud de escala, amplitud y varianza del ruido— se estiman por verosimilitud marginal negativa.',
+    ],
+    equations: [
+      {
+        heading: 'Entrada y salida',
+        tex: '\\mathbf{x}_n\\in\\mathbb{R}^{P}, \\quad \\mathbf{X}\\in\\mathbb{R}^{N\\times P}, \\qquad y_n\\in\\mathbb{R}, \\qquad y_{\\ast}\\mid\\mathbf{X},\\mathbf{y}\\sim\\mathcal{N}\\!\\left( \\mu_{\\ast}, \\sigma_{\\ast}^{2} \\right)',
+        conn: 'Misma entrada tabular que la familia E2, pero la salida es una **distribución predictiva**: media $\\mu_{\\ast}$ y varianza $\\sigma_{\\ast}^{2}$ en el punto de prueba $\\mathbf{x}_{\\ast}$.'
+      },
+      {
+        heading: 'Modelo probabilístico',
+        tex: '\\begin{aligned} f &\\sim \\mathcal{GP}\\!\\left( m_\\theta, k_\\theta \\right), \\qquad y_n = f(\\mathbf{x}_n)+\\varepsilon_n, \\qquad \\varepsilon_n\\sim\\mathcal{N}(0,\\sigma_n^{2}) \\\\[3pt] \\mathbf{K}_\\theta &\\in\\mathbb{R}^{N\\times N}, \\quad (\\mathbf{K}_\\theta)_{ij}=k_\\theta(\\mathbf{x}_i,\\mathbf{x}_j), \\qquad \\mathbf{C}=\\mathbf{K}_\\theta+\\sigma_n^{2}\\mathbf{I}_N \\end{aligned}',
+        conn: 'La **media** $m_\\theta$ y el **kernel** $k_\\theta$ definen la familia de funciones; $\\mathbf{C}$ es la covarianza de las observaciones, con el ruido en la diagonal. Con $m_\\theta=0$ el modelo queda descrito por $k_\\theta$ y $\\sigma_n^{2}$.'
+      },
+      {
+        heading: 'Función de costo: riesgo predictivo esperado',
+        tex: 'J_{\\mathrm{GPR}}(\\theta)=\\mathbb{E}_{(\\mathbf{x}_{\\ast},y_{\\ast})}\\!\\left[ \\left( y_{\\ast}-\\mu_\\theta(\\mathbf{x}_{\\ast}) \\right)^{2} + \\sigma_\\theta^{2}(\\mathbf{x}_{\\ast}) \\right]',
+        conn: 'El criterio predictivo castiga el error cuadrático **y** la incertidumbre declarada; no es el criterio con el que se entrena. El entrenamiento no minimiza este riesgo, sino la verosimilitud marginal negativa del bloque siguiente.'
+      },
+      {
+        heading: 'Verosimilitud marginal negativa',
+        tex: '-\\log p_\\theta(\\mathbf{y}\\mid\\mathbf{X}) = \\underbrace{\\tfrac{1}{2}\\mathbf{y}^{\\top}\\mathbf{C}^{-1}\\mathbf{y}}_{\\text{ajuste}} + \\underbrace{\\tfrac{1}{2}\\log\\det\\mathbf{C}}_{\\text{complejidad}} + \\underbrace{\\tfrac{N}{2}\\log 2\\pi}_{\\text{cte}}',
+        conn: 'El primer término mide el **ajuste** a los datos, el segundo penaliza la **complejidad** a través del determinante de la covarianza —evita que una longitud de escala diminuta pase por ajustar todo— y el tercero es una **constante** que no depende de $\\theta$.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\widehat{\\theta}\\in\\arg\\min_{\\theta\\in\\Theta}\\left[ -\\log p_\\theta(\\mathbf{y}\\mid\\mathbf{X}) \\right]',
+        conn: 'Se estiman los hiperparámetros del kernel y del ruido por optimización derivable (gradiente) del criterio anterior, sin solución analítica cerrada. Los coeficientes no se estiman: se integran analíticamente.'
+      },
+    ],
+    notes: '**Diferencia con OLS:** OLS aprende un vector de coeficientes; GPR aprende una distribución sobre funciones y devuelve incertidumbre. **Relación con la física:** el kernel impone suavidad y estructura; un kernel físico convierte este modelo en la puerta ⑤ (kernel/GPR).',
+    refs: [
+      'Rasmussen & Williams. Gaussian Processes for Machine Learning. MIT Press, 2006, caps. 2 y 5.',
+      'Williams & Rasmussen. Gaussian Processes for Regression. NeurIPS, 1996.'
+    ]
+  },
+  {
+    id: 'd3-gpr-prediction',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'split',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E2 — GPR: predicción e incertidumbre',
+    bullets: [
+      'La media predictiva hereda la estructura del kernel; la varianza predictiva **depende de la distancia a los datos**.',
+      'Lejos de las observaciones la banda se ensancha y vuelve a la varianza previa $k_\\theta(\\mathbf{x}_{\\ast},\\mathbf{x}_{\\ast})$.',
+    ],
+    equations: [
+      {
+        heading: 'Media predictiva',
+        tex: '\\mu_{\\ast} = \\mathbf{k}_{\\ast}^{\\top}\\mathbf{C}^{-1}\\mathbf{y}, \\qquad \\mathbf{k}_{\\ast} = \\bigl[ k_\\theta(\\mathbf{x}_1,\\mathbf{x}_{\\ast}),\\ldots,k_\\theta(\\mathbf{x}_N,\\mathbf{x}_{\\ast}) \\bigr]^{\\top}',
+        conn: 'Es el mejor estimador puntual: combina las observaciones $\\mathbf{y}$ ponderadas por la similitud $\\mathbf{k}_{\\ast}$ entre el punto de prueba y cada observación.'
+      },
+      {
+        heading: 'Varianza predictiva',
+        tex: '\\sigma_{\\ast}^{2} = k_\\theta(\\mathbf{x}_{\\ast},\\mathbf{x}_{\\ast}) - \\mathbf{k}_{\\ast}^{\\top}\\mathbf{C}^{-1}\\mathbf{k}_{\\ast}, \\qquad \\tilde{\\sigma}_{\\ast}^{2} = \\sigma_{\\ast}^{2}+\\sigma_n^{2}',
+        conn: 'Mide la incertidumbre de la media; en un punto observado casi se anula. Para predecir una **observación** ruidosa se añade la varianza del ruido, $\\tilde{\\sigma}_{\\ast}^{2}$.'
+      },
+    ],
+    diagram: 'gpr',
+    diagramTitle: 'GPR · observaciones, media predictiva y banda ±2σ*',
+    legend: [
+      { color: '#2E86AB', label: 'Media predictiva $\\mu_{\\ast}$' },
+      { color: '#E67E22', label: 'Banda de incertidumbre $\\mu_{\\ast}\\pm 2\\sigma_{\\ast}$' },
+      { color: '#334155', label: 'Observaciones $y_n$' },
+    ],
+    notes: '**Lectura:** donde hay datos la banda se cierra; en los huecos se abre y la media vuelve a la previa. Esa varianza es la materia prima de la **UQ** y del criterio de adquisición en diseño experimental.'
   },
   {
     id: 'd3-reg-dlinear',
@@ -856,13 +1174,13 @@ export const SLIDES = [
     equations: [
       {
         heading: 'E2 · Descomposición de la ventana',
-        tex: 'x^{tend}_\\tau = \\frac{1}{p_{ma}} \\sum_{s = -\\lfloor (p_{ma}-1)/2 \\rfloor}^{\\lfloor p_{ma}/2 \\rfloor} x_{\\tau + s}, \\qquad x^{rem}_\\tau = x_\\tau - x^{tend}_\\tau',
+        tex: 'x^{tend}[t] = \\frac{1}{p_{ma}} \\sum_{s = -\\lfloor (p_{ma}-1)/2 \\rfloor}^{\\lfloor p_{ma}/2 \\rfloor} x[t+s], \\qquad x^{rem}[t] = x[t] - x^{tend}[t]',
         conn: '**Conexión:** $p_{ma}$ es el período del promedio móvil (24 h en el protocolo) y los bordes se rellenan. La descomposición es la clásica tendencia más resto: $x^{tend}$ captura el nivel lento y $x^{rem}$ la estacionalidad y el ruido de alta frecuencia. Símbolos locales: $p_{ma}$ (local: no es el momento $p(t)$ del MR), $x^{tend}$, $x^{rem}$, $\\mathbf{W}_{tend}$, $\\mathbf{W}_{rem}$.',
       },
       {
         heading: 'E2 · El modelo: dos proyecciones lineales',
-        tex: '\\hat{\\mathbf{y}} = \\mathbf{W}_{tend}\\,x^{tend} + \\mathbf{b}_{tend} + \\mathbf{W}_{rem}\\,x^{rem} + \\mathbf{b}_{rem}, \\qquad \\mathbf{W}_{tend}, \\mathbf{W}_{rem} \\in \\mathbb{R}^{h \\times \\tau}',
-        conn: '**Conexión:** cada componente tiene su propia proyección $\\mathbb{R}^{\\tau} \\to \\mathbb{R}^{h}$: la tendencia se proyecta a la tendencia del horizonte, el resto al resto, y luego se suman. Los pesos son bloques de $\\theta$ por S2: $\\theta = \\{\\mathbf{W}_{tend}, \\mathbf{b}_{tend}, \\mathbf{W}_{rem}, \\mathbf{b}_{rem}\\}$. **La ventaja no es la capacidad** —unos 18.7 k parámetros con $\\tau = h = 96$— sino el sesgo inductivo de separar tendencia de alta frecuencia.',
+        tex: '\\hat{\\mathbf{y}}_{n+1:n+\\tau} = \\mathbf{W}_{tend}\\,\\mathbf{x}^{tend}_n + \\mathbf{b}_{tend} + \\mathbf{W}_{rem}\\,\\mathbf{x}^{rem}_n + \\mathbf{b}_{rem}, \\qquad \\mathbf{W}_{tend}, \\mathbf{W}_{rem} \\in \\mathbb{R}^{\\tau \\times L}',
+        conn: '**Conexión:** cada componente de la ventana histórica de longitud L tiene su propia proyección $\\mathbb{R}^{L} \\to \\mathbb{R}^{\\tau}$. Los pesos son bloques de $\\theta$: $\\theta = \\{\\mathbf{W}_{tend}, \\mathbf{b}_{tend}, \\mathbf{W}_{rem}, \\mathbf{b}_{rem}\\}$. La tendencia y el resto se proyectan al mismo horizonte futuro y se suman.',
       },
       {
         heading: 'E2 · El ajuste: mínimos cuadrados directos',
@@ -883,9 +1201,9 @@ export const SLIDES = [
     kicker: '5a · Matemática del Diagrama 3',
     title: 'E2 — SVR: pérdida $\\varepsilon_{svr}$-insensible y margen máximo',
     bullets: [
+      '**Entrada/salida:** predictor sobre $\\mathbf{x}_n\\in\\mathbb{R}^{P}$; la formulación mostrada es escalar ($\\tau=1$). Para $\\tau>1$ se requiere estrategia multi-salida explícita.',
       'No penaliza todo error: sólo el que excede un tubo de tolerancia $\\varepsilon_{svr}$.',
-      'Margen y violaciones conviven en un problema **convexo** con óptimo único.',
-      'El dual sólo necesita productos internos: de ahí el **truco del kernel**.',
+      'Margen y violaciones conviven en un problema **convexo**; el dual sólo necesita productos internos, de ahí el truco del kernel.',
     ],
     equations: [
       {
@@ -917,8 +1235,9 @@ export const SLIDES = [
     kicker: '5a · Matemática del Diagrama 3',
     title: 'E2 — Árbol de regresión (CART): partición recursiva',
     bullets: [
-      'No supone linealidad: aproxima $f$ con **cajas** del espacio de entrada.',
-      'Dentro de cada hoja la predicción es constante: la media de sus muestras.',
+      '**Entrada:** características tabulares $\\mathbf{x}_n\\in\\mathbb{R}^{P}$; esta ecuación muestra una salida escalar ($\\tau=1$).',
+      'No supone linealidad: aproxima $f$ con **cajas** del espacio de entrada; dentro de cada hoja predice la media de sus muestras.',
+      'Para $\\tau>1$, la implementación debe especificar salida vectorial o un predictor por horizonte; no se presume equivalencia.',
       'Buscar el árbol óptimo es NP-duro; en la práctica se crece **greedy** y se poda.',
     ],
     equations: [
@@ -965,7 +1284,7 @@ export const SLIDES = [
     refs: [
       'Referencias: Breiman, Machine Learning 45(1), 5–32, 2001 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 15.',
     ],
-    notes: '**Bagging frente a boosting:** el bosque promedia en paralelo para bajar varianza; el boosting suma en serie para bajar sesgo. **Multi-salida:** el criterio del split puede sumar el RSS de las $h$ componentes, así que un solo bosque predice todo el horizonte. **Protocolo:** `n_estimators` en 200/500/1000 y `max_depth` en None/8/16/32; al ser estocástico, se reporta media y desviación sobre semillas.',
+    notes: '**Bagging frente a boosting:** el bosque promedia en paralelo para bajar varianza; el boosting suma en serie para bajar sesgo. **Multi-salida:** el criterio del split puede sumar el RSS de las $\\tau$ componentes, así que un solo bosque predice todo el horizonte. **Protocolo:** `n_estimators` en 200/500/1000 y `max_depth` en None/8/16/32; al ser estocástico, se reporta media y desviación sobre semillas.',
   },
   {
     id: 'd3-reg-boost',
@@ -975,6 +1294,7 @@ export const SLIDES = [
     kicker: '5a · Matemática del Diagrama 3',
     title: 'E2 — Gradient Boosting (XGBoost): ajustar el residuo',
     bullets: [
+      '**Salida:** la formulación escalar se interpreta por salida ($\\tau=1$); el caso multi-horizonte requiere una estrategia vectorial o modelos separados.',
       'Construye el modelo **aditivamente**: cada árbol corrige lo que dejó el anterior.',
       'Cada $T_m$ ajusta el **gradiente negativo** de la pérdida, no $y$ directamente.',
     ],
@@ -987,7 +1307,7 @@ export const SLIDES = [
       {
         heading: 'E2 · El objetivo del ensamble y su aproximación por iteración',
         tex: '\\mathcal{L}\\left( F \\right) = \\sum_{i=1}^{N} \\ell\\left( y_i, F(\\mathbf{x}_i) \\right) + \\sum_{m=1}^{M_{arb}} \\Omega\\left( T_m \\right), \\qquad \\mathrm{Obj}^{(m)} = \\sum_{i=1}^{N} \\left[ g_i\\, T_m(\\mathbf{x}_i) + \\frac{1}{2}\\,\\eta_i\\, T_m(\\mathbf{x}_i)^2 \\right] + \\Omega\\left( T_m \\right)',
-        conn: '**Conexión:** el objetivo global es pérdida de datos **más** castigo por complejidad de cada árbol. Como minimizar $\\mathcal{L}$ directamente es intratable, XGBoost expande $\\mathcal{L}$ a **segundo orden** alrededor de $F_{m-1}$ y minimiza $\\mathrm{Obj}^{(m)}$, con $g_i$ el gradiente y $\\eta_i$ la curvatura (segunda derivada) por muestra. Símbolo local: $\\eta_i$ **no** es el horizonte $h$.',
+        conn: '**Conexión:** el objetivo global es pérdida de datos **más** castigo por complejidad de cada árbol. Como minimizar $\\mathcal{L}$ directamente es intratable, XGBoost expande $\\mathcal{L}$ a **segundo orden** alrededor de $F_{m-1}$ y minimiza $\\mathrm{Obj}^{(m)}$, con $g_i$ el gradiente y $\\eta_i$ la curvatura (segunda derivada) por muestra. Símbolo local: $\\eta_i$ es curvatura por muestra y no representa el horizonte $\\tau$.',
       },
       {
         heading: 'E2 · Peso óptimo de hoja y ganancia del split',
@@ -999,6 +1319,46 @@ export const SLIDES = [
       'Referencias: Friedman, Annals of Statistics 29(5), 1189–1232, 2001 (gradient boosting) · Chen & Guestrin, KDD 2016 (XGBoost) · Ke et al., NeurIPS 2017 (LightGBM) · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 10.',
     ],
     notes: '**Contraste:** el bosque reduce **varianza** promediando en paralelo; el boosting reduce **sesgo** sumando en serie, y puede sobreajustar: lo controlan $\\nu$, $M_{arb}$ y la parada temprana. **LightGBM** cambia la implementación, no la matemática. **Sin extrapolación:** sus hojas son constantes.',
+  },
+  {
+    id: 'd3-mat-2-rnn',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Matemática del Diagrama 3',
+    title: 'E3 — RNN simple: estado oculto recurrente',
+    bullets: [
+      'Base de la familia recurrente: un solo estado oculto $\\mathbf{h}[t]$ que resume el pasado.',
+      'LSTM y GRU cambian la arquitectura interna de $f_\\theta$; la formulación del aprendizaje es la misma.',
+    ],
+    equations: [
+      {
+        heading: 'Entrada y salida de secuencias',
+        tex: '\\mathbf{X}_n = (\\mathbf{x}[1],\\ldots,\\mathbf{x}[T]) \\in \\mathbb{R}^{T\\times P}, \\qquad \\mathbf{y}_n \\in \\mathbb{R}^{\\tau}, \\qquad \\hat{\\mathbf{y}}_n = f_\\theta(\\mathbf{X}_n)',
+        conn: '$T$ es el número de pasos de la secuencia de entrada —la ventana de longitud $L$ de la página de forecasting—, $P$ las características por paso y $\\tau$ el horizonte. $t$ indexa el tiempo dentro de la secuencia y $n$ la muestra: no son el mismo eje.'
+      },
+      {
+        heading: 'Modelo recurrente: actualización del estado oculto',
+        tex: '\\begin{aligned} \\mathbf{h}[t] &= \\varphi\\!\\left( \\mathbf{W}_h\\mathbf{x}[t] + \\mathbf{U}_h\\mathbf{h}[t-1] + \\mathbf{b}_h \\right), \\qquad \\mathbf{h}[0]=\\mathbf{0} \\\\[3pt] \\hat{\\mathbf{y}}_n &= \\mathbf{W}_{out}\\mathbf{h}[T] + \\mathbf{b}_{out} = f_\\theta(\\mathbf{X}_n) \\end{aligned}',
+        conn: '$\\varphi$ es una no linealidad (por ejemplo $\\tanh$) y $\\mathbf{h}[t]\\in\\mathbb{R}^{H}$. Todos los pesos y sesgos entrenables se agrupan en $\\theta=\\{\\mathbf{W}_h,\\mathbf{U}_h,\\mathbf{b}_h,\\mathbf{W}_{out},\\mathbf{b}_{out}\\}$.'
+      },
+      {
+        heading: 'Función de costo: riesgo esperado',
+        tex: 'J(\\theta) = \\mathbb{E}_{(\\mathbf{X},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{y} - f_\\theta(\\mathbf{X}) \\rVert_{2}^{2} \\right]',
+        conn: 'Misma forma que en OLS y la familia penalizada: el objeto es el riesgo esperado del error de pronóstico.'
+      },
+      {
+        heading: 'Aproximación empírica',
+        tex: '\\widehat{J}_{N}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N} \\lVert \\mathbf{y}_n - f_\\theta(\\mathbf{X}_n) \\rVert_{2}^{2}',
+        conn: 'Promedio sobre las $N$ ventanas de entrenamiento. Si las ventanas se solapan **no son independientes**: el promedio es una aproximación práctica, no una esperanza bajo muestras i.i.d.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{N}(\\theta)',
+        conn: 'Se entrena con **BPTT** y optimizadores basados en gradientes (SGD, Adam); no existe solución analítica cerrada general. El gradiente atraviesa la recurrencia paso a paso, de ahí el desvanecimiento.'
+      },
+    ],
+    notes: '**Común a la familia:** RNN, LSTM y GRU comparten $J(\\theta)$, $\\widehat{J}_N(\\theta)$ y $\\hat{\\theta}\\in\\arg\\min$; sólo cambia la arquitectura interna de $f_\\theta$. Las páginas siguientes detallan esa parte interna y conservan esta misma formulación.'
   },
   {
     id: 'd3-mat-2-lstm',
@@ -1014,16 +1374,28 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Compuertas de olvido y entrada',
-        tex: '\\mathbf{f}[t] = \\sigma(\\mathbf{W}_f \\mathbf{x}[t] + \\mathbf{U}_f \\mathbf{h}[t-1] + \\mathbf{b}_f), \\qquad \\mathbf{i}[t] = \\sigma(\\mathbf{W}_i \\mathbf{x}[t] + \\mathbf{U}_i \\mathbf{h}[t-1] + \\mathbf{b}_i)',
+        tex: '\\begin{aligned} \\mathbf{f}[t] &= \\sigma\\!\\left( \\mathbf{W}_f\\mathbf{x}[t] + \\mathbf{U}_f\\mathbf{h}[t-1] + \\mathbf{b}_f \\right) \\\\[3pt] \\mathbf{i}[t] &= \\sigma\\!\\left( \\mathbf{W}_i\\mathbf{x}[t] + \\mathbf{U}_i\\mathbf{h}[t-1] + \\mathbf{b}_i \\right) \\end{aligned}',
+        conn: 'Cada compuerta evalúa la entrada actual y el estado oculto anterior; $\\sigma$ es la sigmoide. $\\mathbf{x}[t]\\in\\mathbb{R}^{P}$ es el paso $t$ de la secuencia $\\mathbf{X}_n$.'
       },
       {
-        heading: 'Candidato y actualización de memoria',
-        tex: '\\tilde{\\mathbf{c}}[t] = \\tanh(\\mathbf{W}_c \\mathbf{x}[t] + \\mathbf{U}_c \\mathbf{h}[t-1] + \\mathbf{b}_c), \\qquad \\mathbf{c}[t] = \\mathbf{f}[t] \\odot \\mathbf{c}[t-1] + \\mathbf{i}[t] \\odot \\tilde{\\mathbf{c}}[t]',
+        heading: 'Candidato y actualización de la memoria celular',
+        tex: '\\begin{aligned} \\tilde{\\mathbf{c}}[t] &= \\tanh\\!\\left( \\mathbf{W}_c\\mathbf{x}[t] + \\mathbf{U}_c\\mathbf{h}[t-1] + \\mathbf{b}_c \\right) \\\\[3pt] \\mathbf{c}[t] &= \\mathbf{f}[t] \\odot \\mathbf{c}[t-1] + \\mathbf{i}[t] \\odot \\tilde{\\mathbf{c}}[t] \\end{aligned}',
+        conn: 'La ruta de memoria $\\mathbf{c}[t]$ conserva información a través de muchos pasos: la compuerta de olvido decide qué se descarta y la de entrada qué se incorpora. $\\odot$ es el producto elemento a elemento.'
       },
       {
         heading: 'Compuerta de salida y estado expuesto',
-        tex: '\\mathbf{o}[t] = \\sigma(\\mathbf{W}_o \\mathbf{x}[t] + \\mathbf{U}_o \\mathbf{h}[t-1] + \\mathbf{b}_o), \\qquad \\mathbf{h}[t] = \\mathbf{o}[t] \\odot \\tanh(\\mathbf{c}[t])',
-        conn: 'Cada compuerta usa la entrada actual y el estado oculto anterior; $\\odot$ es el producto elemento a elemento. La ruta de memoria $\\mathbf{c}[t]$ permite conservar información a través de muchos pasos.',
+        tex: '\\mathbf{o}[t] = \\sigma\\!\\left( \\mathbf{W}_o\\mathbf{x}[t] + \\mathbf{U}_o\\mathbf{h}[t-1] + \\mathbf{b}_o \\right), \\qquad \\mathbf{h}[t] = \\mathbf{o}[t] \\odot \\tanh\\!\\left( \\mathbf{c}[t] \\right)',
+        conn: 'El estado expuesto $\\mathbf{h}[t]$ es lo que lee la capa de salida: $\\hat{\\mathbf{y}}_n=\\mathbf{W}_{out}\\mathbf{h}[T]+\\mathbf{b}_{out}$, igual que en la página de la RNN.'
+      },
+      {
+        heading: 'Función de costo y aproximación empírica',
+        tex: '\\begin{aligned} J(\\theta) &= \\mathbb{E}_{(\\mathbf{X},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{y} - f_\\theta(\\mathbf{X}) \\rVert_{2}^{2} \\right] \\\\[3pt] \\widehat{J}_{N}(\\theta) &= \\frac{1}{N}\\sum_{n=1}^{N} \\lVert \\mathbf{y}_n - f_\\theta(\\mathbf{X}_n) \\rVert_{2}^{2} \\end{aligned}',
+        conn: 'Mismo riesgo que en la RNN; $\\theta$ reúne ahora $\\mathbf{W}_{(\\cdot)},\\mathbf{U}_{(\\cdot)},\\mathbf{b}_{(\\cdot)}$ de las tres compuertas y el candidato. Con ventanas solapadas el promedio no es una esperanza bajo muestras i.i.d.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{N}(\\theta)',
+        conn: 'Entrenamiento por **BPTT** con optimizadores basados en gradientes. La memoria celular atenúa el desvanecimiento del gradiente, pero no hay solución analítica cerrada general.'
       },
     ],
   },
@@ -1041,19 +1413,62 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Compuertas de actualización y reinicio',
-        tex: '\\mathbf{u}[t] = \\sigma(\\mathbf{W}_u \\mathbf{x}[t] + \\mathbf{U}_u \\mathbf{h}[t-1] + \\mathbf{b}_u), \\qquad \\mathbf{r}[t] = \\sigma(\\mathbf{W}_r \\mathbf{x}[t] + \\mathbf{U}_r \\mathbf{h}[t-1] + \\mathbf{b}_r)',
+        tex: '\\begin{aligned} \\mathbf{u}[t] &= \\sigma\\!\\left( \\mathbf{W}_u\\mathbf{x}[t] + \\mathbf{U}_u\\mathbf{h}[t-1] + \\mathbf{b}_u \\right) \\\\[3pt] \\mathbf{r}[t] &= \\sigma\\!\\left( \\mathbf{W}_r\\mathbf{x}[t] + \\mathbf{U}_r\\mathbf{h}[t-1] + \\mathbf{b}_r \\right) \\end{aligned}',
+        conn: 'La compuerta de actualización $\\mathbf{u}[t]$ decide cuánto estado nuevo entra; la de reinicio $\\mathbf{r}[t]$ decide cuánto pasado se usa para proponerlo. La notación $\\mathbf{u}[t]$ evita la colisión con el embedding espectral.'
       },
       {
-        heading: 'Candidato: reinicio del estado previo',
-        tex: '\\tilde{\\mathbf{h}}[t] = \\tanh\\!\\bigl(\\mathbf{W}_h \\mathbf{x}[t] + \\mathbf{U}_h (\\mathbf{r}[t] \\odot \\mathbf{h}[t-1]) + \\mathbf{b}_h\\bigr)',
+        heading: 'Estado candidato',
+        tex: '\\tilde{\\mathbf{h}}[t] = \\tanh\\!\\left( \\mathbf{W}_h\\mathbf{x}[t] + \\mathbf{U}_h\\!\\left( \\mathbf{r}[t] \\odot \\mathbf{h}[t-1] \\right) + \\mathbf{b}_h \\right)',
+        conn: 'El reinicio modula el estado previo **antes** de combinarlo con la entrada actual: es la diferencia de fondo con la LSTM, que usa una memoria celular aparte.'
       },
       {
-        heading: 'Mezcla del estado anterior y el candidato',
+        heading: 'Actualización del estado oculto',
         tex: '\\mathbf{h}[t] = (1 - \\mathbf{u}[t]) \\odot \\mathbf{h}[t-1] + \\mathbf{u}[t] \\odot \\tilde{\\mathbf{h}}[t]',
-        conn: 'Con la convención de esta diapositiva, $\\mathbf{u}[t]$ pondera el candidato nuevo y $1-\\mathbf{u}[t]$ conserva el estado anterior. El backbone recurrente aplica esta celda paso a paso a la secuencia.',
+        conn: 'Con la convención de esta diapositiva, $\\mathbf{u}[t]$ pondera el candidato y $1-\\mathbf{u}[t]$ conserva el estado anterior; algunas referencias intercambian los factores. La capa de salida es la misma de la RNN: $\\hat{\\mathbf{y}}_n=\\mathbf{W}_{out}\\mathbf{h}[T]+\\mathbf{b}_{out}$.'
+      },
+      {
+        heading: 'Función de costo y aproximación empírica',
+        tex: '\\begin{aligned} J(\\theta) &= \\mathbb{E}_{(\\mathbf{X},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{y} - f_\\theta(\\mathbf{X}) \\rVert_{2}^{2} \\right] \\\\[3pt] \\widehat{J}_{N}(\\theta) &= \\frac{1}{N}\\sum_{n=1}^{N} \\lVert \\mathbf{y}_n - f_\\theta(\\mathbf{X}_n) \\rVert_{2}^{2} \\end{aligned}',
+        conn: 'Idéntico al de la LSTM: $\\theta$ contiene los pesos y sesgos de las dos compuertas, del candidato y de la salida. Con ventanas solapadas el promedio no es una esperanza bajo muestras i.i.d.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{N}(\\theta)',
+        conn: 'También por **BPTT** con optimizadores basados en gradientes: menos parámetros que la LSTM, misma ausencia de solución cerrada.'
       },
     ],
   },
+  {
+    id: 'd3-sequence-learning',
+    module: 'd3',
+    tone: 'orange',
+    kind: 'wide',
+    kicker: '5a · Aprendizaje secuencial · formulación común',
+    title: 'RNN, LSTM y GRU: de la ventana histórica al horizonte',
+    bullets: [
+      'La ventana $L=T$ fija cuántos pasos pasados recibe la red; el horizonte $\\tau$ fija cuántas salidas futuras produce. No son el mismo eje.',
+      'Las tres arquitecturas comparten entrada, salida, costo y optimización: sólo cambia la celda interna de $f_\\theta$.',
+    ],
+    equations: [
+      {
+        heading: 'Entrada secuencial y estado recurrente',
+        tex: '\\mathbf{X}^{win}_n=(\\mathbf{x}[n-L+1],\\ldots,\\mathbf{x}[n])\\in\\mathbb{R}^{T\\times P}, \\quad T=L, \\qquad \\mathbf{h}[t]=g_\\theta(\\mathbf{x}[t],\\mathbf{h}[t-1])',
+        conn: '$L$ es la longitud de ventana, $T$ el número de pasos de la secuencia de entrada y $H$ la dimensión del estado oculto; ninguno representa el horizonte $\\tau$. Las compuertas de LSTM y GRU definen el operador $g_\\theta$.'
+      },
+      {
+        heading: 'Lectura del estado y salida multi-paso',
+        tex: '\\hat{\\mathbf{Y}}_{n+1:n+\\tau}=\\operatorname{reshape}_{\\tau\\times Q}(\\mathbf{W}_{out}\\mathbf{h}[n]+\\mathbf{b}_{out})\\in\\mathbb{R}^{\\tau\\times Q}',
+        conn: 'La cabeza de salida puede ser una proyección directa o un decodificador autoregresivo; aquí se muestra la proyección directa, con $\\mathbf{W}_{out}\\in\\mathbb{R}^{(\\tau Q)\\times H}$. $Q$ es el número de variables objetivo y $H$ la dimensión del estado oculto; para una variable, $Q=1$.'
+      },
+      {
+        heading: 'Comparación: misma formulación, distinta celda',
+        tex: 'J(\\theta)=\\mathbb{E}\\!\\left[\\lVert\\mathbf{y}-f_\\theta(\\mathbf{X})\\rVert_2^2\\right], \\qquad \\hat{\\theta}\\in\\arg\\min_\\theta\\widehat{J}_N(\\theta), \\qquad f_\\theta\\in\\{\\text{RNN},\\text{LSTM},\\text{GRU}\\}',
+        conn: 'Las tres comparten riesgo, promedio empírico y optimización; la diferencia está dentro de la celda: un estado recurrente, tres compuertas con celda, o dos compuertas. $\\theta$ reúne los pesos y sesgos de cada celda y de $\\mathbf{W}_{out}$, más los de cada capa cuando hay $L_{cap}$ capas.'
+      }
+    ],
+    notes: '**Común a la familia:** RNN, LSTM y GRU comparten $J(\\theta)$, $\\widehat{J}_N(\\theta)$ y $\\hat{\\theta}\\in\\arg\\min$; se entrenan por **BPTT** con optimizadores de gradiente y no tienen solución analítica cerrada. Con ventanas solapadas, el promedio no es una esperanza bajo muestras i.i.d.'
+  },
+
   {
     id: 'd3-mat-3',
     module: 'd3',
@@ -1092,7 +1507,7 @@ export const SLIDES = [
       },
       {
         heading: 'E7 · Distribución predictiva pre-entrenada (zero/few-shot)',
-        tex: 'p_\\theta\\bigl(y[\\tau+1], \\dots, y[\\tau+h] \\mid \\mathbf{X}\\bigr) \\quad \\text{con } \\theta \\text{ fijado en pre-entrenamiento masivo externo}',
+        tex: 'p_\\theta\\bigl(\\mathbf{y}_{T+1:T+\\tau} \\mid \\mathbf{X}^{win}_{T-L+1:T}\\bigr) \\quad \\text{con } \\theta \\text{ fijado en pre-entrenamiento masivo externo}',
         conn:
           '**Conexión:** "zero/few-shot" ↔ evaluar $p_\\theta$ sin re-entrenar $\\theta$ (Chronos tokeniza valores; TimesFM parches; Moirai any-variate).',
       },
@@ -1169,12 +1584,12 @@ export const SLIDES = [
     kicker: '5b · Matemática del Diagrama 4',
     title: 'Patrón C — Demanda: física como restricción de forma',
     bullets: [
-      'No hay EDO del activo: la física entra como **regularizadores cualitativos** sobre $\\hat{\\mathbf{y}} \\in \\mathbb{R}^h$ (puerta ①, o ② si se cablea).',
+      'No hay EDO del activo: la física entra como **regularizadores cualitativos** sobre $\\hat{\\mathbf{y}} \\in \\mathbb{R}^{\\tau}$ (puerta ①, o ② si se cablea).',
     ],
     equations: [
       {
         heading: 'Penalización de rampas y de parabolicidad (ERCOT 2026)',
-        tex: '\\mathcal{L}_{rampa} = \\sum_{j=1}^{h-1} \\max\\!\\bigl(0,\\; \\left| \\hat{y}[j+1] - \\hat{y}[j] \\right| - r_{max}\\bigr), \\qquad \\mathcal{L}_{par} = \\sum_{j=2}^{h-1} \\left( \\hat{y}[j-1] - 2\\hat{y}[j] + \\hat{y}[j+1] \\right)^2',
+        tex: '\\mathcal{L}_{rampa} = \\sum_{j=1}^{\\tau-1} \\max\\!\\bigl(0,\\; \\left| \\hat{y}[j+1] - \\hat{y}[j] \\right| - r_{max}\\bigr), \\qquad \\mathcal{L}_{par} = \\sum_{j=2}^{\\tau-1} \\left( \\hat{y}[j-1] - 2\\hat{y}[j] + \\hat{y}[j+1] \\right)^2',
         conn:
           '**Conexión:** "loss parabólica/ramp" ↔ $\\mathcal{L}_{par}$, $\\mathcal{L}_{rampa}$; monotonía para chillers (Tang 2026): $\\frac{\\partial \\hat{y}}{\\partial x_m} \\ge 0$ penalizada con $\\mathcal{L}_{mono}$.',
       },
@@ -1202,9 +1617,9 @@ export const SLIDES = [
       },
       {
         heading: 'D · Residuo físico y pérdida compuesta',
-        tex: '\\mathcal{R}_{phys}(t) = C_{in} \\frac{d \\hat{T}_{in}(t)}{dt} - \\left[ \\frac{T_{out}(t) - \\hat{T}_{in}(t)}{R_{ea}} + \\frac{T_m(t) - \\hat{T}_{in}(t)}{R_{in}} + A_w I_{sol}(t) + \\dot{Q}_{int}(t) + P_{HVAC}(t) \\right]',
+        tex: 'r_\\theta(t)= C_{in} \\frac{d f_\\theta(t)}{dt} - \\left[ \\frac{T_{out}(t) - f_\\theta(t)}{R_{ea}} + \\frac{T_m(t) - f_\\theta(t)}{R_{in}} + A_w I_{sol}(t) + \\dot{Q}_{int}(t) + P_{HVAC}(t) \\right]',
         conn:
-          'La pérdida $\\mathcal{L}_{phys} = \\frac{1}{\\tilde{N} \\cdot h} \\sum_{n,j} \\lVert \\mathcal{R}_{phys}(t_{n,j}; \\Theta) \\rVert^2$ con $\\mathcal{L}_{total}$ estándar (puerta ①); sin evaluación multi-horizonte en la literatura ("horizontes cortos").',
+          'La pérdida física es $\\mathbb{E}_{t\\sim p_{phys}}[r_\\theta(t)^2]$; su aproximación empírica promedia los residuos en puntos de colocación y pasos del horizonte $\\tau$. La función objetivo compuesta añade esta penalización al riesgo de datos con peso $\\lambda_{phys}$. Las derivadas son respecto al tiempo de la salida de la red.'
       },
       {
         heading: 'E · Rama física + rama residual + contexto (PhysEmbedFormer)',
