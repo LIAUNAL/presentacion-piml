@@ -14,7 +14,7 @@ const nodes = [
   {
     id: 'e2',
     type: 'deck',
-    data: { color: '#95A5A6', title: 'E2 · ML clásico', lines: ['SVR · RF · XGBoost · ANFIS'] },
+    data: { color: '#95A5A6', title: 'E2 · ML clásico', lines: ['GP/GPR · SVR · RF · XGBoost · ANFIS'] },
     position: { x: 0, y: 170 },
   },
   {
