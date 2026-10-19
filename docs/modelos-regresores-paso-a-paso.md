@@ -1823,16 +1823,19 @@ mirar** y **repetir la cuenta del ejemplo**:
 | Slide del deck | Sección de este documento |
 | --- | --- |
 | `d3-reg-ols` — regresión lineal por mínimos cuadrados | §1.1, §1.3, §3.1 |
-| `d3-reg-mle` — máxima verosimilitud con ruido gaussiano | §3.2 |
-| `d3-reg-ridge` — penalización cuadrática y contracción | §4.0, §4.1 |
-| `d3-reg-lasso` — penalización en valor absoluto y selección | §4.2 |
-| `d3-reg-elastic` — penalización $\ell_1 + \ell_2$ | §4.3 |
+| `d3-reg-mle` — máxima verosimilitud (MLE) | §3.2 |
+| `d3-reg-ridge` — Ridge (L2): penalización cuadrática | §4.0, §4.1 |
+| `d3-reg-lasso` — Lasso (L1): penalización en valor absoluto | §4.2 |
+| `d3-reg-elastic` — Elastic Net: regularización $\ell_1 + \ell_2$ | §4.3 |
 | `d3-reg-dlinear` — descomposición lineal y baseline | §4.4 |
+| `d3-gpr-model` — GPR: modelo y optimización | §5.7 (truco del kernel) |
+| `d3-gpr-prediction` — GPR: predicción e incertidumbre | §5.7 (truco del kernel) |
 | `d3-reg-svr` — pérdida insensible y margen máximo | §5 |
 | `d3-reg-tree` — partición recursiva (CART) | §6.1 |
 | `d3-reg-forest` — bagging sobre árboles | §6.2 |
 | `d3-reg-boost` — gradient boosting (XGBoost) | §6.3 |
-| `d3-mat-1` — SARIMA (E1) | fuera del alcance de este documento (familia E1) |
+| `d3-mat-1-arima` — ARIMA (E1) | fuera del alcance de este documento (familia E1) |
+| `d3-mat-1` — SARIMA: extensión estacional (E1) | fuera del alcance de este documento (familia E1) |
 
 ---
 
