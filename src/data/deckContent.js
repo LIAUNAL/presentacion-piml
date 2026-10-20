@@ -215,6 +215,43 @@ export const SLIDES = [
     ],
   },
   {
+    id: 'd1-puerta2-deriv',
+    module: 'd1',
+    tone: 'purple',
+    kind: 'door',
+    kicker: '3 · Puerta ② · Fundamentación física',
+    title: 'Puerta ② — Del Hamiltoniano a la dinámica del masa-resorte',
+    lema: 'De dónde salen las ecuaciones que la puerta ② impone como estructura: cuatro pasos desde la energía hasta la EDO del MR ($c = 0$).',
+    equations: [
+      {
+        heading: 'Paso 1 · Construcción del Hamiltoniano',
+        tex: '\\mathbf{z}(t)=\\begin{bmatrix} q(t) \\\\ p(t) \\end{bmatrix}, \\quad p(t)=m\\,\\nabla_t q(t), \\qquad T=\\frac{p(t)^{2}}{2m}, \\quad V=\\frac{k\\,q(t)^{2}}{2} \\;\\Rightarrow\\; H=T+V',
+        conn: 'El Hamiltoniano es la **energía total** del sistema conservativo: cinética más potencial del resorte. $\\mathbf{z}(t)=(q(t),p(t))^{\\top}$ es el estado canónico; $\\nabla_t$ ya quedó definida en la página del sistema.'
+      },
+      {
+        heading: 'Paso 2 · Ecuaciones de Hamilton',
+        tex: '\\nabla_t q(t) = \\partial_{p}H = \\frac{p(t)}{m}, \\qquad \\nabla_t p(t) = -\\partial_{q}H = -k\\,q(t) \\qquad\\Longleftrightarrow\\qquad \\nabla_t\\mathbf{z}(t) = \\mathbb{J}_s\\,\\nabla_{\\mathbf{z}}H(\\mathbf{z}(t))',
+        conn: 'Con la matriz simpléctica $\\mathbb{J}_s = \\begin{bmatrix} 0 & 1 \\\\ -1 & 0 \\end{bmatrix}$, la dinámica es $\\nabla_t\\mathbf{z}=\\mathbb{J}_s\\nabla_{\\mathbf{z}}H$: el gradiente del Hamiltoniano respecto al estado da la regla de evolución.'
+      },
+      {
+        heading: 'Paso 3 · Recuperación de la ecuación física',
+        tex: 'p(t)=m\\,\\nabla_t q(t) \\;\\Rightarrow\\; \\nabla_t p(t)=m\\,\\nabla_t^{2}q(t) \\;\\Rightarrow\\; m\\,\\nabla_t^{2}q(t)+k\\,q(t)=0',
+        conn: 'Sustituyendo la primera ecuación de Hamilton en la segunda se recupera **exactamente** la EDO del masa-resorte conservativo: la dinámica sale de $H$ por derivación, no se aprende.'
+      },
+      {
+        heading: 'Paso 4 · Conservación de energía',
+        tex: '\\frac{dH}{dt} = \\left( \\nabla_{\\mathbf{z}}H \\right)^{\\top}\\mathbb{J}_s\\,\\nabla_{\\mathbf{z}}H = 0 \\;\\Rightarrow\\; H(t)=\\text{constante}',
+        conn: 'La conservación aparece **por construcción**, porque $\\mathbb{J}_s$ es antisimétrica. Vale para el caso conservativo $c=0$, sin amortiguamiento ni fuerza externa.'
+      },
+    ],
+    notes: '**Esta página es una derivación física:** no tiene función de costo ni optimización. La página siguiente toma estas mismas ecuaciones y las impone como **estructura** de una red.',
+    refs: [
+      "Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.",
+      "Cranmer et al. Lagrangian Neural Networks. arXiv:2003.04630, 2020.",
+      "Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018."
+    ]
+  },
+  {
     id: 'd1-puerta2',
     module: 'd1',
     tone: 'purple',
@@ -222,89 +259,40 @@ export const SLIDES = [
     kicker: '3 · Puerta ② · Forma fuerte',
     title: 'Puerta ② — Arquitectura (Hamiltonian NN)',
     lema: 'La física entra en la **estructura del modelo**: se cumple **por construcción** para todo $\\theta$.',
-    derivation: [
-      '$(q(t), p(t))$',
-      '$f_\\theta$ — red neuronal',
-      '$H_\\theta(q(t),p(t))$',
-      '$\\nabla H_\\theta$ (autodiff)',
-      '$\\mathbb{J}\\,\\nabla H_\\theta$ → dinámica',
-    ],
+    derivation: ['$(q(t), p(t))$', '$f_\\theta$ — red neuronal', '$\\hat{H}_\\theta(q(t),p(t))$', '$\\nabla_{\\mathbf{z}}\\hat{H}_\\theta$ (autodiff)', '$\\mathbb{J}_s\\nabla_{\\mathbf{z}}\\hat{H}_\\theta$ → dinámica'],
     equations: [
       {
-        heading: 'Estado canónico y Hamiltoniano físico',
-        tex: 'q(t) = x(t), \\qquad p(t) = m\\,\\dot{x}(t), \\qquad H(q(t), p(t)) = \\frac{p(t)^2}{2m} + \\frac{k\\,q(t)^2}{2} \\quad (c = 0)',
-        conn: '**Conexión:** para el sistema masa-resorte conservativo, el Hamiltoniano representa la energía mecánica total. $q(t)$: posición generalizada · $p(t)$: momento — estados en cada instante $t$ · $H$: energía total instantánea.',
+        heading: 'Entrada, salida y modelo',
+        tex: '\\mathbf{z}(t)=(q(t), p(t))^{\\top}, \\qquad \\hat{H}_\\theta(\\mathbf{z}(t)) = f_\\theta(\\mathbf{z}(t)), \\qquad \\theta\\in\\Theta',
+        conn: 'La red aprende una **función escalar** del estado canónico: no predice la trayectoria y **no requiere etiquetas de energía**. La entrada es $\\mathbf{z}=(q,p)^{\\top}$ y la salida es un escalar.'
       },
       {
-        heading: 'La red aprende el Hamiltoniano (función escalar)',
-        tex: 'f_\\theta:\\ (q(t), p(t)) \\;\\longmapsto\\; H_\\theta(q(t), p(t)) \\approx H(q(t), p(t))',
-        conn: '**Conexión:** la red **no predice directamente** $q(t)$ ni $p(t)$: aprende una función escalar. $H_\\theta$ **no se compara necesariamente con etiquetas de energía**: se aprende porque su gradiente debe reproducir la dinámica observada. Entrada de la red $= (q(t), p(t))$ · salida $= H_\\theta(q(t), p(t))$.',
+        heading: 'Estructura Hamiltoniana (la física por construcción)',
+        tex: '\\hat{\\mathbf{v}}_\\theta(\\mathbf{z}) = \\mathbb{J}_s\\,\\nabla_{\\mathbf{z}}\\hat{H}_\\theta(\\mathbf{z}), \\qquad \\nabla_t q = \\partial_{p}\\hat{H}_\\theta, \\quad \\nabla_t p = -\\partial_{q}\\hat{H}_\\theta',
+        conn: 'Son las ecuaciones de Hamilton de la página anterior aplicadas al Hamiltoniano **aprendido**: la física no entra como penalización, entra en la estructura y se cumple para todo $\\theta$.'
       },
       {
-        heading: 'Autodiff y ecuaciones de Hamilton — ★ PUNTO DONDE ENTRA LA FÍSICA',
-        tex: '\\dot{q}_\\theta(t) = \\frac{\\partial H_\\theta}{\\partial p}, \\qquad \\dot{p}_\\theta(t) = -\\frac{\\partial H_\\theta}{\\partial q}, \\qquad \\frac{d}{dt}\\begin{bmatrix} q(t) \\\\ p(t) \\end{bmatrix} = \\mathbb{J}\\,\\nabla H_\\theta',
-        bridge: {
-          chain: [
-            { tex: 'H_\\theta(q(t),\\,p(t))' },
-            { step: 'Autodiff' },
-            { tex: '\\left( \\partial H_\\theta / \\partial q,\\; \\partial H_\\theta / \\partial p \\right)' },
-            { step: 'Ecs. de Hamilton' },
-            { tex: '\\left( \\dot{q}_\\theta(t),\\; \\dot{p}_\\theta(t) \\right)' },
-          ],
-        },
-        conn: '**La física NO entra como penalización: entra en la estructura.** Las ecs. de Hamilton (con $\\mathbb{J} = \\begin{bmatrix} 0 & 1 \\\\ -1 & 0 \\end{bmatrix}$) no «transforman» mágicamente una derivada en otra: son la regla física que convierte las pendientes de $H_\\theta$ respecto al estado $(q(t), p(t))$ en las tasas de cambio temporal $(\\dot{q}_\\theta(t), \\dot{p}_\\theta(t))$.',
+        heading: 'Función de costo: riesgo esperado',
+        tex: 'J_{\\mathrm{HNN}}(\\theta) = \\mathbb{E}_{(\\mathbf{z},\\mathbf{v})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{v} - \\hat{\\mathbf{v}}_\\theta(\\mathbf{z}) \\rVert_{2}^{2} \\right], \\qquad \\mathbf{v} = \\left( \\nabla_t q, \\nabla_t p \\right)^{\\top}',
+        conn: 'El criterio compara las **derivadas temporales observadas** $\\mathbf{v}$ con las que predice el gradiente del Hamiltoniano aprendido.'
       },
       {
-        heading: 'Función de pérdida (dinámica) y optimización',
-        tex: '\\mathcal{L}_{HNN}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N}\\left[ \\left| \\dot{q}_\\theta(t_n) - \\dot{q}(t_n) \\right|^2 + \\left| \\dot{p}_\\theta(t_n) - \\dot{p}(t_n) \\right|^2 \\right], \\qquad \\theta^* = \\arg\\min_{\\theta}\\, \\mathcal{L}_{HNN}(\\theta)',
-        conn: '**Conexión:** los objetivos salen de los datos: $\\dot{q}(t_n) = \\dot{x}(t_n)$ y $\\dot{p}(t_n) = m\\,\\ddot{x}(t_n)$; si no hay aceleración medida, $\\dot{p}(t_n)$ se estima por diferencias finitas. Con $\\dot{q}_\\theta(t) = \\partial H_\\theta/\\partial p$ y $\\dot{p}_\\theta(t) = -\\partial H_\\theta/\\partial q$, no existe $\\mathcal{L}_{phys}$ separado: la física ya está incorporada en la arquitectura.',
+        heading: 'Aproximación empírica',
+        tex: '\\widehat{J}_{\\mathrm{HNN},N}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N}\\left[ \\left( \\nabla_t q(t_n) - \\partial_{p}\\hat{H}_\\theta(\\mathbf{z}_n) \\right)^{2} + \\left( \\nabla_t p(t_n) + \\partial_{q}\\hat{H}_\\theta(\\mathbf{z}_n) \\right)^{2} \\right]',
+        conn: 'Promedio sobre las $N$ observaciones; si las velocidades no se miden, se estiman por diferencias finitas.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\theta^{*} \\in \\arg\\min_{\\theta} J_{\\mathrm{HNN}}(\\theta), \\qquad \\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{\\mathrm{HNN},N}(\\theta)',
+        conn: 'La forma poblacional define el objetivo; el entrenamiento resuelve la empírica. La estructura se cumple por construcción, pero reproducir la dinámica real depende del **entrenamiento y los datos**.'
       },
     ],
-    notes:
-      'Mensaje clave: la HNN no aprende directamente la trayectoria — aprende $H_\\theta(q(t), p(t))$; las ecuaciones de Hamilton convierten su gradiente en la dinámica y un integrador recupera $(q(t), p(t))$.',
+    notes: '**Mensaje clave:** la HNN no aprende la trayectoria: aprende $\\hat{H}_\\theta$ y sus derivadas determinan la dinámica; un integrador recupera $(q(t), p(t))$.',
     refs: [
-      'Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.',
-      'Cranmer et al. Lagrangian Neural Networks. arXiv:2003.04630, 2020.',
-      'Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018.',
-    ],
-  },
-  {
-    id: 'd1-puerta2-deriv',
-    module: 'd1',
-    tone: 'purple',
-    kind: 'door',
-    kicker: '3 · Puerta ② · Desglose matemático',
-    title: 'Puerta ② — Del Hamiltoniano a la dinámica del masa-resorte',
-    lema: 'De dónde salen las ecuaciones que la puerta ② impone como estructura: tres pasos desde la energía hasta la EDO del MR ($c = 0$).',
-    equations: [
-      {
-        heading: 'Paso 1 · Construcción del Hamiltoniano',
-        tex: 'q(t) = x(t), \\quad p(t) = m\\,\\dot{x}(t), \\quad T = \\frac{p(t)^2}{2m}, \\quad V = \\frac{k\\,q(t)^2}{2} \\;\\Rightarrow\\; H = T + V = \\frac{p(t)^2}{2m} + \\frac{k\\,q(t)^2}{2}',
-        conn: '**Conexión:** el Hamiltoniano representa la energía total del sistema conservativo: energía cinética más energía potencial del resorte.',
-      },
-      {
-        heading: 'Paso 2 · Ecuaciones de Hamilton',
-        tex: '\\dot{q}(t) = \\frac{\\partial H}{\\partial p} = \\frac{p(t)}{m}, \\qquad \\dot{p}(t) = -\\frac{\\partial H}{\\partial q} = -k\\,q(t)',
-        conn: '**Conexión:** las derivadas del Hamiltoniano determinan cómo cambia el estado del sistema. $H$ no entrega directamente la trayectoria: entrega la regla de evolución del sistema.',
-      },
-      {
-        heading: 'Paso 3 · Recuperación de la ecuación física',
-        tex: 'p(t) = m\\,\\dot{q}(t) \\;\\Rightarrow\\; \\dot{p}(t) = m\\,\\ddot{q}(t) \\;\\Rightarrow\\; m\\,\\ddot{q}(t) + k\\,q(t) = 0 \\;\\Rightarrow\\; m\\,\\ddot{x}(t) + k\\,x(t) = 0',
-        conn: '**Conexión:** las ecuaciones de Hamilton recuperan exactamente la ecuación original del masa-resorte (identificación $q(t) \\equiv x(t)$ del Paso 1): la dinámica sale de $H$ por derivación, no se aprende.',
-      },
-      {
-        heading: 'Conservación de energía (por construcción)',
-        tex: '\\frac{dH}{dt} = \\nabla H^{\\top}\\, \\mathbb{J}\\, \\nabla H = 0 \\quad\\Rightarrow\\quad H(t) = \\text{constante a lo largo de la trayectoria}',
-        conn: '**Destacado:** la conservación de energía aparece por construcción debido a la estructura Hamiltoniana — aplica al caso conservativo $c = 0$ y sin fuerza externa; en la HNN, vale para todo $\\theta$.',
-      },
-    ],
-    notes:
-      'Nota: la formulación alternativa basada en Euler–Lagrange, la Lagrangian Neural Network (§F3 del documento), se desarrolla en las dos diapositivas siguientes.',
-    refs: [
-      'Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.',
-      'Cranmer et al. Lagrangian Neural Networks. arXiv:2003.04630, 2020.',
-      'Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018.',
-    ],
+      "Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.",
+      "Cranmer et al. Lagrangian Neural Networks. arXiv:2003.04630, 2020.",
+      "Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018."
+    ]
   },
   {
     id: 'd1-puerta2-lagrange',
