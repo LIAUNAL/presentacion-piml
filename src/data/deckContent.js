@@ -295,6 +295,43 @@ export const SLIDES = [
     ]
   },
   {
+    id: 'd1-puerta2-lagrange-deriv',
+    module: 'd1',
+    tone: 'purple',
+    kind: 'door',
+    kicker: '3 · Puerta ② · Fundamentación lagrangiana',
+    title: 'Puerta ② — Del Lagrangiano a la dinámica del masa-resorte',
+    lema: 'De dónde sale la regla de evolución que la LNN impone como estructura: cuatro pasos desde $L=T-V$ hasta la EDO del MR ($c=0$).',
+    equations: [
+      {
+        heading: 'Paso 1 · Construcción del Lagrangiano',
+        tex: 'T = \\frac{m\\,(\\nabla_t q(t))^{2}}{2}, \\qquad V = \\frac{k\\,q(t)^{2}}{2}, \\qquad L = T - V = \\frac{m\\,(\\nabla_t q(t))^{2}}{2} - \\frac{k\\,q(t)^{2}}{2}',
+        conn: 'El Lagrangiano es energía cinética **menos** potencial, con las mismas $m$, $k$ y la misma trayectoria del sistema. $\\nabla_t q(t)$ es la velocidad (el $\\dot{q}$ clásico); $\\nabla_t$ ya quedó definida en la página del sistema.'
+      },
+      {
+        heading: 'Paso 2 · Ecuación de Euler–Lagrange',
+        tex: '\\nabla_t\\!\\left( \\partial_{\\nabla_t q}L \\right) - \\partial_{q}L = 0, \\qquad \\partial_{\\nabla_t q}L = m\\,\\nabla_t q(t), \\quad \\partial_{q}L = -k\\,q(t)',
+        conn: 'La regla de evolución es el principio de acción: las derivadas parciales de $L$ respecto a la posición y a la velocidad determinan la dinámica.'
+      },
+      {
+        heading: 'Paso 3 · Recuperación de la ecuación física',
+        tex: '\\nabla_t\\!\\left( m\\,\\nabla_t q(t) \\right) + k\\,q(t) = 0 \\;\\Rightarrow\\; m\\,\\nabla_t^{2}q(t) + k\\,q(t) = 0',
+        conn: 'Es exactamente la EDO del masa-resorte **conservativo** ($c=0$, sin amortiguamiento ni fuerza externa): la dinámica sale de $L$ por derivación, no se aprende.'
+      },
+      {
+        heading: 'Paso 4 · Equivalencia hamiltoniana (transformada de Legendre)',
+        tex: 'p(t) = \\partial_{\\nabla_t q}L = m\\,\\nabla_t q(t) \\;\\Rightarrow\\; H = p(t)\\,\\nabla_t q(t) - L = \\frac{p(t)^{2}}{2m} + \\frac{k\\,q(t)^{2}}{2}',
+        conn: 'La transformada de Legendre pasa de $L$ a $H$ y recupera el Hamiltoniano de la página anterior: para el caso conservativo ambas formulaciones son equivalentes.'
+      },
+    ],
+    notes: '**Esta página es un desarrollo físico:** no tiene función de costo ni optimización. La página siguiente toma esta misma regla y la impone como **estructura** de una red.',
+    refs: [
+      "Cranmer, Greydanus, Hoyer, Battaglia, Spergel, Ho. Lagrangian Neural Networks. ICLR, 2020.",
+      "Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.",
+      "Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018."
+    ]
+  },
+  {
     id: 'd1-puerta2-lagrange',
     module: 'd1',
     tone: 'purple',
@@ -302,89 +339,40 @@ export const SLIDES = [
     kicker: '3 · Puerta ② · Forma fuerte (Lagrangian NN)',
     title: 'Puerta ② — Arquitectura (Lagrangian NN)',
     lema: 'La física entra en la **estructura del modelo**: se cumple **por construcción** para todo $\\theta$, ahora a través del principio de acción.',
-    derivation: [
-      '$(q(t), \\dot{q}(t))$',
-      '$f_\\theta$ — red neuronal',
-      '$L_\\theta(q(t),\\dot{q}(t))$',
-      '$\\partial L_\\theta$ (autodiff)',
-      'Euler–Lagrange → dinámica',
-    ],
+    derivation: ['$(q(t), \\nabla_t q(t))$', '$f_\\theta$ — red neuronal', '$\\hat{L}_\\theta(q(t),\\nabla_t q(t))$', '$\\partial \\hat{L}_\\theta$ (autodiff)', 'Euler–Lagrange → aceleración'],
     equations: [
       {
-        heading: 'Estado generalizado y Lagrangiano físico',
-        tex: 'q(t) = x(t), \\qquad \\dot{q}(t) = \\dot{x}(t), \\qquad L(q(t), \\dot{q}(t)) = T - V = \\frac{m\\dot{q}(t)^2}{2} - \\frac{k\\,q(t)^2}{2} \\quad (c = 0)',
-        conn: '**Conexión:** para el sistema masa-resorte conservativo, el Lagrangiano es energía cinética menos energía potencial — misma notación $q(t)$, $\\dot{q}(t)$ y los mismos $m$, $k$ del bloque hamiltoniano ($H = T + V$, $L = T - V$). $L$: función escalar.',
+        heading: 'Entrada, salida y modelo',
+        tex: '\\mathbf{z}(t) = \\left( q(t), \\nabla_t q(t) \\right)^{\\top}, \\qquad \\hat{L}_\\theta(\\mathbf{z}(t)) = f_\\theta(\\mathbf{z}(t)), \\qquad \\theta\\in\\Theta',
+        conn: 'La red aprende un **Lagrangiano escalar**: no predice la trayectoria y **no requiere etiquetas** del Lagrangiano físico.'
       },
       {
-        heading: 'La red aprende el Lagrangiano (función escalar)',
-        tex: 'f_\\theta:\\ (q(t), \\dot{q}(t)) \\;\\longmapsto\\; L_\\theta(q(t), \\dot{q}(t)) \\approx L(q(t), \\dot{q}(t))',
-        conn: '**Conexión:** igual que la HNN, la LNN **no predice directamente** $q(t)$: aprende una función escalar. $L_\\theta$ **no se compara con etiquetas de energía**: se aprende porque sus derivadas deben reproducir la dinámica observada. Entrada de la red $= (q(t), \\dot{q}(t))$ · salida $= L_\\theta(q(t), \\dot{q}(t))$.',
+        heading: 'Modelo dinámico: Euler–Lagrange y aceleración predicha',
+        tex: '\\hat{a}_\\theta(\\mathbf{z}) = \\left( \\partial^{2}_{(\\nabla_t q)(\\nabla_t q)}\\hat{L}_\\theta \\right)^{-1} \\!\\left[ \\partial_{q}\\hat{L}_\\theta - \\partial^{2}_{q(\\nabla_t q)}\\hat{L}_\\theta\\,\\nabla_t q \\right]',
+        conn: 'Sale de imponer $\\nabla_t(\\partial_{\\nabla_t q}\\hat{L}_\\theta)-\\partial_{q}\\hat{L}_\\theta=0$ y despejar la aceleración; se requiere una derivada segunda respecto a la velocidad **no nula**, $\\partial^{2}_{(\\nabla_t q)(\\nabla_t q)}\\hat{L}_\\theta\\neq 0$.'
       },
       {
-        heading: 'Autodiff y ecuación de Euler–Lagrange — ★ PUNTO DONDE ENTRA LA FÍSICA',
-        tex: '\\frac{d}{dt}\\,\\frac{\\partial L_\\theta}{\\partial \\dot{q}} - \\frac{\\partial L_\\theta}{\\partial q} = 0',
-        bridge: {
-          chain: [
-            { tex: 'L_\\theta(q(t),\\,\\dot{q}(t))' },
-            { step: 'Autodiff' },
-            { tex: '\\left( \\partial L_\\theta / \\partial q,\\; \\partial L_\\theta / \\partial \\dot{q} \\right)' },
-            { step: 'Ecs. de Euler–Lagrange' },
-            { tex: '\\ddot{q}_\\theta(t) \\Rightarrow \\text{dinámica}' },
-          ],
-        },
-        conn: '**La física NO entra como penalización: entra en la estructura.** La ec. de Euler–Lagrange (principio de acción) es la regla física que convierte las derivadas parciales de $L_\\theta$ respecto al estado $(q(t), \\dot{q}(t))$ en la aceleración $\\ddot{q}_\\theta(t)$: el análogo lagrangiano de $\\mathbb{J}\\,\\nabla H_\\theta$, con $\\partial L_\\theta$ en lugar de $\\nabla H_\\theta$.',
+        heading: 'Función de costo: riesgo esperado',
+        tex: 'J_{\\mathrm{LNN}}(\\theta) = \\mathbb{E}_{\\mathbf{z}\\sim p_{\\mathrm{datos}}}\\!\\left[ \\left( a - \\hat{a}_\\theta(\\mathbf{z}) \\right)^{2} \\right], \\qquad a = \\nabla_t^{2}q',
+        conn: 'El objetivo es la **aceleración**: se compara la observada $a$ con la que induce el Lagrangiano aprendido.'
       },
       {
-        heading: 'Función de pérdida (dinámica) y optimización',
-        tex: '\\mathcal{L}_{LNN}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N}\\left| \\ddot{q}_\\theta(t_n) - \\ddot{q}(t_n) \\right|^2, \\qquad \\theta^* = \\arg\\min_{\\theta}\\, \\mathcal{L}_{LNN}(\\theta)',
-        conn: '**Conexión:** los objetivos salen de los datos: $\\ddot{q}(t_n) = \\ddot{x}(t_n)$ (diferencias finitas si solo hay posición medida); $\\ddot{q}_\\theta(t_n)$ se obtiene resolviendo la ec. de Euler–Lagrange para $L_\\theta$. No existe $\\mathcal{L}_{phys}$ separado: la física ya está incorporada en la arquitectura, igual que en la HNN.',
+        heading: 'Aproximación empírica',
+        tex: '\\widehat{J}_{\\mathrm{LNN},N}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N}\\left( a_n - \\hat{a}_\\theta(\\mathbf{z}_n) \\right)^{2}',
+        conn: 'Promedio sobre las $N$ observaciones; si sólo hay posición medida, la aceleración se estima por diferencias finitas.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '\\theta^{*} \\in \\arg\\min_{\\theta} J_{\\mathrm{LNN}}(\\theta), \\qquad \\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{\\mathrm{LNN},N}(\\theta)',
+        conn: 'La estructura Euler–Lagrange se impone **por construcción**; reproducir la dinámica real depende del entrenamiento. No se añade una penalización física separada.'
       },
     ],
-    notes:
-      'Mensaje clave: la LNN tampoco aprende directamente la trayectoria — aprende $L_\\theta(q(t), \\dot{q}(t))$; la ecuación de Euler–Lagrange convierte sus derivadas en la aceleración y un integrador recupera $(q(t), \\dot{q}(t))$.',
+    notes: '**Mensaje clave:** la LNN tampoco aprende la trayectoria: aprende $\\hat{L}_\\theta$ y Euler–Lagrange convierte sus derivadas en la aceleración; un integrador recupera $(q(t), \\nabla_t q(t))$.',
     refs: [
-      'Cranmer et al. Lagrangian Neural Networks. arXiv:2003.04630, 2020.',
+      'Cranmer, Greydanus, Hoyer, Battaglia, Spergel, Ho. Lagrangian Neural Networks. ICLR, 2020.',
       'Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.',
-      'Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018.',
-    ],
-  },
-  {
-    id: 'd1-puerta2-lagrange-deriv',
-    module: 'd1',
-    tone: 'purple',
-    kind: 'door',
-    kicker: '3 · Puerta ② · Desglose matemático (Lagrangian NN)',
-    title: 'Puerta ② — Del Lagrangiano a la dinámica del masa-resorte',
-    lema: 'De dónde sale la regla de evolución que la LNN impone como estructura: tres pasos desde $L = T - V$ hasta la EDO del MR ($c = 0$), y su equivalencia con la formulación hamiltoniana.',
-    equations: [
-      {
-        heading: 'Paso 1 · Construcción del Lagrangiano',
-        tex: 'q(t) = x(t), \\quad \\dot{q}(t) = \\dot{x}(t), \\quad T = \\frac{m\\dot{q}(t)^2}{2}, \\quad V = \\frac{k\\,q(t)^2}{2} \\;\\Rightarrow\\; L = T - V = \\frac{m\\dot{q}(t)^2}{2} - \\frac{k\\,q(t)^2}{2}',
-        conn: '**Conexión:** el Lagrangiano usa las mismas $m$, $k$ y la misma trayectoria $x(t)$ que el Hamiltoniano: energía cinética menos potencial en lugar de más.',
-      },
-      {
-        heading: 'Paso 2 · Ecuación de Euler–Lagrange',
-        tex: '\\frac{\\partial L}{\\partial \\dot{q}} = m\\,\\dot{q}(t), \\qquad \\frac{\\partial L}{\\partial q} = -k\\,q(t) \\;\\Rightarrow\\; \\frac{d}{dt}\\,\\frac{\\partial L}{\\partial \\dot{q}} - \\frac{\\partial L}{\\partial q} = m\\,\\ddot{q}(t) + k\\,q(t) = 0',
-        conn: '**Conexión:** las derivadas del Lagrangiano determinan cómo cambia el estado del sistema. $L$ no entrega directamente la trayectoria: entrega la regla de evolución (principio de acción), igual que $H$ en la formulación anterior.',
-      },
-      {
-        heading: 'Paso 3 · Recuperación de la ecuación física',
-        tex: 'm\\,\\ddot{q}(t) + k\\,q(t) = 0 \\;\\Rightarrow\\; m\\,\\ddot{x}(t) + k\\,x(t) = 0',
-        conn: '**Conexión:** la ecuación de Euler–Lagrange recupera exactamente la ecuación original del masa-resorte (identificación $q(t) \\equiv x(t)$ del Paso 1): la dinámica sale de $L$ por derivación, no se aprende.',
-      },
-      {
-        heading: 'Equivalencia con la formulación hamiltoniana (transformada de Legendre)',
-        tex: 'p(t) = \\frac{\\partial L}{\\partial \\dot{q}} = m\\,\\dot{q}(t) \\;\\Rightarrow\\; H = p(t)\\,\\dot{q}(t) - L = \\frac{p(t)^2}{2m} + \\frac{k\\,q(t)^2}{2} = T + V',
-        conn: '**Destacado:** para el MR conservativo ($c = 0$) las dos puertas ② son equivalentes: la transformada de Legendre lleva de $L$ a $H$ y recupera exactamente el Hamiltoniano del bloque anterior, con su conservación de energía incluida.',
-      },
-    ],
-    notes:
-      'Nota: misma estructura de tres pasos que el desglose hamiltoniano — cambia la variable de partida ($L = T - V$ en lugar de $H = T + V$) y la regla de evolución (Euler–Lagrange en lugar de las ecs. de Hamilton).',
-    refs: [
-      'Cranmer et al. Lagrangian Neural Networks. arXiv:2003.04630, 2020.',
-      'Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.',
-      'Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018.',
-    ],
+      'Chen et al. Neural Ordinary Differential Equations. NeurIPS 2018.'
+    ]
   },
   {
     id: 'd1-puerta2-vs',
