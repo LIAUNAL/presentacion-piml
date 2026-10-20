@@ -1730,3 +1730,39 @@ body.focus-mode .deck-controls .controls-logo {
   margin: 2px 0 0;
   line-height: 1.3;
 }
+
+/* Round 16 (Puerta ① · PINN): cuatro cajas con un costo en dos líneas cada
+   una y tres referencias; se compacta la pila para que las referencias no
+   queden cortadas en 1080p. Alcance por id estable. */
+.slide[data-id='d1-puerta1'] .math-stack {
+  gap: 6px;
+}
+
+.slide[data-id='d1-puerta1'] .eq-box {
+  padding: 6px clamp(10px, 1.2vw, 14px);
+}
+
+.slide[data-id='d1-puerta1'] .eq-box .eq-heading {
+  margin: 2px 0 1px;
+  font-size: 0.88rem;
+}
+
+.slide[data-id='d1-puerta1'] .eq-box .eq-display {
+  font-size: clamp(0.9rem, 1.1vw, 1.04rem);
+  line-height: 1.32;
+}
+
+.slide[data-id='d1-puerta1'] .eq-box .eq-conn {
+  margin-top: 2px;
+  font-size: 0.84rem;
+  line-height: 1.34;
+}
+
+.slide[data-id='d1-puerta1'] .door-lema {
+  margin: 2px 0 8px;
+}
+
+.slide[data-id='d1-puerta1'] .slide-references {
+  font-size: 0.7rem;
+  line-height: 1.3;
+}

@@ -146,23 +146,22 @@ export const SLIDES = [
     ],
     equations: [
       {
-        heading: 'Ecuación de movimiento (residuo físico)',
-        tex: '\\mathcal{F}[q] \\;\\equiv\\; m\\,\\ddot{q}(t) + c\\,\\dot{q}(t) + k\\,q(t) = 0',
-        conn: '**MR:** masa $m$, rigidez $k$, amortiguamiento $c$; la trayectoria $x(t)$ es lo que cada puerta predice.',
+        heading: 'Operador temporal y ecuación de movimiento',
+        tex: '\\begin{aligned} \\nabla_t := \\frac{d}{dt}, \\quad \\nabla_t^{2} := \\frac{d^{2}}{dt^{2}}, \\qquad \\mathcal{F} = m\\,\\nabla_t^{2} + c\\,\\nabla_t + k\\,\\mathcal{I} \\\\[3pt] \\mathcal{F}[q](t) = m\\,\\nabla_t^{2}q(t) + c\\,\\nabla_t q(t) + k\\,q(t) = 0 \\end{aligned}',
+        conn: '$\\nabla_t$ es una convención para la derivada temporal **unidimensional** y $\\mathcal{I}$ el operador identidad; $\\mathcal{F}$ es el operador diferencial del MR. La trayectoria $q(t)$ es la variable física que cada puerta predice: no es la matriz de características $\\mathbf{X}$ de los modelos de aprendizaje.'
       },
       {
         heading: 'Estado canónico y energía (Hamiltoniano)',
-        tex: 'q(t) = x(t), \\quad p(t) = m\\,\\dot{x}(t), \\quad H(q(t), p(t)) = \\frac{p(t)^2}{2m} + \\frac{k\\,q(t)^2}{2} \\quad (c = 0)',
-        conn: '**Conexión:** el caso conservativo ($c=0$) es hamiltoniano puro; es la forma que exige la puerta ② en su variante HNN. $q(t)$ y $p(t)$ son los estados (posición y momento) en cada instante; $H$ se evalúa sobre esa trayectoria. La variante lagrangiana ($L = T - V$) se define en la diapositiva propia de la puerta ② (Lagrangian NN).',
+        tex: 'q(t), \\quad p(t) = m\\,\\nabla_t q(t), \\qquad H(q(t), p(t)) = \\frac{p(t)^{2}}{2m} + \\frac{k\\,q(t)^{2}}{2} \\quad (c = 0)',
+        conn: '**Conexión:** el caso conservativo ($c=0$) es hamiltoniano puro; es la forma que exige la puerta ② en su variante HNN. $q(t)$ y $p(t)$ son posición y momento en cada instante, no entradas del modelo. La variante lagrangiana se define en la diapositiva propia de la puerta ②.'
       },
       {
         heading: 'Datos disponibles',
-        tex: '\\mathbf{x}_n = (t_n, q(t_n), \\dot{q}(t_n)), \\qquad \\mathbf{y}_n=q(t_n) \\quad (\\tau=1), \\qquad n=1,\\dots,N',
-        conn: '**Conexión:** las tres puertas consumen el mismo dato básico: trayectoria medida del MR.',
+        tex: '\\mathbf{x}_n = (t_n, q(t_n), \\nabla_t q(t_n)), \\qquad \\mathbf{y}_n = q(t_n) \\quad (\\tau=1), \\qquad n=1,\\ldots,N',
+        conn: 'Las tres puertas consumen la misma trayectoria medida del MR. La puerta ① (PINN) usará **sólo** $t$ como entrada de la red; los rezagos y las derivadas son material de las otras puertas.'
       },
     ],
-    notes:
-      'Las tres páginas siguientes instancian $\\mathcal{F}[u]=0$ sobre este sistema: misma física, distinto punto de entrada.',
+    notes: 'Las tres páginas siguientes instancian $\\mathcal{F}[u]=0$ sobre este sistema: misma física, distinto punto de entrada.'
   },
   {
     id: 'd1-puerta1',
@@ -171,34 +170,34 @@ export const SLIDES = [
     kind: 'door',
     kicker: '3 · Puerta ① · Forma débil',
     title: 'Puerta ① — Función de pérdida (PINN)',
-    lema: 'La física entra en la **función de pérdida (costo)**: se penaliza, no se garantiza.',
+    lema: 'La física entra como **penalización del residuo**: se busca que la red la respete, sin garantizar su cumplimiento exacto.',
     equations: [
       {
-        heading: 'Modelo',
-        tex: '\\hat{q}(t) = f_\\theta(t), \\qquad \\theta \\in \\Theta',
-        conn: '**Conexión:** la red aproxima la solución del sistema masa-resorte; es el bloque "Modelo ML f_θ" del diagrama.',
+        heading: 'Entrada, salida y modelo',
+        tex: 't\\in\\mathbb{R}, \\qquad y(t)=q(t)\\in\\mathbb{R}, \\qquad \\hat{y}(t)=f_\\theta(t), \\quad \\theta\\in\\Theta',
+        conn: 'La red aproxima el desplazamiento del MR a partir **únicamente del tiempo**: la entrada es $t$, no una matriz de características.'
       },
       {
         heading: 'Residuo físico (diferenciación automática)',
-        tex: 'r_\\theta(t_j) = m\\,\\frac{d^2 f_\\theta(t_j)}{dt^2} + c\\,\\frac{d f_\\theta(t_j)}{dt} + k\\,f_\\theta(t_j)',
-        conn: '**Conexión:** la caja punteada "Diff. automática" produce $r_\\theta$ en los puntos de colocación $t_j$; es $\\mathcal{F}[\\hat{x}_\\theta]$ de la ley $\\mathcal{F}[u]=0$.',
+        tex: 'r_\\theta(t) = \\mathcal{F}[f_\\theta](t) = m\\,\\nabla_t^{2} f_\\theta(t) + c\\,\\nabla_t f_\\theta(t) + k\\,f_\\theta(t)',
+        conn: 'La caja punteada "Diff. automática" produce $r_\\theta$ en los puntos de colocación: $\\mathcal{F}$ y $\\nabla_t$ son los definidos en la página del sistema.'
       },
       {
-        heading: 'Función de pérdida',
-        tex: '\\mathcal{J}(\\theta)=\\mathbb{E}_{(t,q)\\sim p_{\\mathrm{datos}}}\\left[\\mathcal{L}(q,f_\\theta(t))\\right]+\\lambda_{phys}\\mathbb{E}_{t\\sim p_{\\mathrm{phys}}}\\left[r_\\theta(t)^2\\right]',
-        conn: '**Conexión:** la línea inferior del diagrama es exactamente esta suma: la física entra en el segundo término, no en la estructura.',
+        heading: 'Función de costo: riesgo esperado y aproximación empírica',
+        tex: '\\begin{aligned} J(\\theta) &= \\mathbb{E}_{(t,y)\\sim p_{\\mathrm{datos}}}\\!\\left[ \\left( y-f_\\theta(t) \\right)^{2} \\right] + \\lambda_{phys}\\,\\mathbb{E}_{t\\sim p_{c}}\\!\\left[ r_\\theta(t)^{2} \\right] \\\\[3pt] \\widehat{J}(\\theta) &= \\frac{1}{N_d}\\sum_{i=1}^{N_d} \\left( q_i - f_\\theta(t_i) \\right)^{2} + \\frac{\\lambda_{phys}}{N_c}\\sum_{j=1}^{N_c} r_\\theta(\\tilde{t}_j)^{2} \\end{aligned}',
+        conn: 'El primer término es el **error de datos** sobre las $N_d$ observaciones; el segundo es la **penalización física** en los $N_c$ puntos de colocación, con peso $\\lambda_{phys}$. El residuo se penaliza, pero su cumplimiento exacto **no está garantizado**, y las condiciones iniciales deben imponerse cuando correspondan.'
       },
       {
         heading: 'Problema de optimización',
-        tex: '\\hat{\\theta}=\\arg\\min_{\\theta\\in\\Theta}\\mathcal{J}(\\theta)',
-        conn: 'El residuo entra en la pérdida, no en la estructura: el cumplimiento depende de $\\lambda_{phys}$ y del entrenamiento.',
+        tex: '\\begin{aligned} \\theta^{*} &\\in \\arg\\min_{\\theta\\in\\Theta} J(\\theta) \\\\[3pt] \\widehat{\\theta} &\\in \\arg\\min_{\\theta\\in\\Theta} \\widehat{J}(\\theta) \\end{aligned}',
+        conn: 'La forma poblacional define el objetivo; el entrenamiento resuelve la empírica. La física entra en la **pérdida**, no en la estructura de la red.'
       },
     ],
     refs: [
       'Raissi, Perdikaris, Karniadakis. Physics-informed neural networks. J. Comput. Phys. 378, 686–707, 2019.',
       'Karniadakis et al. Physics-informed machine learning. Nat. Rev. Phys. 3(6), 422–440, 2021. DOI: 10.1038/s42254-021-00314-5.',
-      'Doumèche. Physics-informed ML: time series forecasting. Tesis Sorbonne, arXiv:2507.08906, 2025.',
-    ],
+      'Doumèche. Physics-informed ML: time series forecasting. Tesis Sorbonne, arXiv:2507.08906, 2025.'
+    ]
   },
   {
     id: 'd1-puerta1-diagram',
