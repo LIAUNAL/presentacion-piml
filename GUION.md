@@ -74,6 +74,15 @@ Regla de ritmo: los diagramas (slides de figura) son los mapas y merecen el dobl
 - **Redes de la puerta ②:** "La HNN aprende $\hat{H}_\theta$ y la LNN aprende $\hat{L}_\theta$; en ambos casos la dinámica sale por derivación automática, con el riesgo cuadrático sobre derivadas temporales —en la LNN, sobre la aceleración— sin penalización física separada. La estructura se cumple por construcción, pero reproducir la dinámica real depende del entrenamiento y de los datos."
 - **Puente:** "La pregunta siguiente es qué familias concretas existen para series de tiempo: eso es el Diagrama 2."
 
+### Slide 5b — 3b · Problemas directos e inversos · PINN inversa · convergencia e incertidumbre
+
+- ⏱ ~2.5 min
+- **Pantalla:** cinco páginas: directo e inverso; solución clásica; red frente a parámetros físicos; optimización conjunta; convergencia, identificabilidad e incertidumbre.
+- **Guion:**
+  "Cerramos el diagrama 1 con las cuatro preguntas del tutor. Primero, el problema directo calcula la respuesta: dados $\boldsymbol{\phi}=(m,c,k)$ y las condiciones iniciales, se obtiene $x(t;\boldsymbol{\phi})$. El inverso va al revés: con mediciones $\{t_i,x_i^{obs}\}$ se estima $\widehat{\boldsymbol{\phi}}$. Segundo, sin redes: el directo se integra con Euler, Runge–Kutta o Newmark-$\beta$, y el inverso se resuelve simulando y minimizando el error cuadrático sobre los parámetros, con el costo de resolver el directo en cada iteración."
+  "Tercero, la red: aprende $\widehat{x}(t)=f_{\boldsymbol{\theta}}(t)$ y los parámetros físicos $\boldsymbol{\phi}$ son otra cosa —describen el sistema y son interpretables—. Con diferenciación automática se obtiene $\mathcal{R}(t)$ y se mide cuánto se incumple la física. Cuarto, en la PINN inversa se optimizan $\boldsymbol{\theta}$ y $\boldsymbol{\phi}$ a la vez sobre $\mathcal{L}=\lambda_d\mathcal{L}_d+\lambda_f\mathcal{L}_f+\lambda_0\mathcal{L}_0+\mathcal{L}_{\mathrm{prior}}$. Y el cierre: la convergencia depende de inicializaciones, pesos y escalado; sólo los cocientes $c/m$ y $k/m$ son identificables en vibración libre; y la banda del ensemble es dispersión, no un intervalo con cobertura del 95 %."
+- **Puente:** "Con esto pasamos a las familias concretas de PIML: el diagrama 2."
+
 ### Slide 6 — 4 · Diagrama 2 · Familias PIML para series de tiempo (todas las aplicaciones)
 
 - ⏱ ~2 min

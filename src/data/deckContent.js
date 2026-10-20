@@ -523,6 +523,176 @@ export const SLIDES = [
 
   // ── §4 Diagrama 2 — Familias PIML para TS ───────────────────────────────
   {
+    id: 'd1b-directo-inverso',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'split',
+    kicker: '3b · Problemas directos e inversos',
+    title: 'Problema directo y problema inverso',
+    bullets: [
+      'El **directo** calcula la respuesta del sistema: parámetros conocidos, salida desconocida.',
+      'El **inverso** identifica los parámetros físicos a partir de mediciones de la salida.',
+    ],
+    equations: [
+      {
+        heading: 'Modelo físico y parámetros',
+        tex: '\\begin{aligned} m\\,\\nabla_t^{2}x(t) + c\\,\\nabla_t x(t) + k\\,x(t) &= F(t) \\\\[3pt] \\boldsymbol{\\phi} &= (m, c, k)^{\\top} \\end{aligned}',
+        conn: 'Mismo sistema masa-resorte-amortiguador del deck; $F(t)$ es la excitación y $\\boldsymbol{\\phi}$ reúne los parámetros físicos.'
+      },
+      {
+        heading: 'Los dos sentidos',
+        tex: '\\boldsymbol{\\phi} \\longrightarrow x(t;\\boldsymbol{\\phi}), \\qquad\\{t_i, x_i^{obs}\\}_{i=1}^{N} \\longrightarrow \\widehat{\\boldsymbol{\\phi}}',
+        conn: 'El directo **evalúa** el modelo; el inverso **ajusta** parámetros. Se usan las mismas ecuaciones en sentidos opuestos.'
+      },
+    ],
+    diagram: 'directoInverso',
+    diagramTitle: 'Directo: parámetros → salida · Inverso: mediciones → parámetros',
+    legend: [
+      { color: '#7D3C98', label: 'Parámetros físicos $\\boldsymbol{\\phi}$' },
+      { color: '#2E86AB', label: 'Modelo físico / salida' },
+      { color: '#E67E22', label: 'Mediciones y estimación' },
+    ],
+    notes: '**Idea clave:** el directo es una evaluación; el inverso, una estimación. La PINN entra cuando el solucionador clásico es costoso o cuando hay que estimar $\\boldsymbol{\\phi}$ junto con la solución.'
+  },
+  {
+    id: 'd1b-clasicos',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'split',
+    kicker: '3b · Problemas directos e inversos',
+    title: 'Resolverlos sin redes neuronales',
+    bullets: [
+      '**Directo:** integración analítica o numérica — Euler, Runge–Kutta, Newmark-$\\beta$.',
+      '**Inverso:** simulación repetida más optimización sobre los parámetros.',
+    ],
+    equations: [
+      {
+        heading: 'Directo: esquema de Euler',
+        tex: '\\begin{aligned} x_{n+1} &= x_n + \\Delta t\\,v_n \\\\[3pt] v_{n+1} &= v_n + \\Delta t\\,\\frac{F_n - c\\,v_n - k\\,x_n}{m} \\end{aligned}',
+        conn: 'Un paso de integración por iteración: el estado $(x_n,v_n)$ avanza con el paso $\\Delta t$. Runge–Kutta y Newmark-$\\beta$ mejoran precisión y estabilidad.'
+      },
+      {
+        heading: 'Inverso: mínimos cuadrados sobre la simulación',
+        tex: '\\widehat{\\boldsymbol{\\phi}} = \\arg\\min_{\\boldsymbol{\\phi}}\\sum_{i=1}^{N}\\left( x(t_i;\\boldsymbol{\\phi}) - x_i^{obs} \\right)^{2}',
+        conn: 'Cada evaluación del objetivo exige resolver el directo: el costo crece con el número de iteraciones del optimizador.'
+      },
+    ],
+    diagram: 'inversoIterativo',
+    diagramTitle: 'Estimación clásica: simular, comparar y optimizar en bucle',
+    legend: [
+      { color: '#7D3C98', label: 'Parámetros $\\boldsymbol{\\phi}$' },
+      { color: '#2E86AB', label: 'Solver numérico' },
+      { color: '#E67E22', label: 'Comparación y optimización' },
+    ],
+    notes: 'Los métodos clásicos resuelven el directo y, combinados con un optimizador, el inverso. Su límite es el costo por evaluación del solucionador.'
+  },
+  {
+    id: 'd1b-red-fisica',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'split',
+    kicker: '3b · PINN para identificación',
+    title: 'Red neuronal: predicción e identificación',
+    table: [
+      ['Parámetros de red', 'Parámetros físicos'],
+      ['$\\boldsymbol{\\theta}$', '$\\boldsymbol{\\phi}$'],
+      ['Pesos y sesgos', '$m, c, k$'],
+      ['Aproximan la salida', 'Describen el sistema'],
+      ['Sin interpretación física directa', 'Interpretables físicamente'],
+    ],
+    equations: [
+      {
+        heading: 'Salida neuronal',
+        tex: '\\widehat{x}(t) = f_{\\boldsymbol{\\theta}}(t)',
+        conn: 'La red recibe **sólo el tiempo**, igual que en la puerta ①; no recibe la física.'
+      },
+      {
+        heading: 'Residuo físico',
+        tex: '\\mathcal{R}(t) = m\\,\\nabla_t^{2}\\widehat{x}(t) + c\\,\\nabla_t\\widehat{x}(t) + k\\,\\widehat{x}(t) - F(t)',
+        conn: 'La **diferenciación automática** entrega $\\nabla_t\\widehat{x}$ y $\\nabla_t^{2}\\widehat{x}$ sin malla: con ellas se evalúa la ecuación física en cualquier instante.'
+      },
+    ],
+    diagram: 'residuoAutodiff',
+    diagramTitle: 'Del tiempo al residuo: derivadas automáticas de la salida',
+    legend: [
+      { color: '#2E86AB', label: 'Red y salida' },
+      { color: '#7D3C98', label: 'Derivadas automáticas' },
+      { color: '#E67E22', label: 'Residuo físico' },
+    ],
+    notes: 'La red aproxima la salida con $\\boldsymbol{\\theta}$ y, en la variante inversa, los parámetros físicos $\\boldsymbol{\\phi}$ se tratan como incógnitas adicionales del mismo problema.'
+  },
+  {
+    id: 'd1b-pinn-inversa',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'split',
+    kicker: '3b · PINN para identificación',
+    title: 'Optimización conjunta de una PINN inversa',
+    equations: [
+      {
+        heading: 'Pérdida compuesta',
+        tex: '\\mathcal{L}(\\boldsymbol{\\theta},\\boldsymbol{\\phi}) = \\lambda_d\\mathcal{L}_d + \\lambda_f\\mathcal{L}_f + \\lambda_0\\mathcal{L}_0 + \\mathcal{L}_{\\mathrm{prior}}',
+        conn: '$\\mathcal{L}_d$: ajuste a mediciones · $\\mathcal{L}_f$: cumplimiento de la física · $\\mathcal{L}_0$: condiciones iniciales · $\\mathcal{L}_{\\mathrm{prior}}$: regularización física.'
+      },
+      {
+        heading: 'Problema de optimización',
+        tex: '(\\widehat{\\boldsymbol{\\theta}}, \\widehat{\\boldsymbol{\\phi}}) = \\arg\\min_{\\boldsymbol{\\theta},\\boldsymbol{\\phi}} \\mathcal{L}(\\boldsymbol{\\theta},\\boldsymbol{\\phi})',
+        conn: 'Los dos conjuntos se actualizan **a la vez**: $\\boldsymbol{\\theta}$ mueve la curva y $\\boldsymbol{\\phi}$ mueve la física que la curva debe cumplir.'
+      },
+    ],
+    diagram: 'pinnConjunta',
+    diagramTitle: 'Un solo bucle: tiempo → red → pérdidas → optimizador → actualización',
+    legend: [
+      { color: '#2E86AB', label: 'Red $f_{\\boldsymbol{\\theta}}$' },
+      { color: '#E67E22', label: 'Pérdidas y optimizador' },
+      { color: '#7D3C98', label: 'Parámetros físicos $\\boldsymbol{\\phi}$' },
+    ],
+    notes: 'Diferenciar los dos grupos de parámetros es lo que separa una PINN directa (sólo $\\boldsymbol{\\theta}$) de una PINN inversa ($\\boldsymbol{\\theta}$ y $\\boldsymbol{\\phi}$).',
+    refs: [
+      'Prayoga & Husni. An inverse problem of determining the parameters in multiphysics problem by using fractional physics-informed neural networks. 2025.',
+      'Karkadakattil. Physics-informed digital twin for robust inverse parameter identification under sparse and noisy measurements. 2026.'
+    ]
+  },
+  {
+    id: 'd1b-convergencia',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'split',
+    kicker: '3b · Convergencia e incertidumbre',
+    title: 'Convergencia, identificabilidad e incertidumbre',
+    table: [
+      ['Dificultad', 'Estrategia'],
+      ['Mínimos locales', 'Múltiples inicializaciones'],
+      ['Pérdidas desbalanceadas', 'Ajuste de ponderaciones'],
+      ['Gradientes inestables', 'Normalización y escalado'],
+      ['Sensibilidad al entrenamiento', 'Adam y luego L-BFGS'],
+      ['Ruido y pocos datos', 'Regularización y validación'],
+    ],
+    equations: [
+      {
+        heading: 'Identificabilidad en vibración libre',
+        tex: '\\nabla_t^{2}x + \\frac{c}{m}\\,\\nabla_t x + \\frac{k}{m}\\,x = 0 \\;\\Rightarrow\\; \\text{sólo } c/m \\text{ y } k/m \\text{ son identificables}',
+        conn: 'Con sólo desplazamientos, la escala de masa es arbitraria: los parámetros individuales no se identifican aunque sus cocientes sí.'
+      },
+      {
+        heading: 'Ensemble: media y dispersión',
+        tex: '\\overline{x}(t) = \\frac{1}{M}\\sum_{j=1}^{M}\\widehat{x}^{(j)}(t), \\qquad s_x(t) = \\sqrt{\\frac{1}{M-1}\\sum_{j=1}^{M}\\left( \\widehat{x}^{(j)}(t) - \\overline{x}(t) \\right)^{2}}',
+        conn: 'La banda es **dispersión del ensemble**, no un intervalo de confianza ni predictivo con cobertura garantizada; conviene declararlo y analizar también la incertidumbre de $\\boldsymbol{\\phi}$.'
+      },
+    ],
+    diagram: 'bandaEnsemble',
+    diagramTitle: 'Trayectoria media del ensemble con banda de dispersión',
+    legend: [
+      { color: '#2E86AB', label: 'Media $\\overline{x}(t)$' },
+      { color: '#E67E22', label: 'Dispersión $\\pm 2s_x$' },
+    ],
+    notes: '**Cierre:** la incertidumbre se analiza en los dos niveles —parámetros físicos y salida— y se reporta qué significa la banda que se dibuja.',
+    refs: [
+      'Prayoga & Husni. An inverse problem of determining the parameters in multiphysics problem by using fractional physics-informed neural networks. 2025.',
+      'Karkadakattil. Physics-informed digital twin for robust inverse parameter identification under sparse and noisy measurements. 2026.'
+    ]
+  },
+  {
     id: 'd2-figura',
     module: 'd2',
     tone: 'purple',
