@@ -3,6 +3,7 @@
 export const MODULES = [
   { id: 'portada', label: 'Portada', tone: 'cyan' },
   { id: 'notacion', label: 'Notación', tone: 'purple' },
+  { id: 'nabla', label: '3 · Nabla, gradiente y jacobiano', tone: 'purple' },
   { id: 'd1', label: 'D1 · Cuatro puertas', tone: 'blue' },
   { id: 'd2', label: 'D2 · Familias PIML', tone: 'purple' },
   { id: 'd3', label: 'D3 · Data-driven', tone: 'orange' },

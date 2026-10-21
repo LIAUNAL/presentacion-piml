@@ -5,6 +5,7 @@ import DataDrivenFlow from './DataDrivenFlow.jsx';
 import GprUncertaintyFigure from './GprUncertaintyFigure.jsx';
 import { DirectoInversoFigure, InversoIterativoFigure, PinnConjuntaFigure, ResiduoAutodiffFigure } from './PimlFlowFigures.jsx';
 import EnsembleBand from './EnsembleBand.jsx';
+import NablaCasosFigure from './NablaCasosFigure.jsx';
 import InterseccionFlow from './InterseccionFlow.jsx';
 import ProblemasFlow from './ProblemasFlow.jsx';
 import OpcionesFlow from './OpcionesFlow.jsx';
@@ -22,6 +23,7 @@ export const DIAGRAM_COMPONENTS = {
   inversoIterativo: InversoIterativoFigure,
   pinnConjunta: PinnConjuntaFigure,
   bandaEnsemble: EnsembleBand,
+  nablaCasos: NablaCasosFigure,
   residuoAutodiff: ResiduoAutodiffFigure,
   d4: InterseccionFlow,
   d5: ProblemasFlow,

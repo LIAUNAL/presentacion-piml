@@ -53,7 +53,7 @@ export const SLIDES = [
       [
         'Física térmica RC (PINN-RC)',
         'temperaturas $T_{in}, T_{out}, T_m$; capacidades $C_{in}, C_m$; resistencias $R_{ea}, R_{in}, R_{out}$.',
-        'Variables de estado y parámetros del circuito térmico 2R2C (patrón D, §5b) cuyo residuo penaliza la PINN-RC.',
+        'Variables de estado y parámetros del circuito térmico 2R2C (patrón D, §6b) cuyo residuo penaliza la PINN-RC.',
       ],
       [
         'Exógenas y drivers',
@@ -72,8 +72,8 @@ export const SLIDES = [
       ],
       [
         'Operadores diferenciales',
-        '$\\nabla_{\\mathbf{x}}f=[\\partial f/\\partial x_i]_{i=1}^{n}\\in\\mathbb{R}^{n}$ (gradiente columna, $f:\\mathbb{R}^n\\to\\mathbb{R}$); $[\\mathbf{J}_{\\mathbf f}]_{ij}=\\partial f_i/\\partial x_j\\in\\mathbb{R}^{m\\times n}$ (jacobiano); $[\\mathbf{H}_f]_{ij}=\\partial^2f/\\partial x_i\\partial x_j$ (Hessiana); $\\Delta f=\\sum_i\\partial^2f/\\partial x_i^2$ (laplaciano).',
-        'Gradiente, jacobiano, Hessiana y laplaciano son objetos distintos. $\\mathbf H_f$ evita confundir la Hessiana con $\\Delta f$; $\\mathbf J_s$ se reserva para la matriz simpléctica. Las derivadas temporales se escriben $d/dt$ o con puntos.',
+        '$\\nabla_{\\mathbf{x}}f=[\\partial f/\\partial x_i]_{i=1}^{P}\\in\\mathbb{R}^{P}$ (gradiente columna, $f:\\mathbb{R}^P\\to\\mathbb{R}$); $[\\mathbf{J}_f]_{ij}=\\partial f_i/\\partial x_j\\in\\mathbb{R}^{M\\times P}$ (jacobiano, filas = salidas, columnas = entradas); $[\\mathbf{H}_f]_{ij}=\\partial^2f/\\partial x_i\\partial x_j\\in\\mathbb{R}^{P\\times P}$ (Hessiana); $\\Delta f=\\operatorname{tr}(\\mathbf H_f)=\\sum_i\\partial^2f/\\partial x_i^2$ (laplaciano).',
+        'Gradiente, jacobiano, Hessiana y laplaciano son objetos distintos; se desarrollan con ejemplos en §3. $\\mathbf H_f$ evita confundir la Hessiana con $\\Delta f$; $\\mathbf J_s$ se reserva para la matriz simpléctica. Las derivadas temporales se escriben $d/dt$ o con puntos.',
       ],
     ],
   },
@@ -113,13 +113,237 @@ export const SLIDES = [
     ],
   },
 
-  // ── §3 Diagrama 1 — Cuatro puertas ──────────────────────────────────────
+  // ── §3 Operador nabla, gradiente y jacobiano ─────────────────────────────
+  {
+    id: 'nabla-casos',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'split',
+    kicker: '3 · Operador nabla · Cuatro casos',
+    title: 'Qué entra y qué sale al derivar: cuatro casos de función',
+    bullets: [
+      '**La forma del resultado la fijan el dominio y el codominio**, no el nombre del modelo: $f:\\mathbb{R}^{P}\\to\\mathbb{R}^{M}$ produce una matriz de $M$ filas y $P$ columnas.',
+      '**Un escalar es el caso $P=M=1$**: el jacobiano degenera en un número y coincide con $f^{\\prime}(t)$.',
+    ],
+    equations: [
+      {
+        heading: 'El jacobiano contiene a los cuatro casos',
+        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}\\partial f_1/\\partial x_1 & \\cdots & \\partial f_1/\\partial x_P\\\\ \\vdots & & \\vdots\\\\ \\partial f_M/\\partial x_1 & \\cdots & \\partial f_M/\\partial x_P\\end{bmatrix}\\in\\mathbb{R}^{M\\times P}, \\qquad [\\mathbf J_{f}]_{ij}=\\frac{\\partial f_i}{\\partial x_j}',
+        conn: 'Filas = salidas; columnas = entradas. Con $M=1$ queda la fila $1\\times P$ que es la traspuesta del gradiente, $(\\nabla_{\\mathbf x}f)^{\\top}$; con $P=1$ queda la columna $M\\times 1$ de derivadas, $f^{\\prime}(t)$.'
+      },
+    ],
+    diagram: 'nablaCasos',
+    diagramTitle: 'Dimensión del dominio, del codominio y del objeto derivado',
+    legend: [
+      { color: '#1E3A5F', label: 'Dominio y codominio' },
+      { color: '#2E86AB', label: 'Función $f$' },
+      { color: '#E67E22', label: 'Objeto derivado' },
+    ],
+    notes: 'El caso «uno a muchos» no es el gradiente: derivar $f:\\mathbb{R}\\to\\mathbb{R}^{M}$ da una **columna** de $M$ derivadas. El gradiente aparece cuando el **codominio** es escalar.'
+  },
+  {
+    id: 'nabla-gradiente',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Gradiente',
+    title: 'Muchos a uno: el gradiente $\\nabla_{\\mathbf x}f$ es un vector columna',
+    equations: [
+      {
+        heading: 'Definición: gradiente de una función escalar',
+        tex: '\\nabla_{\\mathbf x}f(\\mathbf x)=\\begin{bmatrix}\\partial f/\\partial x_1\\\\ \\vdots\\\\ \\partial f/\\partial x_P\\end{bmatrix}\\in\\mathbb{R}^{P}, \\qquad f:\\mathbb{R}^{P}\\to\\mathbb{R}, \\quad \\mathbf x\\in\\mathbb{R}^{P}',
+        conn: 'Es una **columna** por convención: vive en el mismo espacio que $\\mathbf x$, así que $\\boldsymbol\\theta\\leftarrow\\boldsymbol\\theta-\\eta\\nabla_{\\boldsymbol\\theta}\\mathcal L$ resta vectores del mismo espacio. Su traspuesta es la fila $1\\times P$ del jacobiano: $\\mathbf J_{f}=(\\nabla_{\\mathbf x}f)^{\\top}$.'
+      },
+      {
+        heading: 'Ejemplo: forma cuadrática',
+        tex: 'f(\\mathbf x)=\\tfrac12\\mathbf x^{\\top}\\mathbf A\\mathbf x+\\mathbf b^{\\top}\\mathbf x \\;\\Rightarrow\\; \\nabla_{\\mathbf x}f=\\tfrac12(\\mathbf A+\\mathbf A^{\\top})\\mathbf x+\\mathbf b \\;(=\\mathbf A\\mathbf x+\\mathbf b \\text{ si } \\mathbf A=\\mathbf A^{\\top})',
+        conn: 'Dimensiones: $\\mathbf A\\in\\mathbb{R}^{P\\times P}$, $\\mathbf b\\in\\mathbb{R}^{P}$ y el resultado vuelve a $\\mathbb{R}^{P}$. Cada componente $\\partial f/\\partial x_j$ mide cuánto cambia $f$ al mover **sólo** $x_j$.'
+      },
+      {
+        heading: 'Qué información codifica: derivada direccional',
+        tex: '\\frac{d}{d\\varepsilon}f(\\mathbf x+\\varepsilon\\mathbf v)\\Big|_{\\varepsilon=0}=\\nabla_{\\mathbf x}f^{\\top}\\mathbf v\\in\\mathbb{R}',
+        conn: 'Todo cambio de primer orden se lee como un producto interno con $\\nabla_{\\mathbf x}f$: el gradiente es el vector que reproduce **todas** las derivadas direccionales.'
+      },
+    ],
+    notes: 'Mismo operador, distinto espacio: $\\nabla_{\\mathbf x}$ deriva respecto a entradas, $\\nabla_{\\boldsymbol\\theta}\\mathcal L\\in\\mathbb{R}^{|\\boldsymbol\\theta|}$ respecto a parámetros entrenables y $\\nabla_{\\mathbf z}\\hat H_{\\boldsymbol\\theta}$ respecto al estado. El tamaño de la columna lo fija la variable, no el operador.'
+  },
+  {
+    id: 'nabla-jacobiano',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Jacobiano',
+    title: 'Muchos a muchos: el jacobiano $\\mathbf J_{f}\\in\\mathbb{R}^{M\\times P}$',
+    equations: [
+      {
+        heading: 'Definición: una fila por salida, una columna por entrada',
+        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}\\dfrac{\\partial f_1}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_1}{\\partial x_P}\\\\[4pt] \\vdots & \\ddots & \\vdots\\\\[4pt] \\dfrac{\\partial f_M}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_M}{\\partial x_P}\\end{bmatrix}\\in\\mathbb{R}^{M\\times P}, \\qquad [\\mathbf J_{f}]_{ij}=\\dfrac{\\partial f_i}{\\partial x_j}',
+        conn: 'La fila $i$ es $\\nabla_{\\mathbf x}f_i^{\\top}$ y la columna $j$ es $\\partial f/\\partial x_j\\in\\mathbb{R}^{M}$. La matriz no es cuadrada en general y el orden de filas y columnas **no** es intercambiable.'
+      },
+      {
+        heading: 'Regla de la cadena: el producto fija las dimensiones',
+        tex: 'h=g\\circ f \\;\\Rightarrow\\; \\mathbf J_{h}(\\mathbf x)=\\mathbf J_{g}\\bigl(f(\\mathbf x)\\bigr)\\,\\mathbf J_{f}(\\mathbf x)\\in\\mathbb{R}^{K\\times M}\\cdot\\mathbb{R}^{M\\times P}=\\mathbb{R}^{K\\times P}',
+        conn: 'Los índices intermedios $M$ deben coincidir: es la misma regla que encadena la retropropagación capa por capa.'
+      },
+      {
+        heading: 'Lectura local: linealización de primer orden',
+        tex: 'f(\\mathbf x+\\Delta\\mathbf x)\\approx f(\\mathbf x)+\\mathbf J_{f}(\\mathbf x)\\,\\Delta\\mathbf x, \\qquad (M\\times P)(P\\times 1)=M\\times 1',
+        conn: 'Cada elemento es una **sensibilidad local**: cuánto cambia la salida $i$ por unidad de cambio en la entrada $j$, en el punto $\\mathbf x$ y despreciando los términos de segundo orden.'
+      },
+    ],
+    notes: '**No confundir:** $\\mathbf J_{s}$ es la matriz simpléctica de la HNN —constante, antisimétrica, de tamaño $2d\\times 2d$ y **no** proviene de derivar una función—; los costos $J_{\\mathrm{HNN}}$ y $J_{\\mathrm{LNN}}$ son escalares, no matrices.'
+  },
+  {
+    id: 'nabla-ejemplo',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Ejemplo paso a paso',
+    title: 'Ejemplo: tres entradas y dos salidas',
+    equations: [
+      {
+        heading: 'Paso 1 · La función',
+        tex: 'f(\\mathbf x)=\\begin{bmatrix}f_1(\\mathbf x)\\\\ f_2(\\mathbf x)\\end{bmatrix}=\\begin{bmatrix}x_1x_2+\\sin x_3\\\\ x_1^{2}+x_3^{2}\\end{bmatrix}, \\qquad \\mathbf x\\in\\mathbb{R}^{3},\\ f(\\mathbf x)\\in\\mathbb{R}^{2}',
+        conn: 'El dominio tiene dimensión $P=3$ y el codominio $M=2$: el jacobiano tendrá $2$ filas y $3$ columnas.'
+      },
+      {
+        heading: 'Paso 2 · Derivadas parciales de cada salida',
+        tex: '\\nabla_{\\mathbf x}f_1=\\begin{bmatrix}x_2\\\\ x_1\\\\ \\cos x_3\\end{bmatrix}, \\qquad \\nabla_{\\mathbf x}f_2=\\begin{bmatrix}2x_1\\\\ 0\\\\ 2x_3\\end{bmatrix}',
+        conn: '$\\partial f_2/\\partial x_2=0$: la segunda salida no depende de $x_2$. Un cero en el jacobiano es información estructural, no un error de cálculo.'
+      },
+      {
+        heading: 'Paso 3 · Ensamblar la matriz',
+        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}x_2 & x_1 & \\cos x_3\\\\ 2x_1 & 0 & 2x_3\\end{bmatrix}\\in\\mathbb{R}^{2\\times 3}',
+        conn: 'La fila 1 responde «cuánto cambia $f_1$ por unidad de $x_1$, $x_2$, $x_3$»; la fila 2 hace lo mismo para $f_2$.'
+      },
+      {
+        heading: 'Paso 4 · Evaluar en un punto',
+        tex: '\\mathbf J_{f}(1,2,0)=\\begin{bmatrix}2 & 1 & 1\\\\ 2 & 0 & 0\\end{bmatrix}, \\qquad f(1,2,0)=\\begin{bmatrix}2\\\\ 1\\end{bmatrix} \\;\\Rightarrow\\; f(\\mathbf x)\\approx\\begin{bmatrix}2\\\\ 1\\end{bmatrix}+\\mathbf J_{f}(1,2,0)\\,\\Delta\\mathbf x',
+        conn: 'En ese punto, mover $x_1$ en $\\Delta$ cambia $f_1$ y $f_2$ en $2\\Delta$; mover $x_2$ sólo afecta a $f_1$; mover $x_3$ afecta a $f_1$ con pendiente $1$ y a $f_2$ con pendiente $0$.'
+      },
+    ],
+    notes: 'El orden importa: primero se derivan las **salidas** por separado y después se apilan como filas. Derivar primero las entradas produce la traspuesta, que no es el mismo objeto.'
+  },
+  {
+    id: 'nabla-energia',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Sensibilidad en energía',
+    title: 'Modelo energético: cuatro sensores y dos salidas',
+    equations: [
+      {
+        heading: 'Cuatro sensores de entrada y dos salidas',
+        tex: '\\mathbf x=\\begin{bmatrix}T_{out} & RH_{out} & P_{HVAC} & I_{sol}\\end{bmatrix}^{\\top}\\in\\mathbb{R}^{4}, \\qquad f(\\mathbf x)=\\begin{bmatrix}T_{in}^{+1}\\\\ E_{HVAC}\\end{bmatrix}=\\begin{bmatrix}T_{in}+a\\,(T_{out}-T_{in})+b\\,P_{HVAC}+c\\,I_{sol}\\\\ d\\,P_{HVAC}+e\\,(T_{out}-T_{in})\\end{bmatrix}',
+        conn: '$T_{in}$ es **estado**, no entrada: por eso no es columna del jacobiano. $a$ (°C/°C), $b$ (°C/kW), $c$ (°C·m²/W), $d$ (kWh/kW) y $e$ (kWh/°C) son parámetros físicos $\\boldsymbol\\phi$.'
+      },
+      {
+        heading: 'Jacobiano del modelo',
+        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}a & 0 & b & c\\\\ e & 0 & d & 0\\end{bmatrix}\\in\\mathbb{R}^{2\\times 4}',
+        conn: 'Dos filas —la temperatura siguiente y la energía— y cuatro columnas, una por sensor. La columna de $RH_{out}$ es nula porque el modelo declarado **no tiene canal de humedad**: es un supuesto de modelado, no un hallazgo sobre el edificio.'
+      },
+      {
+        heading: 'En un modelo lineal el jacobiano es constante',
+        tex: 'a=0{,}3,\\ b=0{,}5,\\ c=0{,}02,\\ d=1{,}1,\\ e=0{,}4 \\;\\Rightarrow\\; \\mathbf J_{f}=\\begin{bmatrix}0{,}3 & 0 & 0{,}5 & 0{,}02\\\\ 0{,}4 & 0 & 1{,}1 & 0\\end{bmatrix}\\qquad\\text{para todo }\\mathbf x',
+        conn: 'Al ser lineal en las entradas, $\\mathbf J_{f}$ no depende del punto de operación. En un modelo no lineal —saturación del equipo, eficiencia variable— cada elemento depende de $\\mathbf x$ y hay que reevaluarlo en cada punto.'
+      },
+    ],
+    notes: 'El jacobiano responde **una pregunta local**: si el punto de operación se mueve un poco, cuánto se mueve cada salida. No dice nada sobre el comportamiento lejos de ese punto ni sobre causalidad.'
+  },
+  {
+    id: 'nabla-sensibilidad',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Lectura del jacobiano',
+    title: 'Cómo leer cada elemento como sensibilidad local',
+    table: [
+      ['Elemento', 'Unidad', 'Lectura como sensibilidad local'],
+      ['$\\partial T_{in}^{+1}/\\partial T_{out}=a$', '°C/°C', 'fracción del salto térmico exterior que pasa al interior en un paso'],
+      ['$\\partial T_{in}^{+1}/\\partial P_{HVAC}=b$', '°C/kW', 'efecto del equipo sobre la temperatura de la hora siguiente'],
+      ['$\\partial E_{HVAC}/\\partial P_{HVAC}=d$', 'kWh/kW', 'consumo marginal por cada kW adicional del equipo'],
+      ['$\\partial E_{HVAC}/\\partial T_{out}=e$', 'kWh/°C', 'consumo extra asociado al gradiente térmico'],
+      ['$\\partial T_{in}^{+1}/\\partial RH_{out}=0$', '°C/%HR', 'sin efecto: el modelo no usa la humedad como entrada'],
+    ],
+    equations: [
+      {
+        heading: 'Cada elemento arrastra sus unidades',
+        tex: '[\\mathbf J_{f}]_{ij}=\\frac{\\partial y_i}{\\partial x_j} \\;\\Rightarrow\\; \\text{unidad}\\left([\\mathbf J_{f}]_{ij}\\right)=\\frac{\\text{unidad de } y_i}{\\text{unidad de } x_j}',
+        conn: 'Si las unidades no coinciden con la lectura física esperada, el error está en el modelo, no en la derivada: es la comprobación dimensional aplicada elemento por elemento.'
+      },
+      {
+        heading: 'Validez local de la lectura',
+        tex: '\\Delta\\mathbf y\\approx\\mathbf J_{f}(\\mathbf x_0)\\,\\Delta\\mathbf x, \\qquad (M\\times P)(P\\times 1)=M\\times 1',
+        conn: 'La aproximación vale para cambios pequeños alrededor de $\\mathbf x_0$; un jacobiano no es una relación causal global ni un intervalo de incertidumbre.'
+      },
+    ],
+    notes: 'Las columnas se leen **por sensor** (qué entrada mueve más cada salida) y las filas **por salida** (de qué entradas depende). Una columna nula identifica una entrada que el modelo ignora, no una variable irrelevante en el sistema real.'
+  },
+  {
+    id: 'nabla-reglas',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Reglas y dimensiones',
+    title: 'Gradiente, jacobiano y Hessiano: qué es cada objeto',
+    table: [
+      ['Objeto', 'Definición', 'Dimensión', 'Dónde aparece'],
+      ['$\\nabla_{\\mathbf x}f$', '$[\\partial f/\\partial x_j]$', '$\\mathbb{R}^{P}$ (columna)', '$\\nabla_{\\boldsymbol\\theta}\\mathcal L$, $\\nabla_{\\mathbf z}\\hat H_{\\boldsymbol\\theta}$, $\\nabla_{\\boldsymbol\\psi}\\mathcal L$'],
+      ['$\\mathbf J_{f}$', '$[\\partial f_i/\\partial x_j]$', '$\\mathbb{R}^{M\\times P}$ (matriz)', 'sensibilidad salida–entrada de $f_{\\boldsymbol\\theta}$; residuo de una PINN'],
+      ['$\\mathbf H_{f}$', '$[\\partial^{2}f/\\partial x_i\\partial x_j]$', '$\\mathbb{R}^{P\\times P}$ (simétrica si $f\\in C^{2}$)', 'inercia de la LNN; curvatura; paso de Newton'],
+      ['$\\Delta f$', '$\\operatorname{tr}(\\mathbf H_{f})=\\sum_i \\partial^{2}f/\\partial x_i^{2}$', '$\\mathbb{R}$ (escalar)', 'laplaciano: difusión y regularización espacial'],
+    ],
+    equations: [
+      {
+        heading: 'Regla 1 · El laplaciano es la traza del Hessiano',
+        tex: '\\Delta f=\\sum_{i=1}^{P}\\frac{\\partial^{2}f}{\\partial x_i^{2}}=\\operatorname{tr}(\\mathbf H_{f})\\in\\mathbb{R} \\qquad\\Longrightarrow\\qquad \\text{no se escribe } \\nabla^{2}f',
+        conn: '$\\nabla^{2}f$ se lee como laplaciano en unos textos y como Hessiano en otros: aquí se nombra el objeto, $\\Delta f$ o $\\mathbf H_{f}$.'
+      },
+      {
+        heading: 'Regla 2 · El tiempo no lleva nabla',
+        tex: '\\mathcal{F}=m\\,\\frac{d^{2}}{dt^{2}}+c\\,\\frac{d}{dt}+k\\,\\mathcal{I}, \\qquad x(t),\\ \\dot{x}(t),\\ \\ddot{x}(t),\\ \\frac{d}{dt}x(t)',
+        conn: '$\\nabla$ se reserva a derivadas respecto a variables vectoriales. El masa-resorte-amortiguador usa $d/dt$ y puntos; no se escribe $\\nabla_{t}$ porque $\\nabla^{2}$ se confundiría con el laplaciano.'
+      },
+    ],
+    notes: 'Regla de lectura: el **tipo de variable** decide el símbolo —entradas $\\mathbf x$, parámetros $\\boldsymbol\\theta$, estado $\\mathbf z$— y la **forma del resultado** decide el nombre: escalar, vector columna, matriz o matriz cuadrada.'
+  },
+  {
+    id: 'nabla-piml',
+    module: 'nabla',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3 · Operador nabla · Conexión con PIML',
+    title: 'Dónde aparecen: regresión, redes, HNN y LNN',
+    equations: [
+      {
+        heading: 'Tres derivadas del mismo tipo, en tres espacios',
+        tex: '\\nabla_{\\mathbf x}f_{\\boldsymbol\\theta}\\in\\mathbb{R}^{P}, \\qquad \\nabla_{\\boldsymbol\\theta}\\mathcal L\\in\\mathbb{R}^{|\\boldsymbol\\theta|}, \\qquad \\nabla_{\\mathbf z}\\hat H_{\\boldsymbol\\theta}\\in\\mathbb{R}^{2d}',
+        conn: 'Entradas (sensibilidad), parámetros (entrenamiento) y estado (dinámica). Confundirlas es el error más frecuente al leer el residuo de una PINN: allí se derivan **entradas**, no parámetros. La derivada temporal de un campo $f_{\\boldsymbol\\theta}(t,\\mathbf x)$ es parcial, $\\partial_{t}$; si el campo sólo depende de $t$, coincide con $d/dt$.'
+      },
+      {
+        heading: 'Cómo se encadenan los tres objetos',
+        tex: '\\nabla_{\\mathbf x}f\\in\\mathbb{R}^{P} \\;\\longrightarrow\\; \\mathbf J_{f}\\in\\mathbb{R}^{M\\times P} \\;\\longrightarrow\\; \\mathbf H_{f}=\\mathbf J_{\\nabla_{\\mathbf x}f}\\in\\mathbb{R}^{P\\times P}',
+        conn: 'El Hessiano es el **jacobiano del gradiente**: derivar la columna $\\nabla_{\\mathbf x}f$ respecto a $\\mathbf x$ da una matriz $P\\times P$, simétrica si $f\\in C^{2}$ (Schwarz). Así se pasa de escalar a vector, de vector a matriz y de matriz al objeto que mide curvatura.'
+      },
+    ],
+    table: [
+      ['Modelo', 'Objeto derivado', 'Dimensión', 'Papel'],
+      ['Regresión $\\mathbf y=\\mathbf X\\boldsymbol\\theta$', '$\\nabla_{\\boldsymbol\\theta}\\mathcal L=\\frac{1}{N}\\mathbf X^{\\top}(\\mathbf X\\boldsymbol\\theta-\\mathbf y)$', '$\\mathbb{R}^{P}$', 'dirección de descenso; $\\mathbf H=\\frac{1}{N}\\mathbf X^{\\top}\\mathbf X$ da la curvatura'],
+      ['Red $f_{\\boldsymbol\\theta}$', '$\\nabla_{\\boldsymbol\\theta}\\mathcal L$', '$\\mathbb{R}^{|\\boldsymbol\\theta|}$', 'retropropagación'],
+      ['PINN (§4b)', '$\\partial_{t}f_{\\boldsymbol\\theta},\\ \\partial_{\\mathbf x}f_{\\boldsymbol\\theta}$', '$1$ y $P$', 'residuo de la ley física por autodiferenciación'],
+      ['HNN (§4)', '$\\nabla_{\\mathbf z}\\hat H_{\\boldsymbol\\theta}$', '$\\mathbb{R}^{2d}$', 'dinámica $\\dot{\\mathbf z}=\\mathbf J_{s}\\nabla_{\\mathbf z}\\hat H_{\\boldsymbol\\theta}$'],
+      ['LNN (§4)', '$\\mathbf H_{\\dot{\\mathbf q}\\dot{\\mathbf q}},\\ \\mathbf H_{\\dot{\\mathbf q}\\mathbf q}$', '$\\mathbb{R}^{d\\times d}$', 'aceleración predicha por Euler–Lagrange'],
+    ],
+    notes: 'El jacobiano de la red, $\\mathbf J_{f_{\\boldsymbol\\theta}}\\in\\mathbb{R}^{M\\times P}$, es la sensibilidad salida–entrada; no se confunde con $\\mathbf J_{s}$ (simpléctica) ni con el gradiente de la pérdida. El desarrollo de la puerta ② está en §4 y la identificación inversa en §4b.'
+  },
+
+  // ── §4 Diagrama 1 — Cuatro puertas ──────────────────────────────────────
   {
     id: 'd1-figura',
     module: 'd1',
     tone: 'blue',
     kind: 'diagram',
-    kicker: '3 · Diagrama 1',
+    kicker: '4 · Diagrama 1',
     title: 'Las cuatro puertas por las que entra la física',
     lead: [
       'Un solo punto de partida: el modelo ML $\\hat{y} = f_\\theta(\\mathbf{x})$ y el conocimiento físico $\\mathcal{F}[u] = 0$.',
@@ -144,7 +368,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'wide',
-    kicker: '3 · Sistema ejemplar',
+    kicker: '4 · Sistema ejemplar',
     title: 'El sistema ejemplar: masa-resorte-amortiguador (MR)',
     bullets: [
       'Un solo sistema físico para comparar las tres puertas: la ley $\\mathcal{F}[u]=0$ instanciada en el MR.',
@@ -173,7 +397,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'door',
-    kicker: '3 · Puerta ① · Forma débil',
+    kicker: '4 · Puerta ① · Forma débil',
     title: 'Puerta ① — Función de pérdida (PINN)',
     lema: 'La física entra como **penalización del residuo**: se busca que la red la respete, sin garantizar su cumplimiento exacto.',
     equations: [
@@ -209,7 +433,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'diagram',
-    kicker: '3 · Puerta ① · Forma débil · diagrama',
+    kicker: '4 · Puerta ① · Forma débil · diagrama',
     diagram: 'mr1',
     diagramTitle: 'MR · Puerta ① — la física entra en la función de pérdida',
     legend: [
@@ -224,7 +448,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'purple',
     kind: 'door',
-    kicker: '3 · Puerta ② · Fundamentación física',
+    kicker: '4 · Puerta ② · Fundamentación física',
     title: 'Puerta ② — Del Hamiltoniano a la dinámica del masa-resorte',
     lema: 'De dónde salen las ecuaciones que la puerta ② impone como estructura: cuatro pasos desde la energía hasta la EDO del MR ($c = 0$).',
     equations: [
@@ -261,7 +485,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'purple',
     kind: 'door',
-    kicker: '3 · Puerta ② · Forma fuerte',
+    kicker: '4 · Puerta ② · Forma fuerte',
     title: 'Puerta ② — Arquitectura (Hamiltonian NN)',
     lema: 'La física entra en la **estructura del modelo**: se cumple **por construcción** para todo $\\theta$.',
     derivation: ['$(q(t), p(t))$', '$f_{\\boldsymbol{\\theta}}$ — red neuronal', '$\\hat{H}_{\\boldsymbol{\\theta}}(q(t),p(t))$', '$\\nabla_{\\mathbf{z}}\\hat{H}_{\\boldsymbol{\\theta}}$ (autodiff)', '$\\mathbf{J}_s\\nabla_{\\mathbf{z}}\\hat{H}_{\\boldsymbol{\\theta}}$ → dinámica'],
@@ -304,7 +528,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'purple',
     kind: 'door',
-    kicker: '3 · Puerta ② · Fundamentación lagrangiana',
+    kicker: '4 · Puerta ② · Fundamentación lagrangiana',
     title: 'Puerta ② — Del Lagrangiano a la dinámica del masa-resorte',
     lema: 'De dónde sale la regla de evolución que la LNN impone como estructura: cuatro pasos desde $L=T-V$ hasta la EDO del MR ($c=0$).',
     equations: [
@@ -341,7 +565,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'purple',
     kind: 'door',
-    kicker: '3 · Puerta ② · Forma fuerte (Lagrangian NN)',
+    kicker: '4 · Puerta ② · Forma fuerte (Lagrangian NN)',
     title: 'Puerta ② — Arquitectura (Lagrangian NN)',
     lema: 'La física entra en la **estructura del modelo**: se cumple **por construcción** para todo $\\theta$, ahora a través del principio de acción.',
     derivation: ['$(\\mathbf{q}(t), \\dot{\\mathbf{q}}(t))$', '$f_{\\boldsymbol{\\theta}}$ — red neuronal', '$\\hat{L}_{\\boldsymbol{\\theta}}(\\mathbf{q},\\dot{\\mathbf{q}})$', '$\\nabla_{(\\mathbf{q},\\dot{\\mathbf{q}})}\\hat{L}_{\\boldsymbol{\\theta}}$ (autodiff)', 'Euler–Lagrange → aceleración vectorial'],
@@ -384,7 +608,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'purple',
     kind: 'wide',
-    kicker: '3 · Puerta ② · Comparativa',
+    kicker: '4 · Puerta ② · Comparativa',
     title: 'Hamiltoniano vs Lagrangiano: cuándo usar una u otra',
     table: [
       ['Criterio', 'Hamiltoniano $H(q, p)$', 'Lagrangiano $L(q, \\dot{q})$'],
@@ -446,7 +670,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'purple',
     kind: 'diagram',
-    kicker: '3 · Puerta ② · Forma fuerte · diagrama',
+    kicker: '4 · Puerta ② · Forma fuerte · diagrama',
     diagram: 'mr2',
     diagramTitle: 'MR · Puerta ② — flujo de una HNN · la física entra en la estructura',
     legend: [
@@ -462,7 +686,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'cyan',
     kind: 'door',
-    kicker: '3 · Puerta ③ · Física en los datos',
+    kicker: '4 · Puerta ③ · Física en los datos',
     title: 'Puerta ③ — Física en los datos / features',
     lema: 'La física entra **en los datos/features**: indirectamente, antes del modelo.',
     equations: [
@@ -493,7 +717,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'cyan',
     kind: 'diagram',
-    kicker: '3 · Puerta ③ · Física en los datos · diagrama',
+    kicker: '4 · Puerta ③ · Física en los datos · diagrama',
     diagram: 'mr3',
     diagramTitle: 'MR · Puerta ③ — la física entra en los datos / features',
     legend: [
@@ -508,7 +732,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'wide',
-    kicker: '3 · Puerta ④ · Híbrido',
+    kicker: '4 · Puerta ④ · Híbrido',
     title: 'Puerta ④ — Híbrido simulador + red (grey-box)',
     bullets: [
       '**¿Por qué existen?:** un simulador confiable **subvenciona** a la red: $f_{fis}$ da la predicción base —interpretable y físicamente correcta— y $g_\\theta$ aprende solo el residuo.',
@@ -526,13 +750,13 @@ export const SLIDES = [
     ],
   },
 
-  // ── §4 Diagrama 2 — Familias PIML para TS ───────────────────────────────
+  // ── §5 Diagrama 2 — Familias PIML para TS ───────────────────────────────
   {
     id: 'd1b-directo-inverso',
     module: 'd1',
     tone: 'blue',
     kind: 'split',
-    kicker: '3b · Problemas directos e inversos',
+    kicker: '4b · Problemas directos e inversos',
     title: 'Problema directo y problema inverso',
     bullets: [
       'El **directo** calcula la respuesta del sistema: parámetros conocidos, salida desconocida.',
@@ -564,7 +788,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'split',
-    kicker: '3b · Problemas directos e inversos',
+    kicker: '4b · Problemas directos e inversos',
     title: 'Resolverlos sin redes neuronales',
     bullets: [
       '**Directo:** integración analítica o numérica — Euler, Runge–Kutta, Newmark-$\\beta$.',
@@ -596,7 +820,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'split',
-    kicker: '3b · PINN para identificación',
+    kicker: '4b · PINN para identificación',
     title: 'Red neuronal: predicción e identificación',
     table: [
       ['Parámetros de red', 'Parámetros físicos'],
@@ -631,7 +855,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'split',
-    kicker: '3b · PINN para identificación',
+    kicker: '4b · PINN para identificación',
     title: 'Optimización conjunta de una PINN inversa',
     equations: [
       {
@@ -668,7 +892,7 @@ export const SLIDES = [
     module: 'd1',
     tone: 'blue',
     kind: 'split',
-    kicker: '3b · Convergencia e incertidumbre',
+    kicker: '4b · Convergencia e incertidumbre',
     title: 'Convergencia, identificabilidad e incertidumbre',
     table: [
       ['Dificultad', 'Estrategia'],
@@ -707,7 +931,7 @@ export const SLIDES = [
     module: 'd2',
     tone: 'purple',
     kind: 'split',
-    kicker: '4 · Diagrama 2',
+    kicker: '5 · Diagrama 2',
     title: 'Familias PIML para series de tiempo (todas las aplicaciones)',
     bullets: [
       'Punto de partida común: la serie $y[t]$ observa un sistema dinámico gobernado por una ley $\\mathcal{F}[u] = 0$ total o parcialmente conocida.',
@@ -731,7 +955,7 @@ export const SLIDES = [
     module: 'd2',
     tone: 'purple',
     kind: 'wide',
-    kicker: '4 · Matemática del Diagrama 2',
+    kicker: '5 · Matemática del Diagrama 2',
     title: 'F1 — PINN sobre EDO/EDP · F2 — Physics-guided RNN',
     equations: [
       {
@@ -761,7 +985,7 @@ export const SLIDES = [
     module: 'd2',
     tone: 'purple',
     kind: 'wide',
-    kicker: '4 · Matemática del Diagrama 2',
+    kicker: '5 · Matemática del Diagrama 2',
     title: 'F3 — Neural ODE/SDE informados · F4 — Física en el espacio latente',
     equations: [
       {
@@ -789,7 +1013,7 @@ export const SLIDES = [
     module: 'd2',
     tone: 'purple',
     kind: 'wide',
-    kicker: '4 · Matemática del Diagrama 2',
+    kicker: '5 · Matemática del Diagrama 2',
     title: 'F5 — Forecasting restringido · F6 — TS con física embebida',
     equations: [
       {
@@ -826,7 +1050,7 @@ export const SLIDES = [
     module: 'd2',
     tone: 'purple',
     kind: 'wide',
-    kicker: '4 · Familias PIML · objetivos por modelo',
+    kicker: '5 · Familias PIML · objetivos por modelo',
     title: 'Neural ODE/SDE, PhyDNet y física embebida: salida y estimación',
     bullets: [
       'La estructura común identifica entradas, salidas y estimación; no borra las diferencias entre una trayectoria determinista, una dinámica estocástica y una arquitectura con prior físico.',
@@ -851,13 +1075,13 @@ export const SLIDES = [
     ]
   },
 
-  // ── §5a Diagrama 3 — Familias data-driven E1–E8 ─────────────────────────
+  // ── §6a Diagrama 3 — Familias data-driven E1–E8 ─────────────────────────
   {
     id: 'd3-figura',
     module: 'd3',
     tone: 'orange',
     kind: 'split',
-    kicker: '5a · Diagrama 3',
+    kicker: '6a · Diagrama 3',
     title: 'Familias data-driven en sistemas energéticos (SIN física)',
     bullets: [
       'El contraste necesario: la base contra la que se mide todo PIML energético — las 8 familias de la matriz SOTA 2022–2026.',
@@ -880,7 +1104,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E1 — ARIMA: autorregresivo integrado de medias móviles',
     bullets: [
       '**Definición:** ARIMA$(p,d,q)$ modela la serie diferenciada $d$ veces con una parte autorregresiva (orden $p$) y una de medias móviles (orden $q$).',
@@ -924,7 +1148,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E1 — SARIMA: extensión estacional de ARIMA',
     bullets: [
       '**Definición:** SARIMA$(p,d,q)(P,D,Q)_s$ añade a ARIMA un juego de operadores en el rezago estacional $s$; es el único método estadístico clásico nombrado en el diagrama 3.',
@@ -968,7 +1192,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Modelos estadísticos · desarrollo',
+    kicker: '6a · Modelos estadísticos · desarrollo',
     title: 'SARIMA: historia, estimación y distribución de pronóstico',
     bullets: [
       '**Entrada:** historia observada hasta T, con ventana histórica de longitud L; **salida:** distribución o pronóstico para los siguientes $\\tau$ pasos.',
@@ -1001,7 +1225,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Regresión lineal por mínimos cuadrados',
     bullets: [
       '**Límites:** con colinealidad o con $P > N$ la solución puede no ser única; de esas dos condiciones nacen ridge y lasso.',
@@ -1040,7 +1264,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Máxima verosimilitud (MLE)',
     bullets: [
       'La verosimilitud convierte un supuesto sobre el **ruido** en un criterio de estimación: no añade un modelo nuevo.',
@@ -1075,7 +1299,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Modelos probabilísticos · desarrollo',
+    kicker: '6a · Modelos probabilísticos · desarrollo',
     title: 'E2 — Máximo a posteriori (MAP)',
     bullets: [
       'MAP es un criterio de estimación: incorpora información previa sobre los parámetros, no un modelo nuevo.',
@@ -1117,7 +1341,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Ridge (L2): penalización cuadrática',
     bullets: [
       'Penaliza la **magnitud** de los coeficientes: los contrae hacia cero **sin anularlos**.',
@@ -1157,7 +1381,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Lasso (L1): penalización en valor absoluto',
     bullets: [
       'Favorece soluciones **dispersas**: puede llevar coeficientes **exactamente a cero**.',
@@ -1200,7 +1424,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Elastic Net: regularización $\\ell_1 + \\ell_2$',
     bullets: [
       'Combina la **selección de variables** de Lasso con la **contracción** de Ridge.',
@@ -1243,7 +1467,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Gaussian Process Regression: modelo y optimización',
     bullets: [
       'GPR define una **distribución sobre funciones**, no sólo coeficientes como OLS.',
@@ -1287,7 +1511,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'split',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — GPR: predicción e incertidumbre',
     bullets: [
       'La media predictiva hereda la estructura del kernel; la varianza predictiva **depende de la distancia a los datos**.',
@@ -1319,7 +1543,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — DLinear: descomposición lineal y baseline obligatorio',
     bullets: [
       'Separa la ventana en **tendencia** y **resto** con un promedio móvil.',
@@ -1353,7 +1577,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — SVR: pérdida $\\varepsilon_{svr}$-insensible y margen máximo',
     bullets: [
       '**Entrada/salida:** predictor sobre $\\mathbf{x}_n\\in\\mathbb{R}^{P}$; la formulación mostrada es escalar ($\\tau=1$). Para $\\tau>1$ se requiere estrategia multi-salida explícita.',
@@ -1387,7 +1611,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Árbol de regresión (CART): partición recursiva',
     bullets: [
       '**Entrada:** características tabulares $\\mathbf{x}_n\\in\\mathbb{R}^{P}$; esta ecuación muestra una salida escalar ($\\tau=1$).',
@@ -1417,7 +1641,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Random Forest: bagging sobre árboles',
     bullets: [
       'Promedia $M_{arb}$ árboles entrenados sobre **muestras bootstrap**.',
@@ -1446,7 +1670,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E2 — Gradient Boosting (XGBoost): ajustar el residuo',
     bullets: [
       '**Salida:** la formulación escalar se interpreta por salida ($\\tau=1$); el caso multi-horizonte requiere una estrategia vectorial o modelos separados.',
@@ -1480,7 +1704,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E3 — RNN simple: estado oculto recurrente',
     bullets: [
       'Base de la familia recurrente: un solo estado oculto $\\mathbf{h}[t]$ que resume el pasado.',
@@ -1520,7 +1744,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E3 — LSTM: memoria celular y compuertas',
     bullets: [
       'La LSTM mantiene dos estados: memoria celular $\\mathbf{c}[t]$ y estado oculto $\\mathbf{h}[t]$.',
@@ -1559,7 +1783,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E3 — GRU: actualización y reinicio del estado',
     bullets: [
       'La GRU mantiene un solo estado oculto; combina memoria y representación sin una celda separada.',
@@ -1598,7 +1822,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Aprendizaje secuencial · formulación común',
+    kicker: '6a · Aprendizaje secuencial · formulación común',
     title: 'RNN, LSTM y GRU: de la ventana histórica al horizonte',
     bullets: [
       'La ventana $L=T$ fija cuántos pasos pasados recibe la red; el horizonte $\\tau$ fija cuántas salidas futuras produce. No son el mismo eje.',
@@ -1629,7 +1853,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E4 — Convolucionales/TCN · E5 — Transformers LTSF',
     equations: [
       {
@@ -1651,7 +1875,7 @@ export const SLIDES = [
     module: 'd3',
     tone: 'orange',
     kind: 'wide',
-    kicker: '5a · Matemática del Diagrama 3',
+    kicker: '6a · Matemática del Diagrama 3',
     title: 'E6 — SSM/Mamba · E7 — Fundacionales · E8 — Descomposición',
     equations: [
       {
@@ -1679,13 +1903,13 @@ export const SLIDES = [
     ],
   },
 
-  // ── §5b Diagrama 4 — La intersección ────────────────────────────────────
+  // ── §6b Diagrama 4 — La intersección ────────────────────────────────────
   {
     id: 'd4-figura',
     module: 'd4',
     tone: 'magenta',
     kind: 'split',
-    kicker: '5b · Diagrama 4',
+    kicker: '6b · Diagrama 4',
     title: 'La intersección: TS + física en sistemas energéticos',
     bullets: [
       'Dónde se cruzan las familias E1–E8 con las puertas ①–④: cinco patrones (A–E).',
@@ -1710,7 +1934,7 @@ export const SLIDES = [
     module: 'd4',
     tone: 'magenta',
     kind: 'wide',
-    kicker: '5b · Matemática del Diagrama 4',
+    kicker: '6b · Matemática del Diagrama 4',
     title: 'Patrón A — Dinámica de potencia · Patrón B — Flujo de red',
     equations: [
       {
@@ -1736,7 +1960,7 @@ export const SLIDES = [
     module: 'd4',
     tone: 'magenta',
     kind: 'wide',
-    kicker: '5b · Matemática del Diagrama 4',
+    kicker: '6b · Matemática del Diagrama 4',
     title: 'Patrón C — Demanda: física como restricción de forma',
     bullets: [
       'No hay EDO del activo: la física entra como **regularizadores cualitativos** sobre $\\hat{\\mathbf{y}} \\in \\mathbb{R}^{\\tau}$ (puerta ①, o ② si se cablea).',
@@ -1761,7 +1985,7 @@ export const SLIDES = [
     module: 'd4',
     tone: 'magenta',
     kind: 'wide',
-    kicker: '5b · Matemática del Diagrama 4',
+    kicker: '6b · Matemática del Diagrama 4',
     title: 'Patrón D — Física de sustancia (circuito RC) · Patrón E — rama física + residual',
     equations: [
       {
@@ -1785,13 +2009,13 @@ export const SLIDES = [
     ],
   },
 
-  // ── §6 Diagrama 5 — Problemas que resuelve ──────────────────────────────
+  // ── §7 Diagrama 5 — Problemas que resuelve ──────────────────────────────
   {
     id: 'd5-figura',
     module: 'd5',
     tone: 'cyan',
     kind: 'split',
-    kicker: '6 · Diagrama 5',
+    kicker: '7 · Diagrama 5',
     title: '¿Qué problema resuelve cada enfoque PIML en energía?',
     bullets: [
       'Cada puerta ataca preferentemente un problema distinto: la decisión informativa del documento.',
@@ -1815,7 +2039,7 @@ export const SLIDES = [
     module: 'd5',
     tone: 'cyan',
     kind: 'wide',
-    kicker: '6 · Matemática del Diagrama 5',
+    kicker: '7 · Matemática del Diagrama 5',
     title: 'Lectura matemática de las filas ①–④',
     bullets: [
       '**① vs escasez:** $\\lambda_{phys}\\,\\mathcal{L}_{phys}$ restringe las funciones admisibles a las que casi satisfacen $\\mathcal{F}[u] = 0$ → aumenta la muestra efectiva; la ganancia aparece "EXACTAMENTE con pocos datos" (Loffa 2025).',
@@ -1835,7 +2059,7 @@ export const SLIDES = [
     module: 'd5',
     tone: 'cyan',
     kind: 'wide',
-    kicker: '6 · Matemática del Diagrama 5',
+    kicker: '7 · Matemática del Diagrama 5',
     title: 'Problemas laterales: UQ, eventos extremos y escalabilidad',
     equations: [
       {
@@ -1857,13 +2081,13 @@ export const SLIDES = [
     ],
   },
 
-  // ── §7 Diagrama 6 — Opciones de problema ────────────────────────────────
+  // ── §8 Diagrama 6 — Opciones de problema ────────────────────────────────
   {
     id: 'd6-figura',
     module: 'd6',
     tone: 'red',
     kind: 'split',
-    kicker: '7 · Diagrama 6',
+    kicker: '8 · Diagrama 6',
     title: 'Árbol de opciones de problema (NO vinculado a ningún modelo)',
     bullets: [
       'Opciones de problema que la tesis podría abarcar — **sin votar todavía**; la decisión es posterior.',
@@ -1880,7 +2104,7 @@ export const SLIDES = [
       { color: '#F0F4F8', label: 'Nota de combinación' },
     ],
     refs: [
-      'Anclajes de evidencia por opción en §7 ("Matemática del Diagrama 6"); decisión informativa: Tabla 5 (§6) y opciones (§7); resolución posterior a este documento.',
+      'Anclajes de evidencia por opción en §8 ("Matemática del Diagrama 6"); decisión informativa: Tabla 5 (§7) y opciones (§8); resolución posterior a este documento.',
     ],
   },
   {
@@ -1888,10 +2112,10 @@ export const SLIDES = [
     module: 'd6',
     tone: 'red',
     kind: 'wide',
-    kicker: '7 · Matemática del Diagrama 6',
+    kicker: '8 · Matemática del Diagrama 6',
     title: 'Anclajes A y B — régimen de escasez y bandas etiquetadas',
     bullets: [
-      '**Opción A (escasez de datos):** con $\\tilde{N}$ pequeño domina $\\lambda_{phys}\\,\\mathcal{L}_{phys}$; existe un umbral donde el residuo RC (§5b-D) supera a $\\mathcal{L}_{MSE}$ sola (Loffa 2025).',
+      '**Opción A (escasez de datos):** con $\\tilde{N}$ pequeño domina $\\lambda_{phys}\\,\\mathcal{L}_{phys}$; existe un umbral donde el residuo RC (§6b-D) supera a $\\mathcal{L}_{MSE}$ sola (Loffa 2025).',
     ],
     equations: [
       {
@@ -1907,30 +2131,30 @@ export const SLIDES = [
     module: 'd6',
     tone: 'red',
     kind: 'wide',
-    kicker: '7 · Matemática del Diagrama 6',
+    kicker: '8 · Matemática del Diagrama 6',
     title: 'Anclajes C y D — conformal y evaluación por régimen',
     bullets: [
       '**Opción C (UQ):** conformal — $C(\\hat{y}) = [\\hat{y} - \\hat{q},\\, \\hat{y} + \\hat{q}]$ con cobertura $\\ge 1 - \\alpha$ sobre cualquier predictor; B-PINN es prohibitivo en forecasting.',
-      '**Opción D (robustez/extremos):** evaluación por régimen — $\\mathcal{L}_{MSE}\\vert_{\\mathcal{E}}$ por separado, más $\\mathcal{L}_{rampa}$ y $\\mathcal{L}_{par}$ (§5b-C) durante el evento.',
+      '**Opción D (robustez/extremos):** evaluación por régimen — $\\mathcal{L}_{MSE}\\vert_{\\mathcal{E}}$ por separado, más $\\mathcal{L}_{rampa}$ y $\\mathcal{L}_{par}$ (§6b-C) durante el evento.',
     ],
   },
 
-  // ── §8 Lectura conjunta ─────────────────────────────────────────────────
+  // ── §9 Lectura conjunta ─────────────────────────────────────────────────
   {
     id: 'lectura',
     module: 'lectura',
     tone: 'green',
     kind: 'wide',
-    kicker: '8 · Lectura conjunta',
+    kicker: '9 · Lectura conjunta',
     title: 'Los seis diagramas en una tabla',
     table: [
       ['Diagrama', 'Pregunta que responde', 'Matemática asociada'],
-      ['1', 'Cómo entra la física (4 puertas)', '$\\mathcal{L}_{total}$, $\\mathbf{J}_s\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}$, $\\psi_{fis}$, $f_{fis} + g_\\theta$ (§3)'],
-      ['2', 'Qué familias PIML existen para TS (general)', 'F1–F6: PINN, PG-RNN, Neural ODE/SDE, PhyDNet, kernel/GPR, PINT/RFF (§4)'],
-      ['3', 'Qué familias data-driven hay en energía (base)', 'E1–E8: SARIMA, SVR/XGBoost, LSTM/GRU, TCN, atención, SSM, fundacionales, VMD (§5a)'],
-      ['4', 'Dónde TS ∩ física ∩ energía (patrones A–E)', 'swing, flujo de potencia, pérdidas de forma, RC 2R2C + $\\mathcal{R}_{phys}$, rama física+residual (§5b)'],
-      ['5', 'Qué problema resuelve cada enfoque', 'regularizador físico, posterior B-PINN, cuantiles conformales (§6)'],
-      ['6', 'Opciones de problema (sin conectar a modelo)', 'anclajes A–D: régimen de escasez, bandas etiquetadas, conformal, evaluación por régimen (§7)'],
+      ['1', 'Cómo entra la física (4 puertas)', '$\\mathcal{L}_{total}$, $\\mathbf{J}_s\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}$, $\\psi_{fis}$, $f_{fis} + g_\\theta$ (§4)'],
+      ['2', 'Qué familias PIML existen para TS (general)', 'F1–F6: PINN, PG-RNN, Neural ODE/SDE, PhyDNet, kernel/GPR, PINT/RFF (§5)'],
+      ['3', 'Qué familias data-driven hay en energía (base)', 'E1–E8: SARIMA, SVR/XGBoost, LSTM/GRU, TCN, atención, SSM, fundacionales, VMD (§6a)'],
+      ['4', 'Dónde TS ∩ física ∩ energía (patrones A–E)', 'swing, flujo de potencia, pérdidas de forma, RC 2R2C + $\\mathcal{R}_{phys}$, rama física+residual (§6b)'],
+      ['5', 'Qué problema resuelve cada enfoque', 'regularizador físico, posterior B-PINN, cuantiles conformales (§7)'],
+      ['6', 'Opciones de problema (sin conectar a modelo)', 'anclajes A–D: régimen de escasez, bandas etiquetadas, conformal, evaluación por régimen (§8)'],
     ],
   },
 
