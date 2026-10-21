@@ -1,0 +1,25 @@
+# Seguimiento — sección nabla, gradiente y jacobiano
+
+- Fuente de verdad: `odd/tasks/seccion-nabla-gradiente-jacobiano.md` (S1–S8, T1–T7).
+- Estado: en implementación.
+
+## Progreso
+
+- T1 Módulo `nabla` y navegación — hecho.
+- T2 Figura `NablaCasosFigure` — hecho.
+- T3 Siete diapositivas nuevas tras `marco-aprendizaje` — hecho.
+- T4 Renumeración de secciones y referencias cruzadas — hecho.
+- T5 CSS acotado por `data-id` — hecho.
+- T6 Build, lint, capturas y PDF — hecho.
+- T7 Resumen y memoria — hecho.
+
+## Notas
+
+- Decisión S8: se conserva la convención temporal `d/dt` vigente; `∇ₜ` no se reintroduce. Divulgado en la entrega.
+- `GUION.md` sigue desactualizado (26 diapositivas) desde antes de esta feature: fuera de alcance.
+
+## Renumeración resultante
+
+- Secciones: 1 Portada · 2 Notación y marco · **3 Operador nabla (nueva)** · 4 Diagrama 1 + puertas · 4b PINN identificación · 5 Diagrama 2 · 6a Diagrama 3 · 6b Diagrama 4 · 7 Diagrama 5 · 8 Diagrama 6 · 9 Lectura conjunta · 10 Cierre.
+- Referencias cruzadas actualizadas: §5b→§6b, §3→§4, §4→§5, §5a→§6a, §5b→§6b, §6→§7, §7→§8. El hueco del 9 quedó ocupado.
+- Total: 69 diapositivas.

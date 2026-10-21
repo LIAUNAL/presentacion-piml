@@ -1,0 +1,20 @@
+import { chromium } from 'playwright';
+import { spawn } from 'node:child_process';
+const PORT = 4187;
+const URL_ = `http://localhost:${PORT}/presentacion-piml/`;
+const srv = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(PORT), '--strictPort'], { cwd: process.cwd(), stdio: 'ignore' });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+for (let i = 0; i < 60; i++) { try { if ((await fetch(URL_)).ok) break; } catch {} await sleep(400); }
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+await p.goto(URL_, { waitUntil: 'networkidle' });
+await p.evaluate(() => localStorage.setItem('deck-slide-piml', '4'));
+await p.reload({ waitUntil: 'networkidle' });
+const labels = await p.$$eval('.rail-title', (els) => els.map((e) => e.textContent.trim()));
+const pips = await p.$$eval('.rail-dots', (els) => els.map((e) => e.children.length));
+const counter = await p.textContent('#counter');
+const active = await p.textContent('.rail-module.is-active-module .rail-title');
+console.log('módulos:', labels.join(' | '));
+console.log('pips por módulo:', pips.join(','));
+console.log('contador:', counter.trim(), '· módulo activo:', active.trim());
+await b.close(); srv.kill();

@@ -1877,3 +1877,78 @@ body.focus-mode .deck-controls .controls-logo {
   font-size: 0.66rem;
   line-height: 1.26;
 }
+
+/* ---------- §3 Operador nabla, gradiente y jacobiano ---------- */
+/* La sección es didáctica: pocas ecuaciones por página, así que el tipo se
+   escala para llenar la tarjeta sin recortar contenido. Todo va acotado por
+   data-id para no alterar el resto del deck. */
+.slide[data-id^='nabla-'] .math-stack {
+  gap: clamp(12px, 2.4vh, 26px);
+}
+
+.slide[data-id^='nabla-'] .eq-box {
+  padding: clamp(10px, 1.7vh, 18px) clamp(14px, 1.8vw, 22px);
+}
+
+.slide[data-id^='nabla-'] .eq-box .eq-display {
+  font-size: clamp(1.04rem, 1.42vw, 1.3rem);
+  line-height: 1.6;
+}
+
+.slide[data-id^='nabla-'] .eq-box .eq-conn {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.slide[data-id^='nabla-'] .reading-table {
+  font-size: 1rem;
+}
+
+.slide[data-id^='nabla-'] .reading-table th,
+.slide[data-id^='nabla-'] .reading-table td {
+  padding: 8px 11px;
+  line-height: 1.45;
+}
+
+.slide[data-id^='nabla-'] .slide-notes {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* La página del ejemplo encadena cuatro pasos: se compacta para que el
+   comentario final no quede cortado. */
+.slide[data-id='nabla-ejemplo'] .math-stack {
+  gap: 8px;
+}
+
+.slide[data-id='nabla-ejemplo'] .eq-box {
+  padding: 6px clamp(12px, 1.4vw, 16px);
+}
+
+.slide[data-id='nabla-ejemplo'] .eq-box .eq-display {
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+  line-height: 1.4;
+}
+
+.slide[data-id='nabla-ejemplo'] .eq-box .eq-heading {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+.slide[data-id='nabla-ejemplo'] .eq-box .eq-conn {
+  margin-top: 2px;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.slide[data-id='nabla-ejemplo'] .slide-notes {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+/* La tabla de reglas y la de conexión van con las cuatro columnas ajustadas. */
+.slide[data-id='nabla-reglas'] .reading-table td:first-child,
+.slide[data-id='nabla-piml'] .reading-table td:first-child {
+  white-space: normal;
+}
