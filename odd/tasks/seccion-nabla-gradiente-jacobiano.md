@@ -41,3 +41,16 @@ Feature: insertar una sección didáctica nueva (§3) en el deck PIML sin tocar 
 ## Slice boundary
 
 - Commit `e3ab0e8` cierra la feature previa de notación (839 líneas netas en 2 commits sobre `main`); esta feature arranca después de esa frontera y se entrega en dos cortes: (1) módulo, figura y contenido nuevo; (2) renumeración, CSS y exportación.
+
+## Slices entregados
+
+- `925a709` feat(deck): §3 completa — módulo, figura SVG y 8 diapositivas + renumeración (§3–§8 → §4–§9) con sus referencias cruzadas.
+- `e7fbee2` docs(deck): CSS acotado por `data-id`, documento de feature, espejo de seguimiento y resumen con comprobación dimensional.
+- La feature previa de notación quedó aislada en `e3ab0e8` antes de empezar (§3 no arrastra cambios ajenos).
+- PDF y capturas no se commitean: son artefactos de build (ver `.gitignore` de la carpeta).
+
+## Incidencias corregidas durante la verificación
+
+- La ecuación de la primera diapositiva se recortaba a la derecha (`overflow-x`): se dividió en matriz + comentario.
+- El renderizador pinta tablas antes que ecuaciones: la tabla de interpretación energética se movió a una diapositiva propia (09) para no invertir el orden de lectura.
+- `\qquad` se escribió con una sola barra en el fuente JS y KaTeX lo mostró como texto (`qqquad`); se corrigió a `\\qquad` y se verificó que no quedan secuencias LaTeX con barra simple.
