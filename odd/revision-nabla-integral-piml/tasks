@@ -1,0 +1,10 @@
+# ODD mirror — revisión integral nabla PIML
+
+- Estado: completo.
+- Especificación: `odd/tasks/revision-nabla-integral-piml.md` (S1 conserva alcance y convenciones solicitadas).
+- T1 Inventariar 61 diapositivas y ecuaciones relevantes — terminado.
+- T2 Ajustar notación y corregir desbordamientos detectados — terminado; CSS local de compactación para slides 2–3; build/lint pasan.
+- T3 Generar PDF final nuevo sin sobrescribir el original — terminado; `presentacion_piml_nabla_revisada_2026-11-final.pdf`, 61 páginas y 61 capturas.
+- T4 Validar expresiones y revisar diapositivas renderizadas — terminado; se inspeccionaron visualmente todas las diapositivas modificadas, sin recortes en los renders finales.
+- T5 Documentar cambios, memoria y resultado — terminado; resumen en `odd/revision-nabla-integral-piml/resumen-cambios.md`; Engram observación 137.
+- Restricción: preservar PDF local `presentacion_piml_unificada_2026-10-16.pdf`; salida nueva generada.

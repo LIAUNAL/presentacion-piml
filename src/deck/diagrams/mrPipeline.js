@@ -192,7 +192,7 @@ export function buildMrDiagram({ entry }) {
     }),
   );
 
-  const outLabel = entry === 'modelo' ? '$(\\hat{q}, \\hat{p})$' : '$\\hat{x}_\\theta(t)$';
+  const outLabel = entry === 'modelo' ? '$(\\hat{q}, \\hat{p})$' : '$\\hat{x}_\\boldsymbol{\\theta}(t)$';
   nodes.push(
     neuron(
       'out',
@@ -237,8 +237,8 @@ export function buildMrDiagram({ entry }) {
       zIndex: 0,
       data: {
         color: MORADO,
-        label: 'estructura física (conserva $H_\\theta$)',
-        eq: '$\\frac{d}{dt}\\,[q,\\ p] = \\mathbb{J}\\,\\nabla H_\\theta$',
+        label: 'estructura física (conserva $H_\\boldsymbol{\\theta}$)',
+        eq: '$\\dot{\\mathbf{z}}(t) = \\mathbf{J}_s\\,\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}(\\mathbf{z}(t))$',
         badge: false,
           style: {
             width: last.x - first.x + geo.size + 32,
@@ -264,7 +264,7 @@ export function buildMrDiagram({ entry }) {
     id: 'theta',
     type: 'label',
     position: { x: thetaX - 52, y: thetaY },
-    data: { label: '$\\theta = \\{\\mathbf{W}_\\ell, \\mathbf{b}_\\ell\\}_{\\ell=1}^{L}$', variant: 'theta', color: 'var(--fg)' },
+    data: { label: '$\\boldsymbol{\\theta} = \\{\\mathbf{W}_\\ell, \\mathbf{b}_\\ell\\}_{\\ell=1}^{L}$', variant: 'theta', color: 'var(--fg)' },
   });
 
   // ── Cajas punteadas de rol (columna derecha) ──
@@ -295,7 +295,7 @@ export function buildMrDiagram({ entry }) {
         dashed: true,
         heavy: true,
         title: 'Diff. automática',
-        lines: ['$\\dot{\\hat{x}}_\\theta(t),\\, \\ddot{\\hat{x}}_\\theta(t) \\to r_\\theta(t)$', BADGE],
+        lines: ['$\\dot{\\hat{x}}_\\boldsymbol{\\theta}(t),\\, \\ddot{\\hat{x}}_\\boldsymbol{\\theta}(t) \\to r_\\boldsymbol{\\theta}(t)$', BADGE],
         targetHandles: [
           { id: 't-cmp', yPct: 30 },
           { id: 't-fis', yPct: 80 },
@@ -328,7 +328,7 @@ export function buildMrDiagram({ entry }) {
     id: 'opt',
     type: 'deck',
     position: { x: BOX_X + (entry === 'ad' ? 480 : 240), y: entry === 'ad' ? 232 : 176 },
-    data: { color: ROJO, title: 'Minimización', lines: ['$\\theta \\to \\theta^{*}$'] },
+    data: { color: ROJO, title: 'Minimización', lines: ['$\\boldsymbol{\\theta} \\to \\boldsymbol{\\theta}^{*}$'] },
   });
 
   // ── Línea de composición de la pérdida (bajo la zona de cajas) ──
@@ -338,11 +338,11 @@ export function buildMrDiagram({ entry }) {
     entry === 'ad'
       ? [
           // R15: \mathcal igual que las pérdidas del resto del deck.
-          '$\\mathcal{L}_{MSE}(\\theta) + \\lambda_{phys}\\,\\mathcal{L}_{phys}(\\theta) = \\mathcal{L}_{total}(\\theta)$',
+          '$\\mathcal{L}_{MSE}(\\boldsymbol{\\theta}) + \\lambda_{phys}\\,\\mathcal{L}_{phys}(\\boldsymbol{\\theta}) = \\mathcal{L}_{total}(\\boldsymbol{\\theta})$',
         ]
       : entry === 'modelo'
-        ? ['$\\mathcal{L}_{MSE}(\\theta)$ — no existe $\\mathcal{L}_{phys}$: la física está en la estructura']
-        : ['$\\mathcal{L}_{MSE}(\\theta)$ sobre $\\tilde{x}$ aumentado — la física entró antes, en los datos'];
+        ? ['$\\mathcal{L}_{MSE}(\\boldsymbol{\\theta})$ — no existe $\\mathcal{L}_{phys}$: la física está en la estructura']
+        : ['$\\mathcal{L}_{MSE}(\\boldsymbol{\\theta})$ sobre $\\tilde{x}$ aumentado — la física entró antes, en los datos'];
   nodes.push({
     id: 'loss',
     type: 'lossline',
@@ -486,7 +486,7 @@ export function buildHnnDiagram() {
     id: 'hnn-chip-train',
     type: 'label',
     position: { x: 0, y: 195 },
-    data: { label: 'ENTRENAMIENTO · ajuste de $\\theta$ con $\\mathcal{L}_{HNN}(\\theta)$', variant: 'chip', color: NAVY },
+    data: { label: 'ENTRENAMIENTO · ajuste de $\\boldsymbol{\\theta}$ con $\\mathcal{L}_{HNN}(\\boldsymbol{\\theta})$', variant: 'chip', color: NAVY },
   });
 
   // 1 · Sistema físico (conservativo)
@@ -537,14 +537,14 @@ export function buildHnnDiagram() {
     }),
   );
   nodes.push(
-    neuron('hnn-out', '$H_\\theta$', MORADO, { x: 848, y: NET_Y0 + HN + HG }, { fill: '#f6eff9', heavy: true }),
+    neuron('hnn-out', '$H_{\\boldsymbol{\\theta}}$', MORADO, { x: 848, y: NET_Y0 + HN + HG }, { fill: '#f6eff9', heavy: true }),
   );
   edges.push(...neuronMesh(hnnInputIds, hnnHiddenIds[0]));
   edges.push(...neuronMesh(hnnHiddenIds[0], hnnHiddenIds[1]));
   edges.push(...neuronMesh(hnnHiddenIds[1], ['hnn-out']));
   nodes.push(layerLabel('hnn-cap', 'La red aprende el Hamiltoniano', 600, 66));
-  nodes.push(layerLabel('hnn-sal', 'salida única: $H_\\theta(q(t), p(t))$', 770, 308));
-  nodes.push(layerLabel('hnn-theta', '$\\theta = \\{\\mathbf{W}_\\ell, \\mathbf{b}_\\ell\\}_{\\ell=1}^{L}$', 680, 428, 'theta'));
+  nodes.push(layerLabel('hnn-sal', 'salida única: $H_{\\boldsymbol{\\theta}}(\\mathbf{z})$', 770, 308));
+  nodes.push(layerLabel('hnn-theta', '$\\boldsymbol{\\theta} = \\{\\mathbf{W}_\\ell, \\mathbf{b}_\\ell\\}_{\\ell=1}^{L}$', 680, 428, 'theta'));
 
   // 6 · Autodiff (dentro del panel de la física)
   // R15: derivadas parciales marcadas `$…$` (tipografado en DeckNode).
@@ -552,7 +552,7 @@ export function buildHnnDiagram() {
     id: 'hnn-autodiff',
     type: 'deck',
     position: { x: 934, y: 240 },
-    data: { color: MORADO, dashed: true, title: 'Autodiff', lines: ['$\\partial H_\\theta/\\partial q$', '$\\partial H_\\theta/\\partial p$'] },
+    data: { color: MORADO, dashed: true, title: 'Autodiff', lines: ['$\\partial_q H_{\\boldsymbol{\\theta}}(\\mathbf{z})$', '$\\partial_p H_{\\boldsymbol{\\theta}}(\\mathbf{z})$'] },
   });
 
   // 7 · Estructura Hamiltoniana (punto de entrada de la física)
@@ -566,9 +566,9 @@ export function buildHnnDiagram() {
       heavy: true,
       title: 'Estructura Hamiltoniana',
       lines: [
-        '$\\dot{q}_\\theta(t) = \\partial H_\\theta/\\partial p$',
-        '$\\dot{p}_\\theta(t) = -\\partial H_\\theta/\\partial q$',
-        '$\\bigl(\\dot{q}_\\theta(t),\\,\\dot{p}_\\theta(t)\\bigr) = \\mathbb{J}\\,\\nabla H_\\theta$',
+        '$\\dot{q}(t) = \\partial_p H_{\\boldsymbol{\\theta}}(\\mathbf{z}(t))$',
+        '$\\dot{p}(t) = -\\partial_q H_{\\boldsymbol{\\theta}}(\\mathbf{z}(t))$',
+        '$\\dot{\\mathbf{z}}(t) = \\mathbf{J}_s\\,\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}(\\mathbf{z}(t))$',
       ],
     },
   });
@@ -589,9 +589,9 @@ export function buildHnnDiagram() {
       dashed: true,
       title: 'Comparar dinámicas',
       lines: [
-          '$(\\dot{q}_\\theta(t), \\dot{p}_\\theta(t))$',
+          '$(\\dot{q}(t), \\dot{p}(t))$',
           'vs $(\\dot{q}(t_n), \\dot{p}(t_n))$',
-          '$\\to \\mathcal{L}_{HNN}(\\theta)$',
+          '$\\to \\mathcal{L}_{HNN}(\\boldsymbol{\\theta})$',
         ],
     },
   });
@@ -601,7 +601,7 @@ export function buildHnnDiagram() {
     id: 'hnn-opt',
     type: 'deck',
     position: { x: 1564, y: 247 },
-    data: { color: ROJO, title: 'Optimización', lines: ['$\\theta \\to \\theta^{*}$'] },
+    data: { color: ROJO, title: 'Optimización', lines: ['$\\boldsymbol{\\theta} \\to \\boldsymbol{\\theta}^{*}$'] },
   });
 
   // 10 · Rama de predicción (después del entrenamiento, con θ*)
@@ -615,13 +615,13 @@ export function buildHnnDiagram() {
     id: 'hnn-chip-pred',
     type: 'label',
     position: { x: 0, y: 656 },
-    data: { label: 'PREDICCIÓN · después del entrenamiento · usando $\\theta^{*}$', variant: 'chip', color: TEAL },
+    data: { label: 'PREDICCIÓN · después del entrenamiento · usando $\\boldsymbol{\\theta}^{*}$', variant: 'chip', color: TEAL },
   });
   const predChain = [
     { id: 'hnn-p1', x: 0, y: 698, color: NAVY, title: '$(q(t_0), p(t_0))$', lines: ['estado inicial en $t_0$'] },
-    { id: 'hnn-p2', x: 200, y: 700, color: MORADO, title: '$H_\\theta^{*}$', lines: [] },
-    { id: 'hnn-p3', x: 400, y: 700, color: MORADO, title: '$\\mathrm{grad}(H_\\theta^{*})$', lines: [] },
-    { id: 'hnn-p4', x: 600, y: 688, color: MORADO, heavy: true, title: 'ecuaciones de Hamilton', lines: ['$\\mathbb{J}\\,\\nabla H_\\theta^{*}$'] },
+    { id: 'hnn-p2', x: 200, y: 700, color: MORADO, title: '$H_{\\boldsymbol{\\theta}}^{*}$', lines: [] },
+    { id: 'hnn-p3', x: 400, y: 700, color: MORADO, title: '$\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}^{*}$', lines: [] },
+    { id: 'hnn-p4', x: 600, y: 688, color: MORADO, heavy: true, title: 'ecuaciones de Hamilton', lines: ['$\\mathbf{J}_s\\,\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}^{*}$'] },
     { id: 'hnn-p5', x: 812, y: 700, color: NAVY, title: '$(\\dot{q}(t), \\dot{p}(t))$', lines: [] },
     { id: 'hnn-p6', x: 1010, y: 692, color: GRIS, title: 'integrador numérico', lines: ['preferiblemente simpléctico'] },
     { id: 'hnn-p7', x: 1250, y: 698, color: NAVY, title: '$(q(t), p(t))$', lines: [] },

@@ -71,7 +71,7 @@ const RESIDUO_AUTODIFF = {
         { text: 'Tiempo t', color: 'gray' },
         { text: 'Red fθ(t)', color: 'blue' },
         { text: 'Salida x̂(t)', color: 'blue' },
-        { text: 'Autodiff', sub: '∇ₜx̂ y ∇ₜ²x̂', color: 'purple' },
+        { text: 'Autodiff', sub: 'd x̂/dt y d²x̂/dt²', color: 'purple' },
         { text: 'Residuo R(t) = 0', color: 'orange' },
       ],
       edges: ['', '', '', ''],

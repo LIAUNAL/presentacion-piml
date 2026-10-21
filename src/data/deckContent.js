@@ -66,9 +66,14 @@ export const SLIDES = [
         'Los símbolos de operadores y estructuras son locales a su familia. $t_i$ son valores de $t$ continuo: paréntesis, $x(t_i)$; $i$ numera muestras, no tiempo: subíndice, nunca corchete. Colisiones: $\\varepsilon_i$ (ruido), $\\varepsilon[t]$ (innovación) y $\\varepsilon_{svr}$ (tolerancia del tubo) son conceptos distintos; $\\mathbf{U}$ es factor del SVD y $\\mathbf{U}_i$ compuerta; $\\mathcal{N}$ es sólo la normal —la ley física es $\\mathcal{F}[u] = 0$—. $\\mathbf{X}$ denota la matriz muestras-características y las secuencias usan $\\mathbf{X}^{win}_n$.',
       ],
       [
-        'Decisiones de unificación',
-        '$\\theta$ parámetros del modelo; $\\hat{\\theta}$ estimador; $\\Theta$ conjunto de parámetros; $\\lambda_{phys}, \\lambda_{reg}, \\lambda_1, \\lambda_2, \\lambda_{svr}, \\lambda_{rk}$ pesos de penalización; $\\mathcal{L}$ pérdida; $\\mathbf{u}[t]$ compuerta GRU; $f_{fis}$ rama física.',
-        '$\\theta$ es el **único** símbolo de los parámetros: los coeficientes de una regresión, los pesos de una red y las matrices de compuerta son $\\theta$ o bloques con nombre de $\\theta$; $\\Theta$ es el conjunto donde vive.',
+        'Parámetros y optimización',
+        '$\\boldsymbol{\\theta}$ parámetros entrenables; $\\boldsymbol{\\phi}$ parámetros físicos; $\\boldsymbol{\\psi}=[\\boldsymbol{\\theta};\\boldsymbol{\\phi}]$ en optimización conjunta; $\\widehat{\\boldsymbol{\\theta}}$, $\\widehat{\\boldsymbol{\\phi}}$ estimadores; $\\Theta$ conjunto admisible; $\\mathcal{L}$ pérdida.',
+        'Los bloques entrenables de redes y modelos se agrupan en $\\boldsymbol{\\theta}$; los coeficientes físicos en $\\boldsymbol{\\phi}$. En el problema inverso, $\\boldsymbol{\\psi}$ es el vector conjunto y no la feature local $\\psi_{fis}$ de la puerta ③. Los pesos de penalización llevan subíndice ($\\lambda_{phys}$, $\\lambda_{reg}$, $\\lambda_1$, $\\lambda_2$, $\\lambda_{svr}$, $\\lambda_{rk}$).'
+      ],
+      [
+        'Operadores diferenciales',
+        '$\\nabla_{\\mathbf{x}}f=[\\partial f/\\partial x_i]_{i=1}^{n}\\in\\mathbb{R}^{n}$ (gradiente columna, $f:\\mathbb{R}^n\\to\\mathbb{R}$); $[\\mathbf{J}_{\\mathbf f}]_{ij}=\\partial f_i/\\partial x_j\\in\\mathbb{R}^{m\\times n}$ (jacobiano); $[\\mathbf{H}_f]_{ij}=\\partial^2f/\\partial x_i\\partial x_j$ (Hessiana); $\\Delta f=\\sum_i\\partial^2f/\\partial x_i^2$ (laplaciano).',
+        'Gradiente, jacobiano, Hessiana y laplaciano son objetos distintos. $\\mathbf H_f$ evita confundir la Hessiana con $\\Delta f$; $\\mathbf J_s$ se reserva para la matriz simpléctica. Las derivadas temporales se escriben $d/dt$ o con puntos.',
       ],
     ],
   },
@@ -87,23 +92,23 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Aprendizaje regularizado (riesgo poblacional)',
-        tex: '\\hat{\\theta} = \\arg\\min_{\\theta \\in \\Theta} \\left[ \\mathbb{E}_{(\\mathbf{x},\\mathbf{y}) \\sim p_{\\mathrm{datos}}} \\left\\{ \\mathcal{L}(\\mathbf{y},f_{\\theta}(\\mathbf{x})) \\right\\} + \\lambda \\mathcal{R}(\\theta,f_{\\theta}) \\right]',
+        tex: '\\widehat{\\boldsymbol{\\theta}} = \\arg\\min_{\\boldsymbol{\\theta} \\in \\Theta} \\left[ \\mathbb{E}_{(\\mathbf{x},\\mathbf{y}) \\sim p_{\\mathrm{datos}}} \\left\\{ \\mathcal{L}(\\mathbf{y},f_{\\boldsymbol{\\theta}}(\\mathbf{x})) \\right\\} + \\lambda \\mathcal{R}(\\boldsymbol{\\theta},f_{\\boldsymbol{\\theta}}) \\right]',
         conn: 'La esperanza se toma bajo la distribución poblacional de datos. $\\mathcal{R}$ puede penalizar parámetros o comportamiento; en PIML puede ser un residuo físico, que no es una penalización paramétrica.'
       },
       {
         heading: 'Aproximación empírica',
-        tex: '\\widehat{\\mathcal{E}}_N(\\theta)=\\frac{1}{N}\\sum_{n=1}^{N}\\mathcal{L}(\\mathbf{y}_n,f_{\\theta}(\\mathbf{x}_n))',
+        tex: '\\widehat{\\mathcal{E}}_N(\\boldsymbol{\\theta})=\\frac{1}{N}\\sum_{n=1}^{N}\\mathcal{L}(\\mathbf{y}_n,f_{\\boldsymbol{\\theta}}(\\mathbf{x}_n))',
         conn: 'Este promedio es una esperanza respecto de la distribución empírica que asigna masa $1/N$ a cada muestra; aproxima el riesgo poblacional bajo condiciones de muestreo, no por identidad universal.'
       },
       {
         heading: 'PIML/PINN: la penalización física actúa sobre el residuo',
-        tex: '\\hat{\\theta}=\\arg\\min_{\\theta}\\left[\\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\mathcal{L}(\\mathbf{y},f_{\\theta}(\\mathbf{x}))+\\lambda_{phys}\\mathbb{E}_{\\mathbf{z}\\sim p_{phys}}\\lVert r_{\\theta}(\\mathbf{z})\\rVert_2^2\\right]',
+        tex: '\\widehat{\\boldsymbol{\\theta}}=\\arg\\min_{\\boldsymbol{\\theta}}\\left[\\mathbb{E}_{(\\mathbf{x},\\mathbf{y})\\sim p_{\\mathrm{datos}}}\\mathcal{L}(\\mathbf{y},f_{\\boldsymbol{\\theta}}(\\mathbf{x}))+\\lambda_{phys}\\mathbb{E}_{\\mathbf{z}\\sim p_{phys}}\\lVert r_{\\boldsymbol{\\theta}}(\\mathbf{z})\\rVert_2^2\\right]',
         conn: 'La regularización convencional penaliza parámetros; la formulación informada por física penaliza el residuo de una ley en puntos $\\mathbf{z}$. La estructura de optimización es semejante, pero los objetos penalizados son distintos.'
       },
       {
         heading: 'Derivadas: objetos distintos',
-        tex: '\\nabla_{\\theta}\\mathcal{L} \\quad (\\text{optimización}), \\qquad \\nabla_{\\mathbf{x}}f_{\\theta} \\quad (\\text{sensibilidad a entradas}), \\qquad \\frac{\\partial f_{\\theta}}{\\partial t},\\;\\frac{\\partial^{2}f_{\\theta}}{\\partial t^{2}} \\quad (\\text{dinámica temporal})',
-        conn: 'El operador nabla denota gradientes respecto de variables vectoriales; las derivadas temporales de una trayectoria se escriben explícitamente y no se sustituyen por $\\nabla$.'
+        tex: '\\begin{aligned} \\nabla_{\\boldsymbol{\\theta}}\\mathcal{L} &\\quad (\\mathcal{L}\\text{ escalar}), \\qquad \\nabla_{\\mathbf{x}}f_{\\boldsymbol{\\theta}} \\quad (f:\\mathbb{R}^n\\to\\mathbb{R}) \\\\[3pt] \\mathbf{J}_{f_{\\boldsymbol{\\theta}}} &= [\\partial f_i/\\partial x_j]_{ij} \\quad (f:\\mathbb{R}^n\\to\\mathbb{R}^m), \\qquad \\frac{df}{dt},\\;\\frac{d^2f}{dt^2} \\quad (\\text{tiempo}) \\end{aligned}',
+        conn: 'El gradiente se aplica a una función escalar de entrada vectorial; si la salida es vectorial se usa el jacobiano (filas: componentes de salida; columnas: variables de entrada). La derivación temporal se escribe con $d/dt$, no con nabla.'
       }
     ],
   },
@@ -147,17 +152,17 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Operador temporal y ecuación de movimiento',
-        tex: '\\begin{aligned} \\nabla_t := \\frac{d}{dt}, \\quad \\nabla_t^{2} := \\frac{d^{2}}{dt^{2}}, \\qquad \\mathcal{F} = m\\,\\nabla_t^{2} + c\\,\\nabla_t + k\\,\\mathcal{I} \\\\[3pt] \\mathcal{F}[q](t) = m\\,\\nabla_t^{2}q(t) + c\\,\\nabla_t q(t) + k\\,q(t) = 0 \\end{aligned}',
-        conn: '$\\nabla_t$ es una convención para la derivada temporal **unidimensional** y $\\mathcal{I}$ el operador identidad; $\\mathcal{F}$ es el operador diferencial del MR. La trayectoria $q(t)$ es la variable física que cada puerta predice: no es la matriz de características $\\mathbf{X}$ de los modelos de aprendizaje.'
+        tex: '\\begin{aligned} \\mathcal{F} &:= m\\,\\frac{d^{2}}{dt^{2}} + c\\,\\frac{d}{dt} + k\\,\\mathcal{I} \\\\[3pt] \\mathcal{F}[q](t) &= m\\,\\frac{d^{2}q(t)}{dt^{2}} + c\\,\\frac{dq(t)}{dt} + k\\,q(t) = 0 \\end{aligned}',
+        conn: 'Se usa la notación ordinaria para las derivadas temporales; $\\mathcal{I}$ es el operador identidad y $\\mathcal{F}$ el operador diferencial del MR. La trayectoria $q(t)$ es la variable física que cada puerta predice: no es la matriz de características $\\mathbf{X}$ de los modelos de aprendizaje.'
       },
       {
         heading: 'Estado canónico y energía (Hamiltoniano)',
-        tex: 'q(t), \\quad p(t) = m\\,\\nabla_t q(t), \\qquad H(q(t), p(t)) = \\frac{p(t)^{2}}{2m} + \\frac{k\\,q(t)^{2}}{2} \\quad (c = 0)',
+        tex: 'q(t), \\quad p(t) = m\\,\\frac{d}{dt} q(t), \\qquad H(q(t), p(t)) = \\frac{p(t)^{2}}{2m} + \\frac{k\\,q(t)^{2}}{2} \\quad (c = 0)',
         conn: '**Conexión:** el caso conservativo ($c=0$) es hamiltoniano puro; es la forma que exige la puerta ② en su variante HNN. $q(t)$ y $p(t)$ son posición y momento en cada instante, no entradas del modelo. La variante lagrangiana se define en la diapositiva propia de la puerta ②.'
       },
       {
         heading: 'Datos disponibles',
-        tex: '\\mathbf{x}_n = (t_n, q(t_n), \\nabla_t q(t_n)), \\qquad \\mathbf{y}_n = q(t_n) \\quad (\\tau=1), \\qquad n=1,\\ldots,N',
+        tex: '\\mathbf{x}_n = (t_n, q(t_n), \\frac{d}{dt} q(t_n)), \\qquad \\mathbf{y}_n = q(t_n) \\quad (\\tau=1), \\qquad n=1,\\ldots,N',
         conn: 'Las tres puertas consumen la misma trayectoria medida del MR. La puerta ① (PINN) usará **sólo** $t$ como entrada de la red; los rezagos y las derivadas son material de las otras puertas.'
       },
     ],
@@ -179,8 +184,8 @@ export const SLIDES = [
       },
       {
         heading: 'Residuo físico (diferenciación automática)',
-        tex: 'r_\\theta(t) = \\mathcal{F}[f_\\theta](t) = m\\,\\nabla_t^{2} f_\\theta(t) + c\\,\\nabla_t f_\\theta(t) + k\\,f_\\theta(t)',
-        conn: 'La caja punteada "Diff. automática" produce $r_\\theta$ en los puntos de colocación: $\\mathcal{F}$ y $\\nabla_t$ son los definidos en la página del sistema.'
+        tex: 'r_\\theta(t) = \\mathcal{F}[f_\\theta](t) = m\\,\\frac{d^{2}}{dt^{2}} f_\\theta(t) + c\\,\\frac{d}{dt} f_\\theta(t) + k\\,f_\\theta(t)',
+        conn: 'La caja punteada "Diff. automática" produce $r_\\theta$ en los puntos de colocación: $\\mathcal{F}$ y $\\frac{d}{dt}$ son los definidos en la página del sistema.'
       },
       {
         heading: 'Función de costo: riesgo esperado y aproximación empírica',
@@ -225,23 +230,23 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Paso 1 · Construcción del Hamiltoniano',
-        tex: '\\mathbf{z}(t)=\\begin{bmatrix} q(t) \\\\ p(t) \\end{bmatrix}, \\quad p(t)=m\\,\\nabla_t q(t), \\qquad T=\\frac{p(t)^{2}}{2m}, \\quad V=\\frac{k\\,q(t)^{2}}{2} \\;\\Rightarrow\\; H=T+V',
-        conn: 'El Hamiltoniano es la **energía total** del sistema conservativo: cinética más potencial del resorte. $\\mathbf{z}(t)=(q(t),p(t))^{\\top}$ es el estado canónico; $\\nabla_t$ ya quedó definida en la página del sistema.'
+        tex: '\\mathbf{z}(t)=\\begin{bmatrix} q(t) \\\\ p(t) \\end{bmatrix}, \\quad p(t)=m\\,\\frac{d}{dt} q(t), \\qquad T=\\frac{p(t)^{2}}{2m}, \\quad V=\\frac{k\\,q(t)^{2}}{2} \\;\\Rightarrow\\; H=T+V',
+        conn: 'El Hamiltoniano es la **energía total** del sistema conservativo: cinética más potencial del resorte. $\\mathbf{z}(t)=(q(t),p(t))^{\\top}$ es el estado canónico; $\\frac{d}{dt}$ ya quedó definida en la página del sistema.'
       },
       {
         heading: 'Paso 2 · Ecuaciones de Hamilton',
-        tex: '\\nabla_t q(t) = \\partial_{p}H = \\frac{p(t)}{m}, \\qquad \\nabla_t p(t) = -\\partial_{q}H = -k\\,q(t) \\qquad\\Longleftrightarrow\\qquad \\nabla_t\\mathbf{z}(t) = \\mathbb{J}_s\\,\\nabla_{\\mathbf{z}}H(\\mathbf{z}(t))',
-        conn: 'Con la matriz simpléctica $\\mathbb{J}_s = \\begin{bmatrix} 0 & 1 \\\\ -1 & 0 \\end{bmatrix}$, la dinámica es $\\nabla_t\\mathbf{z}=\\mathbb{J}_s\\nabla_{\\mathbf{z}}H$: el gradiente del Hamiltoniano respecto al estado da la regla de evolución.'
+        tex: '\\dot{q}(t) = \\partial_{p}H = \\frac{p(t)}{m}, \\qquad \\dot{p}(t) = -\\partial_{q}H = -k\\,q(t) \\qquad\\Longleftrightarrow\\qquad \\dot{\\mathbf{z}}(t) = \\mathbf{J}_s\\,\\nabla_{\\mathbf{z}}H(\\mathbf{z}(t))',
+        conn: 'Para este ejemplo $q,p\\in\\mathbb{R}$, $\\mathbf{z}\\in\\mathbb{R}^{2}$ y $\\mathbf{J}_s=\\begin{bmatrix}0&1\\\\-1&0\\end{bmatrix}\\in\\mathbb{R}^{2\\times2}$. Es antisimétrica ($\\mathbf{J}_s^\\top=-\\mathbf{J}_s$); así $\\dot q=\\partial_p H$ y $\\dot p=-\\partial_q H$. En $d$ grados de libertad, $\\mathbf{J}_s=\\begin{bmatrix}0&\\mathbf I_d\\\\-\\mathbf I_d&0\\end{bmatrix}\\in\\mathbb{R}^{2d\\times2d}$. El gradiente de $H$ es respecto al estado, no a los parámetros neuronales.'
       },
       {
         heading: 'Paso 3 · Recuperación de la ecuación física',
-        tex: 'p(t)=m\\,\\nabla_t q(t) \\;\\Rightarrow\\; \\nabla_t p(t)=m\\,\\nabla_t^{2}q(t) \\;\\Rightarrow\\; m\\,\\nabla_t^{2}q(t)+k\\,q(t)=0',
+        tex: 'p(t)=m\\,\\frac{d}{dt} q(t) \\;\\Rightarrow\\; \\frac{d}{dt} p(t)=m\\,\\frac{d^{2}}{dt^{2}}q(t) \\;\\Rightarrow\\; m\\,\\frac{d^{2}}{dt^{2}}q(t)+k\\,q(t)=0',
         conn: 'Sustituyendo la primera ecuación de Hamilton en la segunda se recupera **exactamente** la EDO del masa-resorte conservativo: la dinámica sale de $H$ por derivación, no se aprende.'
       },
       {
         heading: 'Paso 4 · Conservación de energía',
-        tex: '\\frac{dH}{dt} = \\left( \\nabla_{\\mathbf{z}}H \\right)^{\\top}\\mathbb{J}_s\\,\\nabla_{\\mathbf{z}}H = 0 \\;\\Rightarrow\\; H(t)=\\text{constante}',
-        conn: 'La conservación aparece **por construcción**, porque $\\mathbb{J}_s$ es antisimétrica. Vale para el caso conservativo $c=0$, sin amortiguamiento ni fuerza externa.'
+        tex: '\\frac{dH}{dt} = \\left( \\nabla_{\\mathbf{z}}H \\right)^{\\top}\\mathbf{J}_s\\,\\nabla_{\\mathbf{z}}H = 0 \\;\\Rightarrow\\; H(t)=\\text{constante}',
+        conn: 'La conservación aparece **por construcción**, porque $\\mathbf{J}_s$ es antisimétrica. Vale para el caso conservativo $c=0$, sin amortiguamiento ni fuerza externa.'
       },
     ],
     notes: '**Esta página es una derivación física:** no tiene función de costo ni optimización. La página siguiente toma estas mismas ecuaciones y las impone como **estructura** de una red.',
@@ -259,31 +264,31 @@ export const SLIDES = [
     kicker: '3 · Puerta ② · Forma fuerte',
     title: 'Puerta ② — Arquitectura (Hamiltonian NN)',
     lema: 'La física entra en la **estructura del modelo**: se cumple **por construcción** para todo $\\theta$.',
-    derivation: ['$(q(t), p(t))$', '$f_\\theta$ — red neuronal', '$\\hat{H}_\\theta(q(t),p(t))$', '$\\nabla_{\\mathbf{z}}\\hat{H}_\\theta$ (autodiff)', '$\\mathbb{J}_s\\nabla_{\\mathbf{z}}\\hat{H}_\\theta$ → dinámica'],
+    derivation: ['$(q(t), p(t))$', '$f_{\\boldsymbol{\\theta}}$ — red neuronal', '$\\hat{H}_{\\boldsymbol{\\theta}}(q(t),p(t))$', '$\\nabla_{\\mathbf{z}}\\hat{H}_{\\boldsymbol{\\theta}}$ (autodiff)', '$\\mathbf{J}_s\\nabla_{\\mathbf{z}}\\hat{H}_{\\boldsymbol{\\theta}}$ → dinámica'],
     equations: [
       {
         heading: 'Entrada, salida y modelo',
-        tex: '\\mathbf{z}(t)=(q(t), p(t))^{\\top}, \\qquad \\hat{H}_\\theta(\\mathbf{z}(t)) = f_\\theta(\\mathbf{z}(t)), \\qquad \\theta\\in\\Theta',
+        tex: '\\mathbf{z}(t)=(q(t), p(t))^{\\top}, \\qquad \\hat{H}_{\\boldsymbol{\\theta}}(\\mathbf{z}(t)) = f_{\\boldsymbol{\\theta}}(\\mathbf{z}(t)), \\qquad \\boldsymbol{\\theta}\\in\\Theta',
         conn: 'La red aprende una **función escalar** del estado canónico: no predice la trayectoria y **no requiere etiquetas de energía**. La entrada es $\\mathbf{z}=(q,p)^{\\top}$ y la salida es un escalar.'
       },
       {
         heading: 'Estructura Hamiltoniana (la física por construcción)',
-        tex: '\\hat{\\mathbf{v}}_\\theta(\\mathbf{z}) = \\mathbb{J}_s\\,\\nabla_{\\mathbf{z}}\\hat{H}_\\theta(\\mathbf{z}), \\qquad \\nabla_t q = \\partial_{p}\\hat{H}_\\theta, \\quad \\nabla_t p = -\\partial_{q}\\hat{H}_\\theta',
-        conn: 'Son las ecuaciones de Hamilton de la página anterior aplicadas al Hamiltoniano **aprendido**: la física no entra como penalización, entra en la estructura y se cumple para todo $\\theta$.'
+        tex: '\\hat{\\mathbf{v}}_{\\boldsymbol{\\theta}}(\\mathbf{z}) = \\mathbf{J}_s\\,\\nabla_{\\mathbf{z}}\\hat{H}_{\\boldsymbol{\\theta}}(\\mathbf{z}), \\qquad \\dot{q} = \\partial_{p}\\hat{H}_{\\boldsymbol{\\theta}}, \\quad \\dot{p} = -\\partial_{q}\\hat{H}_{\\boldsymbol{\\theta}}',
+        conn: 'Son las ecuaciones de Hamilton de la página anterior aplicadas al Hamiltoniano **aprendido**: $\\nabla_{\\mathbf{z}}\\hat H_{\\boldsymbol{\\theta}}$ deriva respecto al estado; la optimización de la red deriva el costo respecto a $\\boldsymbol{\\theta}$. La estructura física se cumple para todo $\\boldsymbol{\\theta}$. '
       },
       {
         heading: 'Función de costo: riesgo esperado',
-        tex: 'J_{\\mathrm{HNN}}(\\theta) = \\mathbb{E}_{(\\mathbf{z},\\mathbf{v})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{v} - \\hat{\\mathbf{v}}_\\theta(\\mathbf{z}) \\rVert_{2}^{2} \\right], \\qquad \\mathbf{v} = \\left( \\nabla_t q, \\nabla_t p \\right)^{\\top}',
+        tex: 'J_{\\mathrm{HNN}}(\\boldsymbol{\\theta}) = \\mathbb{E}_{(\\mathbf{z},\\mathbf{v})\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{v} - \\hat{\\mathbf{v}}_{\\boldsymbol{\\theta}}(\\mathbf{z}) \\rVert_{2}^{2} \\right], \\qquad \\mathbf{v} = (\\dot{q}, \\dot{p})^{\\top}',
         conn: 'El criterio compara las **derivadas temporales observadas** $\\mathbf{v}$ con las que predice el gradiente del Hamiltoniano aprendido.'
       },
       {
         heading: 'Aproximación empírica',
-        tex: '\\widehat{J}_{\\mathrm{HNN},N}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N}\\left[ \\left( \\nabla_t q(t_n) - \\partial_{p}\\hat{H}_\\theta(\\mathbf{z}_n) \\right)^{2} + \\left( \\nabla_t p(t_n) + \\partial_{q}\\hat{H}_\\theta(\\mathbf{z}_n) \\right)^{2} \\right]',
+        tex: '\\widehat{J}_{\\mathrm{HNN},N}(\\boldsymbol{\\theta}) = \\frac{1}{N}\\sum_{n=1}^{N}\\left[ \\left( \\dot{q}(t_n) - \\partial_{p}\\hat{H}_{\\boldsymbol{\\theta}}(\\mathbf{z}_n) \\right)^{2} + \\left( \\dot{p}(t_n) + \\partial_{q}\\hat{H}_{\\boldsymbol{\\theta}}(\\mathbf{z}_n) \\right)^{2} \\right]',
         conn: 'Promedio sobre las $N$ observaciones; si las velocidades no se miden, se estiman por diferencias finitas.'
       },
       {
         heading: 'Problema de optimización',
-        tex: '\\theta^{*} \\in \\arg\\min_{\\theta} J_{\\mathrm{HNN}}(\\theta), \\qquad \\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{\\mathrm{HNN},N}(\\theta)',
+        tex: '\\boldsymbol{\\theta}^{*} \\in \\arg\\min_{\\boldsymbol{\\theta}} J_{\\mathrm{HNN}}(\\boldsymbol{\\theta}), \\qquad \\widehat{\\boldsymbol{\\theta}} \\in \\arg\\min_{\\boldsymbol{\\theta}} \\widehat{J}_{\\mathrm{HNN},N}(\\boldsymbol{\\theta})',
         conn: 'La forma poblacional define el objetivo; el entrenamiento resuelve la empírica. La estructura se cumple por construcción, pero reproducir la dinámica real depende del **entrenamiento y los datos**.'
       },
     ],
@@ -305,22 +310,22 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Paso 1 · Construcción del Lagrangiano',
-        tex: 'T = \\frac{m\\,(\\nabla_t q(t))^{2}}{2}, \\qquad V = \\frac{k\\,q(t)^{2}}{2}, \\qquad L = T - V = \\frac{m\\,(\\nabla_t q(t))^{2}}{2} - \\frac{k\\,q(t)^{2}}{2}',
-        conn: 'El Lagrangiano es energía cinética **menos** potencial, con las mismas $m$, $k$ y la misma trayectoria del sistema. $\\nabla_t q(t)$ es la velocidad (el $\\dot{q}$ clásico); $\\nabla_t$ ya quedó definida en la página del sistema.'
+        tex: 'T = \\frac{m\\,(\\frac{d}{dt} q(t))^{2}}{2}, \\qquad V = \\frac{k\\,q(t)^{2}}{2}, \\qquad L = T - V = \\frac{m\\,(\\frac{d}{dt} q(t))^{2}}{2} - \\frac{k\\,q(t)^{2}}{2}',
+        conn: 'El Lagrangiano es energía cinética **menos** potencial, con las mismas $m$, $k$ y la misma trayectoria del sistema. $\\frac{d}{dt} q(t)$ es la velocidad (el $\\dot{q}$ clásico); $\\frac{d}{dt}$ ya quedó definida en la página del sistema.'
       },
       {
         heading: 'Paso 2 · Ecuación de Euler–Lagrange',
-        tex: '\\nabla_t\\!\\left( \\partial_{\\nabla_t q}L \\right) - \\partial_{q}L = 0, \\qquad \\partial_{\\nabla_t q}L = m\\,\\nabla_t q(t), \\quad \\partial_{q}L = -k\\,q(t)',
+        tex: '\\frac{d}{dt}\\!\\left( \\frac{\\partial L}{\\partial \\dot{q}} \\right) - \\frac{\\partial L}{\\partial q} = 0, \\qquad \\frac{\\partial L}{\\partial \\dot{q}} = m\\,\\dot{q}(t), \\quad \\frac{\\partial L}{\\partial q} = -k\\,q(t)',
         conn: 'La regla de evolución es el principio de acción: las derivadas parciales de $L$ respecto a la posición y a la velocidad determinan la dinámica.'
       },
       {
         heading: 'Paso 3 · Recuperación de la ecuación física',
-        tex: '\\nabla_t\\!\\left( m\\,\\nabla_t q(t) \\right) + k\\,q(t) = 0 \\;\\Rightarrow\\; m\\,\\nabla_t^{2}q(t) + k\\,q(t) = 0',
+        tex: '\\frac{d}{dt}\\!\\left( m\\,\\frac{d}{dt} q(t) \\right) + k\\,q(t) = 0 \\;\\Rightarrow\\; m\\,\\frac{d^{2}}{dt^{2}}q(t) + k\\,q(t) = 0',
         conn: 'Es exactamente la EDO del masa-resorte **conservativo** ($c=0$, sin amortiguamiento ni fuerza externa): la dinámica sale de $L$ por derivación, no se aprende.'
       },
       {
         heading: 'Paso 4 · Equivalencia hamiltoniana (transformada de Legendre)',
-        tex: 'p(t) = \\partial_{\\nabla_t q}L = m\\,\\nabla_t q(t) \\;\\Rightarrow\\; H = p(t)\\,\\nabla_t q(t) - L = \\frac{p(t)^{2}}{2m} + \\frac{k\\,q(t)^{2}}{2}',
+        tex: 'p(t) = \\frac{\\partial L}{\\partial \\dot{q}} = m\\,\\dot{q}(t) \\;\\Rightarrow\\; H = p(t)\\,\\dot{q}(t) - L = \\frac{p(t)^{2}}{2m} + \\frac{k\\,q(t)^{2}}{2}',
         conn: 'La transformada de Legendre pasa de $L$ a $H$ y recupera el Hamiltoniano de la página anterior: para el caso conservativo ambas formulaciones son equivalentes.'
       },
     ],
@@ -339,35 +344,35 @@ export const SLIDES = [
     kicker: '3 · Puerta ② · Forma fuerte (Lagrangian NN)',
     title: 'Puerta ② — Arquitectura (Lagrangian NN)',
     lema: 'La física entra en la **estructura del modelo**: se cumple **por construcción** para todo $\\theta$, ahora a través del principio de acción.',
-    derivation: ['$(q(t), \\nabla_t q(t))$', '$f_\\theta$ — red neuronal', '$\\hat{L}_\\theta(q(t),\\nabla_t q(t))$', '$\\partial \\hat{L}_\\theta$ (autodiff)', 'Euler–Lagrange → aceleración'],
+    derivation: ['$(\\mathbf{q}(t), \\dot{\\mathbf{q}}(t))$', '$f_{\\boldsymbol{\\theta}}$ — red neuronal', '$\\hat{L}_{\\boldsymbol{\\theta}}(\\mathbf{q},\\dot{\\mathbf{q}})$', '$\\nabla_{(\\mathbf{q},\\dot{\\mathbf{q}})}\\hat{L}_{\\boldsymbol{\\theta}}$ (autodiff)', 'Euler–Lagrange → aceleración vectorial'],
     equations: [
       {
         heading: 'Entrada, salida y modelo',
-        tex: '\\mathbf{z}(t) = \\left( q(t), \\nabla_t q(t) \\right)^{\\top}, \\qquad \\hat{L}_\\theta(\\mathbf{z}(t)) = f_\\theta(\\mathbf{z}(t)), \\qquad \\theta\\in\\Theta',
+        tex: '\\mathbf{z}(t) = \\left( \\mathbf{q}(t), \\dot{\\mathbf{q}}(t) \\right)^{\\top}, \\qquad \\hat{L}_{\\boldsymbol{\\theta}}(\\mathbf{z}(t)) = f_{\\boldsymbol{\\theta}}(\\mathbf{z}(t)), \\qquad \\boldsymbol{\\theta}\\in\\Theta',
         conn: 'La red aprende un **Lagrangiano escalar**: no predice la trayectoria y **no requiere etiquetas** del Lagrangiano físico.'
       },
       {
         heading: 'Modelo dinámico: Euler–Lagrange y aceleración predicha',
-        tex: '\\hat{a}_\\theta(\\mathbf{z}) = \\left( \\partial^{2}_{(\\nabla_t q)(\\nabla_t q)}\\hat{L}_\\theta \\right)^{-1} \\!\\left[ \\partial_{q}\\hat{L}_\\theta - \\partial^{2}_{q(\\nabla_t q)}\\hat{L}_\\theta\\,\\nabla_t q \\right]',
-        conn: 'Sale de imponer $\\nabla_t(\\partial_{\\nabla_t q}\\hat{L}_\\theta)-\\partial_{q}\\hat{L}_\\theta=0$ y despejar la aceleración; se requiere una derivada segunda respecto a la velocidad **no nula**, $\\partial^{2}_{(\\nabla_t q)(\\nabla_t q)}\\hat{L}_\\theta\\neq 0$.'
+        tex: '\\hat{\\mathbf{a}}_{\\boldsymbol{\\theta}}(\\mathbf{z}) = \\mathbf{H}_{\\dot{\\mathbf{q}}\\dot{\\mathbf{q}}}^{-1}\\!\\left[ \\nabla_{\\mathbf{q}}\\hat{L}_{\\boldsymbol{\\theta}} - \\mathbf{H}_{\\dot{\\mathbf{q}}\\mathbf{q}}\\,\\dot{\\mathbf{q}} \\right]',
+        conn: 'Para $\\mathbf{q}\\in\\mathbb{R}^{d}$, $\\mathbf{H}_{\\dot{\\mathbf{q}}\\dot{\\mathbf{q}}}=\\partial(\\nabla_{\\dot{\\mathbf{q}}}\\hat{L})/\\partial\\dot{\\mathbf{q}}^{\\top}\\in\\mathbb{R}^{d\\times d}$ y $\\mathbf{H}_{\\dot{\\mathbf{q}}\\mathbf{q}}=\\partial(\\nabla_{\\dot{\\mathbf{q}}}\\hat{L})/\\partial\\mathbf{q}^{\\top}\\in\\mathbb{R}^{d\\times d}$. Sigue de $\\frac{d}{dt}(\\nabla_{\\dot{\\mathbf{q}}}\\hat{L})-\\nabla_{\\mathbf{q}}\\hat{L}=\\mathbf{0}$ para un Lagrangiano autónomo. Requiere que $\\mathbf{H}_{\\dot{\\mathbf{q}}\\dot{\\mathbf{q}}}$ sea invertible; los productos tienen dimensión $d$ y el orden de factores se fija por sus dimensiones.'
       },
       {
         heading: 'Función de costo: riesgo esperado',
-        tex: 'J_{\\mathrm{LNN}}(\\theta) = \\mathbb{E}_{\\mathbf{z}\\sim p_{\\mathrm{datos}}}\\!\\left[ \\left( a - \\hat{a}_\\theta(\\mathbf{z}) \\right)^{2} \\right], \\qquad a = \\nabla_t^{2}q',
-        conn: 'El objetivo es la **aceleración**: se compara la observada $a$ con la que induce el Lagrangiano aprendido.'
+        tex: 'J_{\\mathrm{LNN}}(\\boldsymbol{\\theta}) = \\mathbb{E}_{\\mathbf{z}\\sim p_{\\mathrm{datos}}}\\!\\left[ \\lVert \\mathbf{a} - \\hat{\\mathbf{a}}_{\\boldsymbol{\\theta}}(\\mathbf{z}) \\rVert_{2}^{2} \\right], \\qquad \\mathbf{a} = \\ddot{\\mathbf{q}}',
+        conn: 'El objetivo es la **aceleración**: se compara la observada $\\mathbf{a}$ con la que induce el Lagrangiano aprendido.'
       },
       {
         heading: 'Aproximación empírica',
-        tex: '\\widehat{J}_{\\mathrm{LNN},N}(\\theta) = \\frac{1}{N}\\sum_{n=1}^{N}\\left( a_n - \\hat{a}_\\theta(\\mathbf{z}_n) \\right)^{2}',
+        tex: '\\widehat{J}_{\\mathrm{LNN},N}(\\boldsymbol{\\theta}) = \\frac{1}{N}\\sum_{n=1}^{N}\\left\\lVert \\mathbf{a}_n - \\hat{\\mathbf{a}}_{\\boldsymbol{\\theta}}(\\mathbf{z}_n) \\right\\rVert_{2}^{2}',
         conn: 'Promedio sobre las $N$ observaciones; si sólo hay posición medida, la aceleración se estima por diferencias finitas.'
       },
       {
         heading: 'Problema de optimización',
-        tex: '\\theta^{*} \\in \\arg\\min_{\\theta} J_{\\mathrm{LNN}}(\\theta), \\qquad \\widehat{\\theta} \\in \\arg\\min_{\\theta} \\widehat{J}_{\\mathrm{LNN},N}(\\theta)',
+        tex: '\\boldsymbol{\\theta}^{*} \\in \\arg\\min_{\\boldsymbol{\\theta}} J_{\\mathrm{LNN}}(\\boldsymbol{\\theta}), \\qquad \\widehat{\\boldsymbol{\\theta}} \\in \\arg\\min_{\\boldsymbol{\\theta}} \\widehat{J}_{\\mathrm{LNN},N}(\\boldsymbol{\\theta})',
         conn: 'La estructura Euler–Lagrange se impone **por construcción**; reproducir la dinámica real depende del entrenamiento. No se añade una penalización física separada.'
       },
     ],
-    notes: '**Mensaje clave:** la LNN tampoco aprende la trayectoria: aprende $\\hat{L}_\\theta$ y Euler–Lagrange convierte sus derivadas en la aceleración; un integrador recupera $(q(t), \\nabla_t q(t))$.',
+    notes: '**Mensaje clave:** la LNN tampoco aprende la trayectoria: aprende $\\hat{L}_{\\boldsymbol{\\theta}}$ y Euler–Lagrange convierte sus derivadas en la aceleración; un integrador recupera $(\\mathbf{q}(t), \\dot{\\mathbf{q}}(t))$.',
     refs: [
       'Cranmer, Greydanus, Hoyer, Battaglia, Spergel, Ho. Lagrangian Neural Networks. ICLR, 2020.',
       'Greydanus, Dzamba, Yosinski. Hamiltonian Neural Networks. NeurIPS 2019.',
@@ -395,7 +400,7 @@ export const SLIDES = [
       ],
       [
         'Regla de evolución',
-        'Dos ecuaciones de primer orden: $\\dot{q}(t) = \\partial H / \\partial p$, $\\dot{p}(t) = -\\partial H / \\partial q$ (forma matricial $\\mathbb{J}\\,\\nabla H$).',
+        'Dos ecuaciones de primer orden: $\\dot{q}(t) = \\partial H / \\partial p$, $\\dot{p}(t) = -\\partial H / \\partial q$ (forma vectorial $\\dot{\\mathbf{z}}=\\mathbf{J}_s\\nabla_{\\mathbf{z}}H(\\mathbf{z})$).',
         'Una ecuación de Euler–Lagrange de segundo orden: $\\frac{d}{dt}\\,\\frac{\\partial L}{\\partial \\dot{q}} - \\frac{\\partial L}{\\partial q} = 0$.',
       ],
       [
@@ -536,7 +541,7 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Modelo físico y parámetros',
-        tex: '\\begin{aligned} m\\,\\nabla_t^{2}x(t) + c\\,\\nabla_t x(t) + k\\,x(t) &= F(t) \\\\[3pt] \\boldsymbol{\\phi} &= (m, c, k)^{\\top} \\end{aligned}',
+        tex: '\\begin{aligned} m\\,\\frac{d^{2}}{dt^{2}}x(t) + c\\,\\frac{d}{dt} x(t) + k\\,x(t) &= F(t) \\\\[3pt] \\boldsymbol{\\phi} &= (m, c, k)^{\\top} \\end{aligned}',
         conn: 'Mismo sistema masa-resorte-amortiguador del deck; $F(t)$ es la excitación y $\\boldsymbol{\\phi}$ reúne los parámetros físicos.'
       },
       {
@@ -608,8 +613,8 @@ export const SLIDES = [
       },
       {
         heading: 'Residuo físico',
-        tex: '\\mathcal{R}(t) = m\\,\\nabla_t^{2}\\widehat{x}(t) + c\\,\\nabla_t\\widehat{x}(t) + k\\,\\widehat{x}(t) - F(t)',
-        conn: 'La **diferenciación automática** entrega $\\nabla_t\\widehat{x}$ y $\\nabla_t^{2}\\widehat{x}$ sin malla: con ellas se evalúa la ecuación física en cualquier instante.'
+        tex: '\\mathcal{R}(t) = m\\,\\frac{d^{2}}{dt^{2}}\\widehat{x}(t) + c\\,\\frac{d}{dt}\\widehat{x}(t) + k\\,\\widehat{x}(t) - F(t)',
+        conn: 'La **diferenciación automática** entrega $\\frac{d}{dt}\\widehat{x}$ y $\\frac{d^{2}}{dt^{2}}\\widehat{x}$ sin malla: con ellas se evalúa la ecuación física en cualquier instante.'
       },
     ],
     diagram: 'residuoAutodiff',
@@ -636,8 +641,13 @@ export const SLIDES = [
       },
       {
         heading: 'Problema de optimización',
-        tex: '(\\widehat{\\boldsymbol{\\theta}}, \\widehat{\\boldsymbol{\\phi}}) = \\arg\\min_{\\boldsymbol{\\theta},\\boldsymbol{\\phi}} \\mathcal{L}(\\boldsymbol{\\theta},\\boldsymbol{\\phi})',
-        conn: 'Los dos conjuntos se actualizan **a la vez**: $\\boldsymbol{\\theta}$ mueve la curva y $\\boldsymbol{\\phi}$ mueve la física que la curva debe cumplir.'
+        tex: '\\widehat{\\boldsymbol{\\psi}} = \\arg\\min_{\\boldsymbol{\\psi}} \\mathcal{L}(\\boldsymbol{\\psi}), \\qquad \\boldsymbol{\\psi}=\\begin{bmatrix}\\boldsymbol{\\theta}\\\\\\boldsymbol{\\phi}\\end{bmatrix}',
+        conn: 'Los bloques tienen dimensiones $\\boldsymbol{\\theta}\\in\\mathbb{R}^{n_\\theta}$, $\\boldsymbol{\\phi}\\in\\mathbb{R}^{n_\\phi}$ y $\\boldsymbol{\\psi}\\in\\mathbb{R}^{n_\\theta+n_\\phi}$. Se optimizan simultáneamente: $\\boldsymbol{\\theta}$ parametriza la red y $\\boldsymbol{\\phi}$ la física.'
+      },
+      {
+        heading: 'Gradiente por bloques (pérdida diferenciable)',
+        tex: '\\nabla_{\\boldsymbol{\\psi}}\\mathcal{L}=\\begin{bmatrix}\\nabla_{\\boldsymbol{\\theta}}\\mathcal{L}\\\\\\nabla_{\\boldsymbol{\\phi}}\\mathcal{L}\\end{bmatrix}',
+        conn: 'La primera componente tiene $n_\\theta$ elementos y la segunda $n_\\phi$; el gradiente conjunto tiene dimensión $n_\\theta+n_\\phi$. Para una función diferenciable no restringida, el gradiente nulo es condición necesaria de estacionariedad, no garantía de mínimo global.'
       },
     ],
     diagram: 'pinnConjunta',
@@ -671,7 +681,7 @@ export const SLIDES = [
     equations: [
       {
         heading: 'Identificabilidad en vibración libre',
-        tex: '\\nabla_t^{2}x + \\frac{c}{m}\\,\\nabla_t x + \\frac{k}{m}\\,x = 0 \\;\\Rightarrow\\; \\text{sólo } c/m \\text{ y } k/m \\text{ son identificables}',
+        tex: '\\frac{d^{2}}{dt^{2}}x + \\frac{c}{m}\\,\\frac{d}{dt} x + \\frac{k}{m}\\,x = 0 \\;\\Rightarrow\\; \\text{sólo } c/m \\text{ y } k/m \\text{ son identificables}',
         conn: 'Con sólo desplazamientos, la escala de masa es arbitraria: los parámetros individuales no se identifican aunque sus cocientes sí.'
       },
       {
@@ -1175,9 +1185,9 @@ export const SLIDES = [
         conn: 'Problema convexo pero no diferenciable en cero: no hay fórmula matricial cerrada general equivalente a las ecuaciones normales.'
       },
       {
-        heading: 'E2 · Solución: métodos numéricos',
-        tex: '\\arg\\min_{\\mathbf{W}} \\left\\{ \\frac{1}{N}\\lVert \\mathbf{Y} - \\mathbf{X}\\mathbf{W} \\rVert_{F}^{2} + \\lambda_{1}\\lVert \\mathbf{W} \\rVert_{1} \\right\\} \\quad \\text{(sin forma cerrada general)}',
-        conn: 'La penalización $\\ell_1$ no es diferenciable en cero, así que no existe una fórmula matricial cerrada general equivalente a las ecuaciones normales. Se resuelve por **programación convexa**: descenso por coordenadas, métodos proximales o LARS.'
+        heading: 'E2 · Condición de optimalidad: subgradiente',
+        tex: '-\\frac{2}{N}\\mathbf{X}^{\\top}(\\mathbf{Y}-\\mathbf{X}\\mathbf{W}) + \\lambda_1\\mathbf{S}=\\mathbf{0}, \\qquad S_{pk}\\in\\begin{cases}\\{\\operatorname{sign}(W_{pk})\\},&W_{pk}\\ne0\\\\[-2pt][-1,1],&W_{pk}=0\\end{cases}',
+        conn: 'Condición convexa necesaria y suficiente de optimalidad para la función objetivo mostrada: $\\mathbf{S}\\in\\partial\\lVert\\mathbf{W}\\rVert_1$. En cero se usa el intervalo de subgradientes $[-1,1]$, no un gradiente ordinario. Métodos de solución: descenso por coordenadas, métodos proximales o LARS; no hay forma cerrada general.'
       },
     ],
     refs: [
@@ -1915,7 +1925,7 @@ export const SLIDES = [
     title: 'Los seis diagramas en una tabla',
     table: [
       ['Diagrama', 'Pregunta que responde', 'Matemática asociada'],
-      ['1', 'Cómo entra la física (4 puertas)', '$\\mathcal{L}_{total}$, $\\mathbb{J}\\nabla H_\\theta$, $\\psi_{fis}$, $f_{fis} + g_\\theta$ (§3)'],
+      ['1', 'Cómo entra la física (4 puertas)', '$\\mathcal{L}_{total}$, $\\mathbf{J}_s\\nabla_{\\mathbf{z}}H_{\\boldsymbol{\\theta}}$, $\\psi_{fis}$, $f_{fis} + g_\\theta$ (§3)'],
       ['2', 'Qué familias PIML existen para TS (general)', 'F1–F6: PINN, PG-RNN, Neural ODE/SDE, PhyDNet, kernel/GPR, PINT/RFF (§4)'],
       ['3', 'Qué familias data-driven hay en energía (base)', 'E1–E8: SARIMA, SVR/XGBoost, LSTM/GRU, TCN, atención, SSM, fundacionales, VMD (§5a)'],
       ['4', 'Dónde TS ∩ física ∩ energía (patrones A–E)', 'swing, flujo de potencia, pérdidas de forma, RC 2R2C + $\\mathcal{R}_{phys}$, rama física+residual (§5b)'],

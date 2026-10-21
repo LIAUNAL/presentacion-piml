@@ -895,6 +895,32 @@ p {
   color: var(--fg);
 }
 
+/* The shared mathematical framework has four explanatory cards; compact only
+   this slide so the final differential-notation card remains fully visible. */
+.slide[data-id='marco-aprendizaje'] .math-stack {
+  gap: 5px;
+}
+
+.slide[data-id='marco-aprendizaje'] .eq-box {
+  padding: 4px clamp(10px, 1.2vw, 14px);
+}
+
+.slide[data-id='marco-aprendizaje'] .eq-box .eq-display {
+  font-size: clamp(0.92rem, 1.12vw, 1.06rem);
+  line-height: 1.4;
+}
+
+.slide[data-id='marco-aprendizaje'] .eq-box .eq-heading {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+}
+
+.slide[data-id='marco-aprendizaje'] .eq-box .eq-conn {
+  margin-top: 1px;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
 /* Round 3 (AD-3): bounded companion-text step for the MR page only —
    scoped by stable id, never a global .eq-conn bump. */
 .slide[data-id='d1-mr'] .eq-conn {
@@ -1358,16 +1384,16 @@ p {
   line-height: 1.4;
 }
 
-/* Variante densa: la tabla de notación debe llenar su página completa
-   (REF-1) — celdas altas, tipografía un paso mayor y primera col. ancla. */
+/* La tabla de notación reúne los grupos de símbolos y operadores; conserva
+   legibilidad y reduce el alto de celda para mantener todas sus filas visibles. */
 .slide[data-id='notacion'] .reading-table {
-  font-size: 1rem;
+  font-size: 0.88rem;
 }
 
 .slide[data-id='notacion'] .reading-table th,
 .slide[data-id='notacion'] .reading-table td {
-  padding: 14px 16px;
-  line-height: 1.65;
+  padding: 5px 8px;
+  line-height: 1.3;
 }
 
 .slide[data-id='notacion'] .reading-table td:first-child {
