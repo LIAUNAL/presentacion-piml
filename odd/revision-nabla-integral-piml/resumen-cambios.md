@@ -2,8 +2,8 @@
 
 La presentación final conserva sus 61 diapositivas y el estilo visual original. La revisión separa derivadas temporales, gradientes de estado/parámetros, jacobianos y Hessianas; no convierte toda derivada en un operador nabla.
 
-**Archivo final:** [`../../presentacion_piml_nabla_revisada_2026-11-final.pdf`](../../presentacion_piml_nabla_revisada_2026-11-final.pdf) · 61 páginas.  
-**Capturas:** [`captures-final/`](captures-final/) · 61 PNG. El PDF preexistente `presentacion_piml_unificada_2026-10-16.pdf` se preservó.
+**Archivo final:** esta revisión quedó como **entregable opcional de 61 páginas** en [`../../presentacion_piml_nabla_revisada_2026-11-final.pdf`](../../presentacion_piml_nabla_revisada_2026-11-final.pdf); el entregable vigente es [`../../presentacion_piml_2026-11.pdf`](../../presentacion_piml_2026-11.pdf) (69 páginas, añade §3).  
+**Capturas:** [`captures-final/`](captures-final/) · 61 PNG. El PDF preexistente `presentacion_piml_unificada_2026-10-16.pdf` se conserva en `archivo/`.
 
 ## Cambios por diapositiva
 

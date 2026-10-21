@@ -1,5 +1,7 @@
 # §3 Operador nabla, gradiente y jacobiano — resumen de la sección añadida
 
+**Entregable vigente:** `presentacion_piml_2026-11.pdf` (69 páginas). El PDF de 61 páginas, sin esta sección, queda como versión opcional para exposición corta.
+
 Se añadieron **8 diapositivas** consecutivas inmediatamente después del marco común (§2) y antes de la puerta ① del Diagrama 1. El deck pasa de 61 a **69 diapositivas**; ninguna diapositiva existente se eliminó ni se reescribió: sólo se renumeraron sus kickers y sus referencias cruzadas.
 
 ## Diapositivas nuevas

@@ -8,7 +8,7 @@ Deck de diapositivas a pantalla completa con la revisión de **Modelos Informado
 
 ## Contenido
 
-- 47 diapositivas en español con foco matemático: portada, notación, los 6 diagramas de decisión (con su matemática asociada) y cierre, basados en el documento `revision_piml_series_tiempo_energia_matematica.md`
+- **69 diapositivas** en español con foco matemático: portada, notación, **§3 Operador nabla, gradiente y jacobiano**, los 6 diagramas de decisión (con su matemática asociada) y cierre, basados en el documento `revision_piml_series_tiempo_energia_matematica.md`
 - **Guion de presentación** (`GUION.md`): recorrido slide por slide (~40 min, público técnico) con tiempos, puentes, qué señalar en pantalla y Q&A anticipado
 - 6 diagramas de decisión interactivos construidos con [ReactFlow](https://reactflow.dev) desde los bloques Mermaid del documento — aristas rastreables por color de origen, anclajes múltiples y etiquetas junto al destino
 - Ecuaciones renderizadas con [MathJax](https://www.mathjax.org) (LaTeX literal del documento)
@@ -17,16 +17,23 @@ Deck de diapositivas a pantalla completa con la revisión de **Modelos Informado
 
 ## 📄 Copias PDF (solo locales)
 
-Se mantienen **fuera del repositorio** (git-ignoradas vía `presentacion_piml_v*.pdf`) y se regeneran con `node src/scripts/export-pdf.mjs [ruta.pdf]`:
+Dos entregables en la raíz; todo lo anterior vive en [`archivo/`](archivo/README.md). Los PDF no se versionan: son artefactos de build.
 
-- `presentacion_piml_v2_2026-09.pdf` — versión completa de 29 diapositivas congelada **antes** del recorte matemático, para repaso de conceptos.
-- `presentacion_piml_v3_matematica_2026-09.pdf` — versión matemática ajustada (26 diapositivas).
+| Archivo | Páginas | Rol |
+|---|---:|---|
+| `presentacion_piml_2026-11.pdf` | 69 | Versión completa y vigente |
+| `presentacion_piml_nabla_revisada_2026-11-final.pdf` | 61 | Opcional, sin la sección §3 (exposición corta) |
+
+```bash
+npm run build
+node src/scripts/capture-slides.mjs --clean --pdf presentacion_piml_2026-11.pdf
+```
 
 ## Export y QA visual
 
 ```bash
 npm run build
-node src/scripts/export-pdf.mjs [ruta.pdf]        # PDF 16:9 del deck vigente
+node src/scripts/export-pdf.mjs [ruta.pdf]        # PDF 16:9 del deck vigente (por defecto presentacion_piml_2026-11.pdf)
 node src/scripts/capture-slides.mjs --clean        # PNG por diapositiva en src/scripts/captures/
 ```
 
