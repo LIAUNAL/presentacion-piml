@@ -57,3 +57,7 @@ El encargo pedía «conservar la convención temporal $\nabla_t$» del sistema m
 - Revisión visual: 04–12 (sección nueva y Diagrama 1 renumerado), 67–68 (referencias cruzadas actualizadas).
 - Sin recortes horizontales: la ecuación que se cortaba en la primera versión de la diapositiva 04 se dividió en matriz + comentario.
 - La tabla de interpretación de energía se separó en dos diapositivas (08 y 09) porque el renderizador muestra tablas antes que ecuaciones y el orden de lectura quedaba invertido.
+
+## Historial
+
+Rama `feat/seccion-nabla-gradiente-jacobiano`: `8faac6f` (notación previa) · `56ba794` (§3 nueva) · `956ab82` (composición y documento) · `00a050b` (seguimiento). Los artefactos de build (PDF y capturas) quedan fuera de git mediante `.gitignore` por carpeta.

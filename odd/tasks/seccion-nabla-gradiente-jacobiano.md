@@ -40,12 +40,12 @@ Feature: insertar una sección didáctica nueva (§3) en el deck PIML sin tocar 
 
 ## Slice boundary
 
-- Commit `e3ab0e8` cierra la feature previa de notación (839 líneas netas en 2 commits sobre `main`); esta feature arranca después de esa frontera y se entrega en dos cortes: (1) módulo, figura y contenido nuevo; (2) renumeración, CSS y exportación.
+- Commit `8faac6f` cierra la feature previa de notación (839 líneas netas en 2 commits sobre `main`); esta feature arranca después de esa frontera y se entrega en dos cortes: (1) módulo, figura y contenido nuevo; (2) renumeración, CSS y exportación.
 
 ## Slices entregados
 
-- `925a709` feat(deck): §3 completa — módulo, figura SVG y 8 diapositivas + renumeración (§3–§8 → §4–§9) con sus referencias cruzadas.
-- `e7fbee2` docs(deck): CSS acotado por `data-id`, documento de feature, espejo de seguimiento y resumen con comprobación dimensional.
+- `56ba794` feat(deck): §3 completa — módulo, figura SVG y 8 diapositivas + renumeración (§3–§8 → §4–§9) con sus referencias cruzadas.
+- `956ab82` docs(deck): CSS acotado por `data-id`, documento de feature, espejo de seguimiento y resumen con comprobación dimensional.
 - La feature previa de notación quedó aislada en `e3ab0e8` antes de empezar (§3 no arrastra cambios ajenos).
 - PDF y capturas no se commitean: son artefactos de build (ver `.gitignore` de la carpeta).
 
