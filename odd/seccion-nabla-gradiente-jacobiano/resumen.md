@@ -9,8 +9,8 @@ Se añadieron **8 diapositivas** consecutivas inmediatamente después del marco 
 | # | Kicker | Título | Qué desarrolla |
 |---:|---|---|---|
 | 04 | 3 · Operador nabla · Cuatro casos | Qué entra y qué sale al derivar: cuatro casos de función | Uno a uno, muchos a uno, uno a muchos y muchos a muchos; figura con la **forma** del objeto derivado (escalar, columna, matriz) y ecuación que los unifica en $\mathbf J_f$ |
-| 05 | 3 · Operador nabla · Gradiente | Muchos a uno: el gradiente $\nabla_{\mathbf x}f$ es un vector columna | Definición con $f:\mathbb{R}^{P}\to\mathbb{R}$, ejemplo cuadrático $\tfrac12\mathbf x^\top\mathbf A\mathbf x+\mathbf b^\top\mathbf x$ y derivada direccional |
-| 06 | 3 · Operador nabla · Jacobiano | Muchos a muchos: el jacobiano $\mathbf J_f\in\mathbb{R}^{M\times P}$ | Matriz explícita fila/columna, regla de la cadena con dimensiones y linealización de primer orden |
+| 05 | 3 · Operador nabla · Gradiente y jacobiano | Las dos definiciones: gradiente y jacobiano | Las dos definiciones en una sola página: $\nabla_{\mathbf x}f$ como columna y $\mathbf J_f$ como matriz $M\times P$, con la regla filas/columnas |
+| 06 | 3 · Operador nabla · Construcción general | Muchos a muchos: cómo se construye la matriz, paso a paso | Proceso completo en general: componentes escalares, las $M\cdot P$ derivadas parciales, ordenación por filas y verificación dimensional |
 | 07 | 3 · Operador nabla · Ejemplo paso a paso | Ejemplo: tres entradas y dos salidas | $f:\mathbb{R}^3\to\mathbb{R}^2$ resuelta en cuatro pasos: función, parciales por salida, matriz ensamblada y evaluación numérica |
 | 08 | 3 · Operador nabla · Sensibilidad en energía | Modelo energético: cuatro sensores y dos salidas | $T_{out}, RH_{out}, P_{HVAC}, I_{sol}\to(T_{in}^{+1}, E_{HVAC})$; jacobiano $\mathbb{R}^{2\times 4}$ y caso lineal de jacobiano constante |
 | 09 | 3 · Operador nabla · Lectura del jacobiano | Cómo leer cada elemento como sensibilidad local | Tabla elemento/unidad/lectura, regla de unidades $\partial y_i/\partial x_j$ y validez local |

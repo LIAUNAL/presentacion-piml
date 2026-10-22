@@ -54,3 +54,12 @@ Feature: insertar una sección didáctica nueva (§3) en el deck PIML sin tocar 
 - La ecuación de la primera diapositiva se recortaba a la derecha (`overflow-x`): se dividió en matriz + comentario.
 - El renderizador pinta tablas antes que ecuaciones: la tabla de interpretación energética se movió a una diapositiva propia (09) para no invertir el orden de lectura.
 - `\qquad` se escribió con una sola barra en el fuente JS y KaTeX lo mostró como texto (`qqquad`); se corrigió a `\\qquad` y se verificó que no quedan secuencias LaTeX con barra simple.
+
+## Ajustes de la segunda ronda (2026-10-22)
+
+- **L4 (solicitud, literal):** «1 en esta parte del grafico de la pagina 4 vamos ajustar para que las formulas salgan en formato latex / 2 en las paginas dejemos solo lo siguiente creo que las podemos unir en una 5 (Definición: gradiente de una función escalar) 6 (Definición: una fila por salida, una columna por entrada), es decir solo el primer bloque de cada pagian / 3 quiero agregar un ejemplo de muchos a muchos, pero de forma general donde se vea todo el proceso donde se contruye la matriz jacobiana. todo el proceso. / 4 en la pagina 2 tabla de notacion aparece mucho espacio en blanco y el texto se ve pequeño puede hacer el texto mas grande para ocupar todo el panel de la pagina.»
+- **T8** · Figura de la página 4 con LaTeX — hecho: `NablaCasosFigure` pasó de SVG con unicode a HTML/CSS + `NodeEquation` (MathJax), con las cuatro fórmulas tipografiadas igual que el resto del deck.
+- **T9** · Fusionar gradiente y jacobiano — hecho: se eliminaron `nabla-gradiente` y `nabla-jacobiano`; quedó `nabla-definiciones` con las dos definiciones y sus comentarios.
+- **T10** · Construcción general del jacobiano — hecho: nueva `nabla-jacobiano-general` con los cuatro pasos (componentes, M·P derivadas, filas, verificación dimensional).
+- **T11** · Tabla de notación a panel completo — hecho: 0,88 → 1,02 rem, padding 5/8 → 9/11 px, interlineado 1,3 → 1,42; se retiró el `overflow-y: hidden` para que un futuro desborde se detecte en la captura en vez de recortarse en silencio.
+- El deck sigue en 69 diapositivas: −2 fusionadas, +1 construcción general.

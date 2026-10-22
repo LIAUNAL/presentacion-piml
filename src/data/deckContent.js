@@ -142,12 +142,12 @@ export const SLIDES = [
     notes: 'El caso «uno a muchos» no es el gradiente: derivar $f:\\mathbb{R}\\to\\mathbb{R}^{M}$ da una **columna** de $M$ derivadas. El gradiente aparece cuando el **codominio** es escalar.'
   },
   {
-    id: 'nabla-gradiente',
+    id: 'nabla-definiciones',
     module: 'nabla',
     tone: 'purple',
     kind: 'wide',
-    kicker: '3 · Operador nabla · Gradiente',
-    title: 'Muchos a uno: el gradiente $\\nabla_{\\mathbf x}f$ es un vector columna',
+    kicker: '3 · Operador nabla · Gradiente y jacobiano',
+    title: 'Las dos definiciones: gradiente y jacobiano',
     equations: [
       {
         heading: 'Definición: gradiente de una función escalar',
@@ -155,43 +155,43 @@ export const SLIDES = [
         conn: 'Es una **columna** por convención: vive en el mismo espacio que $\\mathbf x$, así que $\\boldsymbol\\theta\\leftarrow\\boldsymbol\\theta-\\eta\\nabla_{\\boldsymbol\\theta}\\mathcal L$ resta vectores del mismo espacio. Su traspuesta es la fila $1\\times P$ del jacobiano: $\\mathbf J_{f}=(\\nabla_{\\mathbf x}f)^{\\top}$.'
       },
       {
-        heading: 'Ejemplo: forma cuadrática',
-        tex: 'f(\\mathbf x)=\\tfrac12\\mathbf x^{\\top}\\mathbf A\\mathbf x+\\mathbf b^{\\top}\\mathbf x \\;\\Rightarrow\\; \\nabla_{\\mathbf x}f=\\tfrac12(\\mathbf A+\\mathbf A^{\\top})\\mathbf x+\\mathbf b \\;(=\\mathbf A\\mathbf x+\\mathbf b \\text{ si } \\mathbf A=\\mathbf A^{\\top})',
-        conn: 'Dimensiones: $\\mathbf A\\in\\mathbb{R}^{P\\times P}$, $\\mathbf b\\in\\mathbb{R}^{P}$ y el resultado vuelve a $\\mathbb{R}^{P}$. Cada componente $\\partial f/\\partial x_j$ mide cuánto cambia $f$ al mover **sólo** $x_j$.'
-      },
-      {
-        heading: 'Qué información codifica: derivada direccional',
-        tex: '\\frac{d}{d\\varepsilon}f(\\mathbf x+\\varepsilon\\mathbf v)\\Big|_{\\varepsilon=0}=\\nabla_{\\mathbf x}f^{\\top}\\mathbf v\\in\\mathbb{R}',
-        conn: 'Todo cambio de primer orden se lee como un producto interno con $\\nabla_{\\mathbf x}f$: el gradiente es el vector que reproduce **todas** las derivadas direccionales.'
+        heading: 'Definición: una fila por salida, una columna por entrada',
+        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}\\dfrac{\\partial f_1}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_1}{\\partial x_P}\\\\[4pt] \\vdots & \\ddots & \\vdots\\\\[4pt] \\dfrac{\\partial f_M}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_M}{\\partial x_P}\\end{bmatrix}\\in\\mathbb{R}^{M\\times P}, \\qquad [\\mathbf J_{f}]_{ij}=\\dfrac{\\partial f_i}{\\partial x_j}',
+        conn: 'La fila $i$ es $\\nabla_{\\mathbf x}f_i^{\\top}$ y la columna $j$ es $\\partial f/\\partial x_j\\in\\mathbb{R}^{M}$. **El gradiente de una función escalar es un vector; el jacobiano de una función vectorial es una matriz.**'
       },
     ],
-    notes: 'Mismo operador, distinto espacio: $\\nabla_{\\mathbf x}$ deriva respecto a entradas, $\\nabla_{\\boldsymbol\\theta}\\mathcal L\\in\\mathbb{R}^{|\\boldsymbol\\theta|}$ respecto a parámetros entrenables y $\\nabla_{\\mathbf z}\\hat H_{\\boldsymbol\\theta}$ respecto al estado. El tamaño de la columna lo fija la variable, no el operador.'
+    notes: 'Un solo operador, dos formas de salida: si el codominio es escalar, el resultado es una columna de $P$ componentes; si es vectorial, una matriz de $M\\times P$. Con $M=1$ el jacobiano es la fila del gradiente traspuesto.'
   },
   {
-    id: 'nabla-jacobiano',
+    id: 'nabla-jacobiano-general',
     module: 'nabla',
     tone: 'purple',
     kind: 'wide',
-    kicker: '3 · Operador nabla · Jacobiano',
-    title: 'Muchos a muchos: el jacobiano $\\mathbf J_{f}\\in\\mathbb{R}^{M\\times P}$',
+    kicker: '3 · Operador nabla · Construcción general',
+    title: 'Muchos a muchos: cómo se construye la matriz, paso a paso',
     equations: [
       {
-        heading: 'Definición: una fila por salida, una columna por entrada',
-        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}\\dfrac{\\partial f_1}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_1}{\\partial x_P}\\\\[4pt] \\vdots & \\ddots & \\vdots\\\\[4pt] \\dfrac{\\partial f_M}{\\partial x_1} & \\cdots & \\dfrac{\\partial f_M}{\\partial x_P}\\end{bmatrix}\\in\\mathbb{R}^{M\\times P}, \\qquad [\\mathbf J_{f}]_{ij}=\\dfrac{\\partial f_i}{\\partial x_j}',
-        conn: 'La fila $i$ es $\\nabla_{\\mathbf x}f_i^{\\top}$ y la columna $j$ es $\\partial f/\\partial x_j\\in\\mathbb{R}^{M}$. La matriz no es cuadrada en general y el orden de filas y columnas **no** es intercambiable.'
+        heading: 'Paso 1 · Escribir las $M$ componentes escalares',
+        tex: 'f(\\mathbf x)=\\begin{bmatrix}f_1(\\mathbf x)\\\\ \\vdots\\\\ f_M(\\mathbf x)\\end{bmatrix}, \\qquad f_i:\\mathbb{R}^{P}\\to\\mathbb{R}, \\qquad \\mathbf x=\\begin{bmatrix}x_1\\\\ \\vdots\\\\ x_P\\end{bmatrix}\\in\\mathbb{R}^{P}',
+        conn: 'Cada $f_i$ es un caso «muchos a uno»: se deriva con $\\nabla_{\\mathbf x}f_i$ y devuelve una columna de $P$ componentes.'
       },
       {
-        heading: 'Regla de la cadena: el producto fija las dimensiones',
-        tex: 'h=g\\circ f \\;\\Rightarrow\\; \\mathbf J_{h}(\\mathbf x)=\\mathbf J_{g}\\bigl(f(\\mathbf x)\\bigr)\\,\\mathbf J_{f}(\\mathbf x)\\in\\mathbb{R}^{K\\times M}\\cdot\\mathbb{R}^{M\\times P}=\\mathbb{R}^{K\\times P}',
-        conn: 'Los índices intermedios $M$ deben coincidir: es la misma regla que encadena la retropropagación capa por capa.'
+        heading: 'Paso 2 · Derivar cada salida respecto a cada entrada',
+        tex: '\\left\\{\\frac{\\partial f_i}{\\partial x_j}\\right\\}_{\\substack{i=1,\\dots,M\\\\ j=1,\\dots,P}} \\qquad\\Longrightarrow\\qquad M\\cdot P \\text{ derivadas parciales}',
+        conn: 'Una por cada pareja (salida, entrada). Al derivar $f_i$ respecto a $x_j$ se mantienen fijas las demás entradas: es derivada parcial, no total.'
       },
       {
-        heading: 'Lectura local: linealización de primer orden',
-        tex: 'f(\\mathbf x+\\Delta\\mathbf x)\\approx f(\\mathbf x)+\\mathbf J_{f}(\\mathbf x)\\,\\Delta\\mathbf x, \\qquad (M\\times P)(P\\times 1)=M\\times 1',
-        conn: 'Cada elemento es una **sensibilidad local**: cuánto cambia la salida $i$ por unidad de cambio en la entrada $j$, en el punto $\\mathbf x$ y despreciando los términos de segundo orden.'
+        heading: 'Paso 3 · Ordenar: las $P$ derivadas de una salida forman su fila',
+        tex: '\\mathbf J_{f}=\\begin{bmatrix}\\text{fila }1\\\\ \\vdots\\\\ \\text{fila }M\\end{bmatrix}, \\qquad \\text{fila }i=\\left(\\frac{\\partial f_i}{\\partial x_1},\\ \\dots,\\ \\frac{\\partial f_i}{\\partial x_P}\\right)\\in\\mathbb{R}^{1\\times P}',
+        conn: 'La columna $j$ reúne el efecto de la entrada $j$ sobre las $M$ salidas: $\\partial f/\\partial x_j\\in\\mathbb{R}^{M}$. Filas y columnas no se intercambian.'
+      },
+      {
+        heading: 'Paso 4 · Verificar dimensiones y usar la matriz',
+        tex: '\\underbrace{M}_{\\text{salidas}}\\times\\underbrace{P}_{\\text{entradas}}, \\qquad f(\\mathbf x+\\Delta\\mathbf x)\\approx f(\\mathbf x)+\\mathbf J_{f}(\\mathbf x)\\,\\Delta\\mathbf x \\quad (M\\times P)(P\\times 1)',
+        conn: 'Si $M=P$ la matriz es cuadrada; con $M=1$ queda una fila y con $P=1$, una columna. La linealización sólo vale localmente, alrededor de $\\mathbf x$.'
       },
     ],
-    notes: '**No confundir:** $\\mathbf J_{s}$ es la matriz simpléctica de la HNN —constante, antisimétrica, de tamaño $2d\\times 2d$ y **no** proviene de derivar una función—; los costos $J_{\\mathrm{HNN}}$ y $J_{\\mathrm{LNN}}$ son escalares, no matrices.'
+    notes: 'El orden de construcción es fijo: componentes → derivadas → filas → verificación. Reordenar filas o columnas produce otra matriz, aunque represente la misma función.'
   },
   {
     id: 'nabla-ejemplo',
