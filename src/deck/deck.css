@@ -1955,22 +1955,26 @@ body.focus-mode .deck-controls .controls-logo {
 
 /* ---------- Figura §3: los cuatro casos (HTML + MathJax) ---------- */
 /* La figura va en la columna del diagrama y tipografía sus fórmulas con
-   MathJax, igual que las ecuaciones, para no mezclar unicode con LaTeX. */
+   MathJax, igual que las ecuaciones, para no mezclar unicode con LaTeX.
+   Todos los tamaños se expresan en `cqw` sobre el ancho de la propia figura:
+   así el contenido llena los cuadros igual en 1920×1080 que en un portátil,
+   sin desbordar la tarjeta ni recortar la lectura de cada caso. */
 .nabla-casos {
+  container-type: inline-size;
   height: 100%;
   display: grid;
   grid-template-rows: repeat(4, minmax(0, 1fr));
   align-content: center;
-  gap: clamp(6px, 1.2vh, 14px);
-  padding: clamp(8px, 1.4vw, 18px);
+  gap: clamp(8px, 1.17cqw, 14px);
+  padding: clamp(8px, 1.51cqw, 18px);
 }
 
 .nabla-caso {
   display: grid;
-  grid-template-columns: minmax(88px, 0.55fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(110px, 0.7fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: clamp(8px, 1.2vw, 18px);
-  padding-bottom: clamp(6px, 1.1vh, 12px);
+  gap: clamp(8px, 1.68cqw, 20px);
+  padding-bottom: clamp(6px, 1.01cqw, 12px);
   border-bottom: 1px dashed var(--line);
 }
 
@@ -1983,20 +1987,20 @@ body.focus-mode .deck-controls .controls-logo {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  font-size: clamp(0.82rem, 1vw, 0.98rem);
+  font-size: clamp(0.95rem, 1.93cqw, 1.44rem);
   color: var(--subtext1);
   line-height: 1.2;
 }
 
 .nabla-caso-tag strong {
   color: var(--fg);
-  font-size: clamp(0.9rem, 1.1vw, 1.06rem);
+  font-size: clamp(1.05rem, 2.09cqw, 1.56rem);
 }
 
 .nabla-caso-flow {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 0.7vw, 10px);
+  gap: clamp(8px, 1.17cqw, 14px);
   min-width: 0;
 }
 
@@ -2004,41 +2008,41 @@ body.focus-mode .deck-controls .controls-logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: clamp(38px, 3.2vw, 54px);
-  height: clamp(30px, 3.4vh, 44px);
-  padding: 0 8px;
-  border: 1.6px solid var(--navy);
-  border-radius: 9px;
+  min-width: clamp(64px, 9.01cqw, 110px);
+  height: clamp(64px, 9.05cqw, 112px);
+  padding: 0 clamp(8px, 1.17cqw, 16px);
+  border: 2.2px solid var(--navy);
+  border-radius: clamp(8px, 1.17cqw, 14px);
   background: #fff;
   color: var(--navy);
-  font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+  font-size: clamp(1.15rem, 3.35cqw, 2.5rem);
 }
 
 .nabla-f {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: clamp(34px, 2.8vw, 48px);
-  height: clamp(30px, 3.4vh, 44px);
-  border: 1.6px solid var(--phys);
-  border-radius: 9px;
+  min-width: clamp(58px, 8.21cqw, 100px);
+  height: clamp(64px, 9.05cqw, 112px);
+  border: 2.2px solid var(--phys);
+  border-radius: clamp(8px, 1.17cqw, 14px);
   background: #fff;
   color: var(--phys);
   font-family: "Source Serif 4", serif;
-  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  font-size: clamp(1.2rem, 3.51cqw, 2.62rem);
   font-style: italic;
 }
 
 .nabla-arrow {
   color: var(--line-strong);
-  font-size: clamp(0.85rem, 1vw, 1.05rem);
+  font-size: clamp(1rem, 2.76cqw, 2.06rem);
   line-height: 1;
 }
 
 .nabla-glyph {
   display: grid;
-  gap: 3px;
-  margin-left: 4px;
+  gap: clamp(4px, 0.5cqw, 7px);
+  margin-left: clamp(4px, 0.67cqw, 9px);
 }
 
 .nabla-glyph.is-scalar {
@@ -2055,22 +2059,22 @@ body.focus-mode .deck-controls .controls-logo {
 }
 
 .nabla-cell {
-  width: clamp(26px, 2.3vw, 38px);
-  height: clamp(13px, 1.5vh, 19px);
-  border: 1.4px solid var(--frontera);
-  border-radius: 3px;
+  width: clamp(40px, 7.04cqw, 86px);
+  height: clamp(24px, 3.08cqw, 38px);
+  border: 2px solid var(--frontera);
+  border-radius: 4px;
   background: rgba(230, 126, 34, 0.22);
 }
 
 .nabla-glyph.is-scalar .nabla-cell {
-  width: clamp(30px, 2.7vw, 44px);
-  height: clamp(30px, 3.4vh, 44px);
-  border-radius: 6px;
+  width: clamp(64px, 9.66cqw, 118px);
+  height: clamp(64px, 9.05cqw, 112px);
+  border-radius: clamp(8px, 1cqw, 12px);
 }
 
 .nabla-glyph.is-matrix .nabla-cell {
-  width: clamp(20px, 1.8vw, 30px);
-  height: clamp(15px, 1.7vh, 22px);
+  width: clamp(34px, 5.2cqw, 64px);
+  height: clamp(24px, 2.9cqw, 36px);
 }
 
 .nabla-cell.is-faded {
@@ -2087,12 +2091,12 @@ body.focus-mode .deck-controls .controls-logo {
 
 .nabla-object {
   color: var(--fg);
-  font-size: clamp(0.92rem, 1.15vw, 1.12rem);
+  font-size: clamp(1.05rem, 2.49cqw, 1.9rem);
 }
 
 .nabla-reading {
   color: var(--subtext1);
-  font-size: clamp(0.78rem, 0.95vw, 0.92rem);
+  font-size: clamp(0.92rem, 2.22cqw, 1.5rem);
 }
 
 /* La construcción general encadena cuatro pasos: se compacta como la página
@@ -2125,6 +2129,169 @@ body.focus-mode .deck-controls .controls-logo {
   margin: 4px 0 0;
   font-size: 0.86rem;
   line-height: 1.4;
+}
+
+/* §4b: las dos figuras de PINN (directa e inversa) son el argumento de la
+   página, así que cajas y texto suben un paso respecto del diagrama base; el
+   lead también, porque en estas páginas queda aire suficiente. */
+.slide[data-id^='pinn-'] .slide-list-lead {
+  font-size: 1.06rem;
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.flow-pinn .deck-node {
+  padding: 10px 13px;
+  min-width: 180px;
+  font-size: 0.82rem;
+  border-radius: 12px;
+}
+
+.flow-pinn .deck-node .node-title {
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+}
+
+.flow-pinn .deck-node .node-bar {
+  margin: -10px -13px 7px;
+}
+
+/* Las dos fichas de métodos numéricos (§3b) tienen poco texto para una página
+   completa: se escala la tipografía para llenar la tarjeta como el resto de las
+   páginas densas, sin tocar la composición. */
+.slide[data-id^='metodos-'] .eq-box {
+  padding: clamp(6px, 1vh, 10px) clamp(16px, 1.8vw, 22px);
+}
+
+.slide[data-id^='metodos-'] .eq-box .eq-display {
+  font-size: clamp(1rem, 1.24vw, 1.2rem);
+  line-height: 1.55;
+}
+
+/* La ficha de RK4 lleva cuatro estados intermedios: el bloque se comprime
+   para que la página siga cabiendo completa en 1920 y en un portátil. */
+.slide[data-id='metodos-rk4'] .eq-box .eq-display {
+  line-height: 1.22;
+}
+
+.slide[data-id='metodos-rk4'] .eq-box {
+  padding: 4px clamp(16px, 1.8vw, 22px);
+}
+
+.slide[data-id='metodos-rk4'] .reading-table {
+  font-size: 0.92rem;
+}
+
+.slide[data-id^='metodos-'] .reading-table {
+  font-size: 1rem;
+}
+
+.slide[data-id^='metodos-'] .reading-table th,
+.slide[data-id^='metodos-'] .reading-table td {
+  padding: 8px 10px;
+  line-height: 1.34;
+}
+
+.slide[data-id^='metodos-'] .slide-notes {
+  font-size: 0.93rem;
+  line-height: 1.45;
+}
+
+/* Banda inferior de §3b: ejemplo gráfico (Euler vs RK4 vs exacta) junto a los
+   dos papeles del método. Se apoya en el aire que deja la ficha y mantiene la
+   composición de una sola columna del resto de la página. */
+.slide-band {
+  display: grid;
+  grid-template-columns: minmax(220px, 330px) minmax(0, 1fr);
+  gap: clamp(12px, 1.6vw, 24px);
+  align-items: center;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+  min-height: 0;
+}
+
+.band-chart {
+  margin: 0;
+  min-width: 0;
+}
+
+.band-plot {
+  display: block;
+  min-width: 0;
+}
+
+.band-chart svg {
+  width: 100%;
+  height: auto;
+  max-height: 138px;
+  aspect-ratio: 2 / 1;
+}
+
+.band-key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 9px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.72rem;
+  color: var(--subtext1);
+}
+
+.band-key li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.band-key .key-note {
+  color: var(--subtext);
+}
+
+.key-line {
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  border-top: 2.2px solid var(--navy);
+}
+
+.key-line.is-euler {
+  border-top-style: dashed;
+  border-top-color: var(--frontera);
+}
+
+.key-line.is-rk4 {
+  border-top-color: var(--phys);
+}
+
+.band-chart figcaption {
+  margin-top: 2px;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--subtext1);
+}
+
+.band-roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px clamp(14px, 2vw, 28px);
+  min-width: 0;
+}
+
+.band-roles p {
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.4;
+  color: var(--subtext1);
+}
+
+.band-roles strong {
+  display: block;
+  color: var(--fg);
+  font-size: 0.93rem;
+  letter-spacing: 0.01em;
 }
 
 /* La tabla de notación es la referencia del deck: ocupa el panel completo con
@@ -2161,9 +2328,15 @@ body.focus-mode .deck-controls .controls-logo {
 }
 
 /* La figura ocupa la columna derecha; en la izquierda queda aire, así que la
-   ecuación que unifica los cuatro casos se escala para equilibrar la página. */
+   ecuación que unifica los cuatro casos se escala para equilibrar la página.
+   La ecuación es ancha: su tipo se mide sobre el ancho de la propia tarjeta
+   (`cqw`) para que nunca desborde a la derecha, ni en 1920 ni en un portátil. */
+.slide[data-id='nabla-casos'] .slide-content {
+  container-type: inline-size;
+}
+
 .slide[data-id='nabla-casos'] .eq-box .eq-display {
-  font-size: clamp(1.06rem, 1.5vw, 1.38rem);
+  font-size: clamp(0.82rem, 3.9cqw, 1.3rem);
   line-height: 1.6;
 }
 
@@ -2174,4 +2347,66 @@ body.focus-mode .deck-controls .controls-logo {
 .slide[data-id='nabla-casos'] .eq-box .eq-conn {
   font-size: 0.98rem;
   line-height: 1.55;
+}
+
+/* §3b en pantallas menores que 1920: las dos fichas ganan una banda inferior
+   (gráfico + papeles directo/inverso), así que se compactan para seguir
+   cabiendo completas sin recortar la banda. */
+@media (max-width: 1800px) {
+  .slide[data-id^='metodos-'] .eq-box {
+    padding: 6px 14px;
+  }
+
+  .slide[data-id^='metodos-'] .eq-box .eq-display {
+    font-size: 1.02rem;
+    line-height: 1.35;
+  }
+
+  .slide[data-id^='metodos-'] .reading-table {
+    font-size: 0.93rem;
+  }
+
+  .slide[data-id^='metodos-'] .reading-table th,
+  .slide[data-id^='metodos-'] .reading-table td {
+    padding: 6px 9px;
+  }
+
+  .slide[data-id^='metodos-'] .slide-notes {
+    font-size: 0.9rem;
+  }
+
+  .slide-band {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+
+  .slide[data-id^='metodos-'] .band-chart svg {
+    max-height: 104px;
+  }
+
+  .slide[data-id^='metodos-'] .band-chart figcaption {
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+
+  .slide[data-id^='metodos-'] .band-roles p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Pantallas de 1700 px o menos (portátiles chicos y ventanas partidas): §3b
+   reduce la gráfica un paso más para que la banda no quede cortada. */
+@media (max-width: 1700px) {
+  .slide[data-id^='metodos-'] .band-chart svg {
+    max-height: 92px;
+  }
+
+  .slide[data-id^='metodos-'] .band-roles p {
+    font-size: 0.87rem;
+  }
+
+  .slide[data-id^='metodos-'] .reading-table th,
+  .slide[data-id^='metodos-'] .reading-table td {
+    padding: 6px 9px;
+  }
 }

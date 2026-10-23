@@ -3,6 +3,7 @@ import { MathJax } from 'better-react-mathjax';
 import RichText from './RichText.jsx';
 import EquationBox from './EquationBox.jsx';
 import { DIAGRAM_COMPONENTS } from './diagrams/index.js';
+import MetodosComparacion from './diagrams/MetodosComparacion.jsx';
 import NodeEquation from './diagrams/NodeEquation.jsx';
 import { hasMathLine } from './diagrams/DeckFlowPanel.jsx';
 
@@ -202,6 +203,20 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
     );
   }
 
+  const equationStack = slide.equations ? (
+    <div className="math-stack">
+      {slide.equations.map((eq, i) => (
+        <EquationBox
+          key={i}
+          heading={eq.heading}
+          tex={eq.tex}
+          conn={eq.conn}
+          bridge={eq.bridge}
+        />
+      ))}
+    </div>
+  ) : null;
+
   return (
     <article
       className={cls.join(' ')}
@@ -215,6 +230,8 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
         <MathJax>
           <p className="slide-kicker">{slide.kicker}</p>
           <h2>{slide.title}</h2>
+
+          {slide.equationFirst ? equationStack : null}
 
           {slide.table ? (
             <table className="reading-table">
@@ -252,24 +269,32 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
             </ul>
           ) : null}
 
-          {slide.equations ? (
-            <div className="math-stack">
-              {slide.equations.map((eq, i) => (
-                <EquationBox
-                  key={i}
-                  heading={eq.heading}
-                  tex={eq.tex}
-                  conn={eq.conn}
-                  bridge={eq.bridge}
-                />
-              ))}
-            </div>
-          ) : null}
+          {slide.equations && !slide.equationFirst ? equationStack : null}
 
           {slide.notes ? (
             <p className="slide-notes">
               <RichText text={slide.notes} />
             </p>
+          ) : null}
+
+          {slide.roles ? (
+            <div className="slide-band">
+              {slide.comparison ? (
+                <figure className="band-chart">
+                  <MetodosComparacion method={slide.comparison.method} />
+                  <figcaption>
+                    <NodeEquation code={slide.comparison.caption} />
+                  </figcaption>
+                </figure>
+              ) : null}
+              <div className="band-roles">
+                {slide.roles.map((role, i) => (
+                  <p key={i}>
+                    <RichText text={role} />
+                  </p>
+                ))}
+              </div>
+            </div>
           ) : null}
 
           {slide.refs ? (

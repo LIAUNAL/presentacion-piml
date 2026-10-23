@@ -128,7 +128,7 @@ export const SLIDES = [
     equations: [
       {
         heading: 'El jacobiano contiene a los cuatro casos',
-        tex: '\\mathbf J_{f}(\\mathbf x)=\\begin{bmatrix}\\partial f_1/\\partial x_1 & \\cdots & \\partial f_1/\\partial x_P\\\\ \\vdots & & \\vdots\\\\ \\partial f_M/\\partial x_1 & \\cdots & \\partial f_M/\\partial x_P\\end{bmatrix}\\in\\mathbb{R}^{M\\times P}, \\qquad [\\mathbf J_{f}]_{ij}=\\frac{\\partial f_i}{\\partial x_j}',
+        tex: '\\begin{aligned}\\mathbf J_{f}(\\mathbf x)&=\\begin{bmatrix}\\partial f_1/\\partial x_1 & \\cdots & \\partial f_1/\\partial x_P\\\\ \\vdots & & \\vdots\\\\ \\partial f_M/\\partial x_1 & \\cdots & \\partial f_M/\\partial x_P\\end{bmatrix}\\in\\mathbb{R}^{M\\times P}\\\\[6pt] [\\mathbf J_{f}]_{ij}&=\\frac{\\partial f_i}{\\partial x_j}\\end{aligned}',
         conn: 'Filas = salidas; columnas = entradas. Con $M=1$ queda la fila $1\\times P$ que es la traspuesta del gradiente, $(\\nabla_{\\mathbf x}f)^{\\top}$; con $P=1$ queda la columna $M\\times 1$ de derivadas, $f^{\\prime}(t)$.'
       },
     ],
@@ -335,6 +335,79 @@ export const SLIDES = [
       ['LNN (§4)', '$\\mathbf H_{\\dot{\\mathbf q}\\dot{\\mathbf q}},\\ \\mathbf H_{\\dot{\\mathbf q}\\mathbf q}$', '$\\mathbb{R}^{d\\times d}$', 'aceleración predicha por Euler–Lagrange'],
     ],
     notes: 'El jacobiano de la red, $\\mathbf J_{f_{\\boldsymbol\\theta}}\\in\\mathbb{R}^{M\\times P}$, es la sensibilidad salida–entrada; no se confunde con $\\mathbf J_{s}$ (simpléctica) ni con el gradiente de la pérdida. El desarrollo de la puerta ② está en §4 y la identificación inversa en §4b.'
+  },
+
+  {
+    id: 'metodos-euler',
+    module: 'metodos',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3b · Métodos numéricos · Euler explícito',
+    title: 'Euler: un paso en la dirección de la tangente',
+    equationFirst: true,
+    equations: [
+      {
+        heading: 'La EDO en tiempo continuo y su malla',
+        tex: '\\dot{\\mathbf z}(t)=\\mathbf g(\\mathbf z(t),t),\\qquad \\mathbf z(t_0)=\\mathbf z_0,\\qquad t_j=t_0+j\\,\\Delta t,\\qquad \\mathbf z[j]\\approx\\mathbf z(t_j)',
+        conn: 'El estado es $\\mathbf z(t)\\in\\mathbb{R}^{d}$ y $\\mathbf g$ el campo vectorial que lo gobierna. La malla avanza con el paso $\\Delta t$: $j$ numera pasos y $t_j$ es el instante continuo correspondiente. El estado discreto va con corchetes, $\\mathbf z[j]$, como en la Tabla §2.'
+      },
+      {
+        heading: 'Un paso de Euler explícito',
+        tex: '\\mathbf z[j+1]=\\mathbf z[j]+\\Delta t\\,\\mathbf g(\\mathbf z[j],t_j)',
+        conn: 'Es el primer término del desarrollo de Taylor de $\\mathbf z(t_{j+1})$ alrededor de $t_j$: la derivada se reemplaza por la diferencia forward. Error local $\\mathcal{O}(\\Delta t^{2})$ y error global $\\mathcal{O}(\\Delta t)$: primer orden.'
+      },
+    ],
+    table: [
+      ['Ventajas', 'Limitaciones'],
+      ['Una evaluación de $\\mathbf g$ por paso: bajo costo computacional', 'Primer orden: el error global decae sólo como $\\Delta t$ y se acumula paso a paso'],
+      ['Explícito: no resuelve ningún sistema de ecuaciones en cada paso', 'Estabilidad condicional: en $\\dot z(t)=\\lambda z(t)$ exige $\\lvert 1+\\Delta t\\lambda\\rvert\\le 1$'],
+      ['Lectura geométrica directa: avanza en la dirección de la tangente', 'Inadecuado para sistemas rígidos y horizontes largos: el paso lo fija la estabilidad'],
+    ],
+    notes: 'En la cota de estabilidad, $\\lambda$ es un autovalor del sistema linealizado —no un peso de pérdida como $\\lambda_{phys}$—. La variante implícita (backward Euler) evalúa $\\mathbf g(\\mathbf z[j+1],t_{j+1})$ y gana estabilidad incondicional al precio de resolver un sistema por paso.',
+    comparison: {
+      method: 'euler',
+      caption: '$\\dot z(t)=-z(t)$, $z(t_0)=1$, paso $\\Delta t=0.75$: la poligonal de Euler se separa de la curva exacta.',
+    },
+    roles: [
+      '**Problema directo:** integra la EDO con parámetros conocidos para estimar la trayectoria del sistema.',
+      '**Problema inverso:** se utiliza como solucionador numérico dentro de una optimización que ajusta los parámetros físicos a partir de las mediciones.',
+    ],
+  },
+  {
+    id: 'metodos-rk4',
+    module: 'metodos',
+    tone: 'purple',
+    kind: 'wide',
+    kicker: '3b · Métodos numéricos · Runge–Kutta 4',
+    title: 'Runge–Kutta 4: cuatro pendientes por paso',
+    equationFirst: true,
+    equations: [
+      {
+        heading: 'Los cuatro estados intermedios',
+        tex: '\\begin{array}{ll} \\mathbf k_1 = \\mathbf g(\\mathbf z[j],t_j), & \\mathbf k_2 = \\mathbf g\\!\\left(\\mathbf z[j]+\\mathbf k_1\\,\\Delta t/2,\\; t_j+\\Delta t/2\\right) \\\\ \\mathbf k_3 = \\mathbf g\\!\\left(\\mathbf z[j]+\\mathbf k_2\\,\\Delta t/2,\\; t_j+\\Delta t/2\\right), & \\mathbf k_4 = \\mathbf g\\!\\left(\\mathbf z[j]+\\Delta t\\,\\mathbf k_3,\\; t_j+\\Delta t\\right)\\end{array}',
+        conn: 'Cuatro evaluaciones de $\\mathbf g$ por paso. Las dos centrales son la corrección de punto medio: cada pendiente se evalúa donde la anterior llevaría el estado, así que sondea la curvatura.'
+      },
+      {
+        heading: 'Combinación ponderada: Simpson sobre el incremento',
+        tex: '\\mathbf z[j+1]=\\mathbf z[j]+\\frac{\\Delta t}{6}\\left(\\mathbf k_1+2\\mathbf k_2+2\\mathbf k_3+\\mathbf k_4\\right)',
+        conn: 'Los pesos $(1,2,2,1)/6$ son los de la regla de Simpson. Error local $\\mathcal{O}(\\Delta t^{5})$ y global $\\mathcal{O}(\\Delta t^{4})$: al reducir $\\Delta t$ a la mitad, el error global cae por un factor de 16, frente a 2 en Euler.'
+      },
+    ],
+    table: [
+      ['Ventajas', 'Limitaciones'],
+      ['Cuarto orden con cuatro evaluaciones por paso: mayor precisión que Euler para un mismo paso $\\Delta t$, bajo condiciones adecuadas', 'Cuatro evaluaciones de $\\mathbf g$ por paso: coste cuatro veces mayor que Euler'],
+      ['Región de estabilidad absoluta más amplia que Euler para ciertos problemas; sigue siendo condicionalmente estable', 'No es A-estable: en sistemas rígidos el paso lo impone la estabilidad, no la precisión'],
+      ['Sin memoria y de implementación directa: el esquema de referencia', 'Paso fijo sin estimación de error: el control adaptativo exige variantes empotradas'],
+    ],
+    notes: 'Para una EDO de segundo orden como la de §4 se integra el sistema de primer orden equivalente y RK4 se aplica por componentes.',
+    comparison: {
+      method: 'rk4',
+      caption: '$\\dot z(t)=-z(t)$, $z(t_0)=1$ y el mismo paso $\\Delta t=0.75$: RK4 cae sobre la curva exacta.',
+    },
+    roles: [
+      '**Problema directo:** integra la EDO con parámetros conocidos para estimar la trayectoria del sistema.',
+      '**Problema inverso:** se utiliza como solucionador numérico dentro de una optimización que ajusta los parámetros físicos a partir de las mediciones.',
+    ],
   },
 
   // ── §4 Diagrama 1 — Cuatro puertas ──────────────────────────────────────
@@ -888,6 +961,51 @@ export const SLIDES = [
     ]
   },
   {
+    id: 'pinn-directo-figura',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'diagram',
+    kicker: '4b · PINN del problema directo · diagrama',
+    title: 'PINN directa: los parámetros físicos entran fijos',
+    lead: [
+      '**Conocido:** la ley $\\mathcal{F}[\\hat x_{\\boldsymbol\\theta}]=0$ con $\\boldsymbol\\phi=(m,c,k)$ fijos. **Incógnita:** la trayectoria $x(t)$.',
+      '**Entra:** $t$ y las condiciones iniciales. **Sale:** $\\hat x_{\\boldsymbol\\theta}(t)$ y, por autodiferenciación, sus derivadas $\\dot{\\hat x}_{\\boldsymbol\\theta}$ y $\\ddot{\\hat x}_{\\boldsymbol\\theta}$, que forman el residuo $r_{\\boldsymbol\\theta}(t)=m\\ddot{\\hat x}+c\\dot{\\hat x}+k\\hat x-F(t)$.',
+    ],
+    diagram: 'pinnDirecto',
+    diagramTitle: 'Estructura de una PINN para el problema directo del sistema masa-resorte',
+    legend: [
+      { color: '#1E3A5F', label: 'Sistema y parámetros físicos $\\boldsymbol\\phi$ (fijos)' },
+      { color: '#16A085', label: 'Datos y condiciones iniciales' },
+      { color: '#34495E', label: 'Red $f_{\\boldsymbol\\theta}$' },
+      { color: '#7D3C98', label: 'Autodiferenciación' },
+      { color: '#E67E22', label: 'Residuo físico' },
+      { color: '#2E86AB', label: 'Pérdida y optimización' },
+    ],
+  },
+  {
+    id: 'pinn-inverso-figura',
+    module: 'd1',
+    tone: 'blue',
+    kind: 'diagram',
+    kicker: '4b · PINN del problema inverso · diagrama',
+    title: 'PINN inversa: los parámetros físicos entran a la optimización',
+    lead: [
+      '**Conocido:** la estructura de la ley y las mediciones $(t_i,x_i^{obs})$. **Incógnita:** $\\boldsymbol\\phi=(m,c,k)$.',
+      '**Entrena:** $\\boldsymbol\\psi=[\\boldsymbol\\theta;\\boldsymbol\\phi]$; como el residuo depende de $\\boldsymbol\\phi$, el gradiente lo corrige y la optimización devuelve $\\widehat{\\boldsymbol\\phi}$ junto con la trayectoria.',
+    ],
+    diagram: 'pinnInverso',
+    diagramTitle: 'Estructura de una PINN para el problema inverso: los parámetros físicos se entrenan',
+    legend: [
+      { color: '#1E3A5F', label: 'Parámetros físicos $\\boldsymbol\\phi$ (entrenables)' },
+      { color: '#16A085', label: 'Mediciones $(t_i,x_i^{obs})$' },
+      { color: '#34495E', label: 'Red $f_{\\boldsymbol\\theta}$' },
+      { color: '#7D3C98', label: 'Autodiferenciación' },
+      { color: '#E67E22', label: 'Residuo físico' },
+      { color: '#2E86AB', label: 'Pérdida y optimización' },
+      { color: '#C0392B', label: 'Actualización de $\\boldsymbol\\phi$' },
+    ],
+  },
+  {
     id: 'd1b-convergencia',
     module: 'd1',
     tone: 'blue',
@@ -1257,7 +1375,7 @@ export const SLIDES = [
         conn: 'Las ecuaciones normales caracterizan el mínimo. Con rango columna completo, $\\mathbf{X}^{+}=(\\mathbf{X}^{\\top}\\mathbf{X})^{-1}\\mathbf{X}^{\\top}$ y la solución es única; en general $\\mathbf{X}^{+}$ es la pseudoinversa de Moore–Penrose y el residuo es ortogonal a las columnas de $\\mathbf{X}$.'
       },
     ],
-    notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: la solución cerrada sale de igualar a cero el gradiente y deja el residuo ortogonal a las columnas de $\\mathbf{X}$. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta lectura. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.',
+    notes: '**Idea central:** mínimos cuadrados no elige el modelo, elige los coeficientes: la solución cerrada sale de igualar a cero el gradiente y deja el residuo ortogonal a las columnas de $\\mathbf{X}$. Todo lo que sigue —verosimilitud, ridge, lasso— cambia el criterio o le añade un término, pero conserva esta lectura. Ojo con el vocabulario: $\\mathbf{e}$ es residuo (observable), $\\boldsymbol{\\varepsilon}$ es error (no observable), y $R^{2} = 1 - \\lVert\\mathbf{e}\\rVert_2^{2}/\\lVert\\mathbf{y}-\\bar{y}\\mathbf{1}\\rVert_2^{2}$ crece siempre al añadir variables, por eso se reporta el ajustado.'
   },
   {
     id: 'd3-reg-mle',
@@ -1292,7 +1410,7 @@ export const SLIDES = [
         conn: 'Con errores gaussianos independientes y homocedásticos, MLE y mínimos cuadrados comparten el estimador de $\\mathbf{W}$: MLE es un criterio, no un modelo nuevo. Añade $\\hat{\\sigma}^{2}$ —sesgado; el insesgado usa $(N-P)\\tau$ grados de libertad— para la inferencia.'
       },
     ],
-    notes: '**Idea central:** MLE no cambia a $\\hat{\\theta}$; justifica el criterio, da varianza e inferencia, y abre el punto de vista bayesiano. **Puente:** un prior sobre $\\theta$ más esta verosimilitud produce un estimador MAP —gaussiano da ridge, Laplace da lasso—; regularizar es declarar una creencia previa.',
+    notes: '**Idea central:** MLE no cambia a $\\hat{\\theta}$; justifica el criterio, da varianza e inferencia, y abre el punto de vista bayesiano. **Puente:** un prior sobre $\\theta$ más esta verosimilitud produce un estimador MAP —gaussiano da ridge, Laplace da lasso—; regularizar es declarar una creencia previa.'
   },
   {
     id: 'd3-reg-map',
@@ -1570,7 +1688,7 @@ export const SLIDES = [
     refs: [
       'Referencias: Zeng, Chen, Zhang & Xu, Are Transformers Effective for Time Series Forecasting?, AAAI 2023 · protocolo interno del benchmark de regresión (§1, Tabla A).',
     ],
-    notes: '**Por qué está en el deck:** es el baseline obligatorio: ningún modelo nuevo se reporta sin superarlo. **Su tesis:** un modelo lineal bien descompuesto iguala o supera a los Transformers en LTSF. **Contraste:** extrapola (es lineal) y es determinista; no modela interacciones no lineales.',
+    notes: '**Por qué está en el deck:** es el baseline obligatorio: ningún modelo nuevo se reporta sin superarlo. **Su tesis:** un modelo lineal bien descompuesto iguala o supera a los Transformers en LTSF. **Contraste:** extrapola (es lineal) y es determinista; no modela interacciones no lineales.'
   },
   {
     id: 'd3-reg-svr',
@@ -1604,7 +1722,7 @@ export const SLIDES = [
     refs: [
       'Referencias: Vapnik, The Nature of Statistical Learning Theory, 2.ª ed., 2000 · Smola & Schölkopf, Statistics and Computing 14, 199–222, 2004 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 12.',
     ],
-    notes: '**Idea central:** SVR no minimiza el error cuadrático; minimiza margen más violaciones del tubo. **Puente:** es el mismo esqueleto ajuste más castigo de OLS, ridge y lasso, con la pérdida $\\varepsilon_{svr}$-insensible. **Contraste:** es programación cuadrática, no una ecuación normal: no hay forma cerrada general.',
+    notes: '**Idea central:** SVR no minimiza el error cuadrático; minimiza margen más violaciones del tubo. **Puente:** es el mismo esqueleto ajuste más castigo de OLS, ridge y lasso, con la pérdida $\\varepsilon_{svr}$-insensible. **Contraste:** es programación cuadrática, no una ecuación normal: no hay forma cerrada general.'
   },
   {
     id: 'd3-reg-tree',
@@ -1634,7 +1752,7 @@ export const SLIDES = [
     refs: [
       'Referencias: Breiman, Friedman, Olshen & Stone, Classification and Regression Trees, 1984 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 9.',
     ],
-    notes: '**Sesgo–varianza:** un árbol profundo tiene varianza alta y sesgo bajo; uno poco profundo, lo contrario. Ése es el compromiso que atacan los dos ensambles siguientes: **bagging** para la varianza y **boosting** para el sesgo. El árbol es determinista; lo estocástico llega con los ensambles.',
+    notes: '**Sesgo–varianza:** un árbol profundo tiene varianza alta y sesgo bajo; uno poco profundo, lo contrario. Ése es el compromiso que atacan los dos ensambles siguientes: **bagging** para la varianza y **boosting** para el sesgo. El árbol es determinista; lo estocástico llega con los ensambles.'
   },
   {
     id: 'd3-reg-forest',
@@ -1663,7 +1781,7 @@ export const SLIDES = [
     refs: [
       'Referencias: Breiman, Machine Learning 45(1), 5–32, 2001 · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 15.',
     ],
-    notes: '**Bagging frente a boosting:** el bosque promedia en paralelo para bajar varianza; el boosting suma en serie para bajar sesgo. **Multi-salida:** el criterio del split puede sumar el RSS de las $\\tau$ componentes, así que un solo bosque predice todo el horizonte. **Protocolo:** `n_estimators` en 200/500/1000 y `max_depth` en None/8/16/32; al ser estocástico, se reporta media y desviación sobre semillas.',
+    notes: '**Bagging frente a boosting:** el bosque promedia en paralelo para bajar varianza; el boosting suma en serie para bajar sesgo. **Multi-salida:** el criterio del split puede sumar el RSS de las $\\tau$ componentes, así que un solo bosque predice todo el horizonte. **Protocolo:** `n_estimators` en 200/500/1000 y `max_depth` en None/8/16/32; al ser estocástico, se reporta media y desviación sobre semillas.'
   },
   {
     id: 'd3-reg-boost',
@@ -1697,7 +1815,7 @@ export const SLIDES = [
     refs: [
       'Referencias: Friedman, Annals of Statistics 29(5), 1189–1232, 2001 (gradient boosting) · Chen & Guestrin, KDD 2016 (XGBoost) · Ke et al., NeurIPS 2017 (LightGBM) · Hastie, Tibshirani & Friedman, The Elements of Statistical Learning, 2.ª ed., 2009, cap. 10.',
     ],
-    notes: '**Contraste:** el bosque reduce **varianza** promediando en paralelo; el boosting reduce **sesgo** sumando en serie, y puede sobreajustar: lo controlan $\\nu$, $M_{arb}$ y la parada temprana. **LightGBM** cambia la implementación, no la matemática. **Sin extrapolación:** sus hojas son constantes.',
+    notes: '**Contraste:** el bosque reduce **varianza** promediando en paralelo; el boosting reduce **sesgo** sumando en serie, y puede sobreajustar: lo controlan $\\nu$, $M_{arb}$ y la parada temprana. **LightGBM** cambia la implementación, no la matemática. **Sin extrapolación:** sus hojas son constantes.'
   },
   {
     id: 'd3-mat-2-rnn',

@@ -12,6 +12,7 @@ import OpcionesFlow from './OpcionesFlow.jsx';
 import MRPuerta1Flow from './MRPuerta1Flow.jsx';
 import MRPuerta2Flow from './MRPuerta2Flow.jsx';
 import MRPuerta3Flow from './MRPuerta3Flow.jsx';
+import { PinnDirectoFlow, PinnInversoFlow } from './PinnDirectoInversoFlow.jsx';
 
 // id de diagrama (deckContent) -> componente ReactFlow del deck.
 export const DIAGRAM_COMPONENTS = {
@@ -31,4 +32,6 @@ export const DIAGRAM_COMPONENTS = {
   mr1: MRPuerta1Flow,
   mr2: MRPuerta2Flow,
   mr3: MRPuerta3Flow,
+  pinnDirecto: PinnDirectoFlow,
+  pinnInverso: PinnInversoFlow,
 };
