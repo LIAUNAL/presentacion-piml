@@ -36,11 +36,16 @@ const POSITION = {
   bottom: Position.Bottom,
 };
 
-/** Desplazamiento del anclaje a lo largo de su borde (vertical en laterales). */
-function anchorStyle(side, pct) {
-  return side === 'left' || side === 'right'
-    ? { top: `${pct}%` }
-    : { left: `${pct}%` };
+/**
+ * Desplazamiento del anclaje a lo largo de su borde (vertical en laterales).
+ * Con `offsetPx` el anclaje se mide en píxeles desde el borde de origen: así
+ * dos tarjetas de anchos distintos pueden compartir la misma coordenada y el
+ * conector entre ellas sale perfectamente recto.
+ */
+function anchorStyle(side, pct, offsetPx) {
+  const vertical = side === 'left' || side === 'right';
+  const value = offsetPx != null ? `${offsetPx}px` : `${pct}%`;
+  return vertical ? { top: value } : { left: value };
 }
 
 /** Anclajes declarados por el nodo (ids explícitos: las aristas los citan). */
@@ -51,7 +56,7 @@ function Anchors({ handles }) {
       id={handle.id}
       type={handle.type}
       position={POSITION[handle.side]}
-      style={anchorStyle(handle.side, handle.pct ?? 50)}
+      style={anchorStyle(handle.side, handle.pct ?? 50, handle.offsetPx)}
       isConnectable={false}
     />
   ));

@@ -246,7 +246,7 @@ export function buildPinnInversoDiagram() {
       ],
       handles: [
         { id: 'in', type: 'target', side: 'left', pct: 45 },
-        { id: 'from-phi', type: 'target', side: 'top', pct: 35 },
+        { id: 'from-phi', type: 'target', side: 'top', offsetPx: 96 },
         { id: 'out', type: 'source', side: 'bottom', pct: 50 },
       ],
     }),
@@ -261,7 +261,7 @@ export function buildPinnInversoDiagram() {
       lines: ['$\\boldsymbol{\\phi} = (m, c, k)$', 'desconocidos y entrenables'],
       handles: [
         { id: 'in', type: 'target', side: 'right', pct: 50 },
-        { id: 'out', type: 'source', side: 'bottom', pct: 35 },
+        { id: 'out', type: 'source', side: 'bottom', offsetPx: 96 },
       ],
     }),
   );
@@ -368,7 +368,7 @@ export function buildPinnInversoDiagram() {
       color: NAVY,
       strokeWidth: 2.6,
       label: '$\\boldsymbol{\\phi}$',
-      labelAt: { x: 1246, y: 109 },
+      labelAt: { x: 1312, y: 112 },
     }),
     arrowEdge('res', 'Lfis', { color: NARANJA, sourceHandle: 'out', targetHandle: 'in' }),
     // composición de la pérdida total
