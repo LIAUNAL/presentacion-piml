@@ -2156,6 +2156,26 @@ body.focus-mode .deck-controls .controls-logo {
   margin: -10px -13px 7px;
 }
 
+/* Diagramas de la PINN directa (31) e inversa (32). La llave θ y la línea de
+   pérdida llevan anclajes propios para los ciclos de actualización: los puntos
+   de anclaje se ocultan para no romper la lectura de la llave ni del trazo de
+   composición (las flechas llegan igual, con su punta visible). */
+.flow-pinn-inv .deck-label.is-theta,
+.flow-pinn-dir .deck-label.is-theta {
+  font-size: 0.8rem;
+  /* La corrección de MathJax deja los sub/superíndices finales fuera del
+     ancho declarado del contenedor: se reserva ese margen para que el
+     corchete superior y la punta de ∇θL no se monten sobre el texto. */
+  padding-right: 14px;
+}
+
+.flow-pinn-inv .deck-label.is-theta .react-flow__handle,
+.flow-pinn-inv .deck-lossline .react-flow__handle,
+.flow-pinn-dir .deck-label.is-theta .react-flow__handle,
+.flow-pinn-dir .deck-lossline .react-flow__handle {
+  opacity: 0;
+}
+
 /* Las dos fichas de métodos numéricos (§3b) tienen poco texto para una página
    completa: se escala la tipografía para llenar la tarjeta como el resto de las
    páginas densas, sin tocar la composición. */
