@@ -386,6 +386,7 @@ body {
 .rf-frame {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   height: 100%;
   min-height: 0;
 }
@@ -545,7 +546,11 @@ p {
   flex-direction: column;
 }
 
+/* Flex (no solo height:100%): con la figura dimensionada por min-height
+   (una columna) el alto del host no es definido y el lienzo colapsaría. */
 .rf-host {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
@@ -1572,8 +1577,15 @@ body.focus-mode .deck-controls .controls-logo {
     overflow-y: visible;
   }
 
-  .slide-figure {
+  .slide-figure,
+  .slide.is-diagram .slide-figure {
     min-height: 420px;
+  }
+
+  /* Diagrama a página completa: la fila crece con el lienzo y el slide
+     hace scroll, en vez de aplastar el canvas a altura 0. */
+  .slide.is-diagram {
+    grid-template-rows: auto;
   }
 }
 
@@ -1653,7 +1665,8 @@ body.focus-mode .deck-controls .controls-logo {
     font-size: 0.86rem;
   }
 
-  .slide-figure {
+  .slide-figure,
+  .slide.is-diagram .slide-figure {
     min-height: 340px;
   }
 }

@@ -6,6 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import NodeEquation from './NodeEquation.jsx';
+import { hasMathLine } from './mathLine.js';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -70,15 +71,6 @@ export function isEquationLine(line) {
   return typeof line === 'string' && line.startsWith('$') && line.endsWith('$');
 }
 
-/** Línea CON math tipografiable: contiene al menos un par `$…$` completo, ya
- * sea toda la línea (ecuación pura) o mezclado con prosa (rótulos tipo
- * "ajuste de $\theta$ con $\mathcal{L}_{HNN}(\theta)$"). MathJax con
- * inlineMath [['$','$']] compone los segmentos math y deja el resto intacto;
- * un `$` suelto o desparejado no dispara typeset. */
-// eslint-disable-next-line react/only-export-components -- helper compartido por diseño (patrón makeEdge)
-export function hasMathLine(line) {
-  return typeof line === 'string' && /\$[^$\n]+\$/.test(line);
-}
 
 // Anclajes declarados por el nodo (data.sourceHandles / data.targetHandles)
 // se reparten a lo largo del canto: en 'lr' en vertical (top %), en 'tb' en
@@ -326,10 +318,26 @@ function FlowCanvas({
     },
     [fitView, fitViewPadding],
   );
+  useEffect(() => () => {
+    if (refitFrame.current !== null) cancelAnimationFrame(refitFrame.current);
+  }, []);
+
+  // Responsive: reencaja al cambiar el tamaño del marco (resize, rotación,
+  // modo enfoque), agregado en un frame vía refit.
+  const frameRef = useRef(null);
+  useEffect(() => {
+    const el = frameRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(() => refit());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [refit]);
+
+  const fitViewOptions = useMemo(() => ({ padding: fitViewPadding }), [fitViewPadding]);
 
   return (
     <RefitContext.Provider value={refit}>
-      <div className="rf-frame">
+      <div className="rf-frame" ref={frameRef}>
         {title ? <div className="rf-title">{title}</div> : null}
         <ReactFlow
           nodes={nodes}
@@ -338,8 +346,8 @@ function FlowCanvas({
           edgeTypes={edgeTypes}
           className={className}
           fitView
-          fitViewOptions={{ padding: fitViewPadding }}
-          minZoom={0.35}
+          fitViewOptions={fitViewOptions}
+          minZoom={0.2}
           maxZoom={1.9}
           nodesDraggable={false}
           nodesConnectable={false}

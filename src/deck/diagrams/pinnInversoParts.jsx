@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Handle, Position, BaseEdge, EdgeLabelRenderer } from '@xyflow/react';
-import { RefitContext, hasMathLine } from './DeckFlowPanel.jsx';
+import { RefitContext } from './DeckFlowPanel.jsx';
+import { hasMathLine } from './mathLine.js';
 import NodeEquation from './NodeEquation.jsx';
 
 /**

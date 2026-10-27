@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo, Suspense } from 'react';
 import { MathJax } from 'better-react-mathjax';
 import RichText from './RichText.jsx';
 import EquationBox from './EquationBox.jsx';
 import { DIAGRAM_COMPONENTS } from './diagrams/index.js';
 import MetodosComparacion from './diagrams/MetodosComparacion.jsx';
 import NodeEquation from './diagrams/NodeEquation.jsx';
-import { hasMathLine } from './diagrams/DeckFlowPanel.jsx';
+import { hasMathLine } from './diagrams/mathLine.js';
 
 function pad(value) {
   return String(value).padStart(2, '0');
@@ -17,7 +17,7 @@ function pad(value) {
  * lema + matemática + diagrama MR), diagram (solo figura MR a página
  * completa) o wide (columna única: bullets/tabla/pila de ecuaciones).
  */
-export default function SlideBody({ slide, index, total, phaseClass }) {
+function SlideBody({ slide, index, total, active, phaseClass }) {
   const cls = ['slide'];
 
   if (slide.kind === 'cover') {
@@ -108,7 +108,9 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
           </MathJax>
           <figure className="slide-figure">
             <div className="rf-host">
-              <Diagram active title={slide.diagramTitle} legend={slide.legend} />
+              <Suspense fallback={null}>
+                <Diagram active={active} title={slide.diagramTitle} legend={slide.legend} />
+              </Suspense>
             </div>
             <figcaption className="figure-legend">
               {(slide.legend || []).map((chip, i) => (
@@ -172,7 +174,9 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
               {hasFigure ? (
                 <figure className="slide-figure">
                   <div className="rf-host">
-                    <Diagram active title={slide.diagramTitle} legend={slide.legend} />
+                    <Suspense fallback={null}>
+                      <Diagram active={active} title={slide.diagramTitle} legend={slide.legend} />
+                    </Suspense>
                   </div>
                   <figcaption className="figure-legend">
                     {(slide.legend || []).map((chip, i) => (
@@ -310,7 +314,9 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
       {hasFigure ? (
         <figure className="slide-figure">
           <div className="rf-host">
-            <Diagram active title={slide.diagramTitle} legend={slide.legend} />
+            <Suspense fallback={null}>
+              <Diagram active={active} title={slide.diagramTitle} legend={slide.legend} />
+            </Suspense>
           </div>
           <figcaption className="figure-legend">
             {(slide.legend || []).map((chip, i) => (
@@ -325,3 +331,5 @@ export default function SlideBody({ slide, index, total, phaseClass }) {
     </article>
   );
 }
+
+export default memo(SlideBody);

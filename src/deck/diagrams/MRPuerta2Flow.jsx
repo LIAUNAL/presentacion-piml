@@ -1,7 +1,7 @@
 import React from 'react';
 import DeckFlowPanel from './DeckFlowPanel.jsx';
 import { buildHnnDiagram } from './mrPipeline.js';
-import { NeuronNode, LabelNode, StructureNode, LossLineNode } from './mrNodeTypes.jsx';
+import { MR_NODE_TYPES } from './mrNodeTypes.jsx';
 
 /**
  * Puerta ② — Arquitectura (forma fuerte, Hamiltonian NN). Flujo completo de
@@ -18,6 +18,6 @@ export default function MRPuerta2Flow({ active, title }) {
       active={active}
       className="flow-hnn"
       fitViewPadding={0.02}
-      extraNodeTypes={{ neuron: NeuronNode, label: LabelNode, structure: StructureNode, lossline: LossLineNode }}
+      extraNodeTypes={MR_NODE_TYPES}
     />;
 }

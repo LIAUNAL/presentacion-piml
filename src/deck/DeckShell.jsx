@@ -6,6 +6,10 @@ import SlideBody from './SlideBody.jsx';
 
 const STORAGE_KEY = 'deck-slide-piml';
 const TRANSITION_MS = 440;
+// Slides montados alrededor del actual: los vecinos precargan MathJax y
+// diagramas; el resto no existe en el DOM (memoria y typeset acotados).
+const MOUNT_RADIUS = 2;
+const NO_PHASE = [];
 
 function pad(value) {
   return String(value).padStart(2, '0');
@@ -158,15 +162,18 @@ export default function DeckShell() {
       <Rail slides={SLIDES} currentIndex={current} onJump={handleJump} />
       <div className="stage-layout">
         <main className="viewport" id="viewport">
-          {SLIDES.map((slide, index) => (
-            <SlideBody
-              key={slide.id}
-              slide={slide}
-              index={index}
-              total={total}
-              phaseClass={phaseByIndex.get(index) || []}
-            />
-          ))}
+          {SLIDES.map((slide, index) =>
+            Math.abs(index - current) <= MOUNT_RADIUS || index === leaving ? (
+              <SlideBody
+                key={slide.id}
+                slide={slide}
+                index={index}
+                total={total}
+                active={index === current}
+                phaseClass={phaseByIndex.get(index) || NO_PHASE}
+              />
+            ) : null,
+          )}
         </main>
       </div>
       <footer className="deck-controls">

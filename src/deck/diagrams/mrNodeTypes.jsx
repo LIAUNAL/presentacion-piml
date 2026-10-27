@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Handle, Position } from '@xyflow/react';
-import { RefitContext, hasMathLine } from './DeckFlowPanel.jsx';
+import { RefitContext } from './DeckFlowPanel.jsx';
+import { hasMathLine } from './mathLine.js';
 import NodeEquation from './NodeEquation.jsx';
 
 /**
@@ -102,3 +103,7 @@ export function LossLineNode({ data }) {
     </div>
   );
 }
+
+/** Registro estable (identidad fija) para las puertas MR. */
+// eslint-disable-next-line react/only-export-components -- registro estable de tipos de nodo
+export const MR_NODE_TYPES = { neuron: NeuronNode, label: LabelNode, structure: StructureNode, lossline: LossLineNode };
