@@ -7,13 +7,13 @@ import { MathJax } from 'better-react-mathjax';
  * los consume con inlineMath [['$','$']]). Único componente del panel
  * que importa better-react-mathjax fuera de SlideBody.
  *
- * `dynamic` es obligatorio en builds de producción:
- * better-react-mathjax 3.0.2 hace typeset con `dynamic` o en dev; sin
- * esa prop el prod nunca renderiza `mjx-container`.
+ * Sin `dynamic`: better-react-mathjax 3.0.2 tipografía una vez al montar
+ * (verificado en producción); `dynamic` re-tipografiaba en cada render y
+ * anidaba `mjx-container` duplicados. El contenido de los nodos es fijo.
  */
 export default function NodeEquation({ code, onTypeset }) {
   return (
-    <MathJax inline dynamic onTypeset={onTypeset} className="deck-eqline">
+    <MathJax inline onTypeset={onTypeset} className="deck-eqline">
       {code}
     </MathJax>
   );

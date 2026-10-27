@@ -35,3 +35,6 @@ presentacion_piml_v*.pdf
 
 # PDF archivados: se conservan en disco, no en el repositorio
 /archivo/*.pdf
+
+# MathJax self-hosted: se copia desde node_modules en predev/prebuild
+/public/mathjax/
