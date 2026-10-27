@@ -4,14 +4,17 @@ Deck de diapositivas a pantalla completa con la revisión de **Modelos Informado
 
 ## 🌐 Ver en línea
 
-**<https://ropero99.github.io/presentacion-piml/>**
+**<https://liaunal.github.io/presentacion-piml/>**
+
+Repositorio: [LIAUNAL/presentacion-piml](https://github.com/LIAUNAL/presentacion-piml)
 
 ## Contenido
 
-- **69 diapositivas** en español con foco matemático: portada, notación, **§3 Operador nabla, gradiente y jacobiano**, los 6 diagramas de decisión (con su matemática asociada) y cierre, basados en el documento `revision_piml_series_tiempo_energia_matematica.md`
+- **73 diapositivas** en español con foco matemático: portada, notación, **§3 Operador nabla, gradiente y jacobiano**, los 6 diagramas de decisión (con su matemática asociada) y cierre, basados en el documento `revision_piml_series_tiempo_energia_matematica.md`
 - **Guion de presentación** (`GUION.md`): recorrido slide por slide (~40 min, público técnico) con tiempos, puentes, qué señalar en pantalla y Q&A anticipado
 - 6 diagramas de decisión interactivos construidos con [ReactFlow](https://reactflow.dev) desde los bloques Mermaid del documento — aristas rastreables por color de origen, anclajes múltiples y etiquetas junto al destino
-- Ecuaciones renderizadas con [MathJax](https://www.mathjax.org) (LaTeX literal del documento)
+- Ecuaciones renderizadas con [MathJax](https://www.mathjax.org) 3.2.2 (LaTeX literal del documento), servido desde el propio sitio: sin CDN, funciona offline
+- Responsive: escritorio, laptop, tablet y móvil (en una columna los diagramas se reencajan y se pueden ampliar con los controles +/−)
 - Navegación: teclado (flechas / Home / End), clic en el rail de módulos, botones, swipe táctil y modo enfoque (`f`)
 - Reanudación automática de la última diapositiva (localStorage)
 
@@ -41,16 +44,25 @@ Requieren Playwright/Chromium instalados (`npx playwright install chromium`).
 
 ## Stack
 
-React 19 · Vite 8 · Tailwind CSS 4 · ReactFlow 12 · better-react-mathjax · Oxlint
+React 19 · Vite 8 · Tailwind CSS 4 · ReactFlow 12 · MathJax 3 (better-react-mathjax) · Oxlint
+
+## Rendimiento
+
+- Solo se montan el slide actual y sus vecinos (±2); el resto no existe en el DOM, así que MathJax y ReactFlow trabajan sobre unos pocos slides.
+- Cada diagrama se carga de forma diferida (chunk propio, junto con `@xyflow/react`) cuando su slide entra en esa ventana.
+- `npm run dev` y `npm run build` copian MathJax desde `node_modules/mathjax` a `public/mathjax/` (`src/scripts/copy-mathjax.mjs`); esa carpeta no se versiona.
+- Evalúa el rendimiento con `npm run build && npm run preview`: en `dev` MathJax re-tipografía en cada render.
 
 ## Desarrollo
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173/presentacion-piml/
-npm run build      # genera dist/
+npm run dev        # http://localhost:5173/presentacion-piml/ (copia MathJax antes)
+npm run build      # copia MathJax y genera dist/
+npm run preview    # sirve dist/ localmente
 npm run lint       # oxlint
 ```
+
 ## Publicar cambios en GitHub Pages (flujo directo en `main`)
 
 Para mantenerlo sencillo, trabaja directamente en `main`: verifica la presentación, crea un commit y súbelo. No hace falta crear una rama para cada cambio. El sitio se actualiza automáticamente después del push; el enlace público no cambia.
